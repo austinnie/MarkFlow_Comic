@@ -1,6 +1,6 @@
 # skills/bedroom_lingerie/skill.py
 """
-卧室唯美�E衣 - 一键生�E
+卧室唯美内衣 - 一键生成
 """
 
 import time
@@ -32,7 +32,7 @@ except ImportError as e:
     CONTROLNET_ENGINE_AVAILABLE = False
     logger.warning(f"ControlNet 引擎不可用: {e}")
 
-# 冁E��风格
+# 内衣风格
 OUTFIT_MAP = {
     "white_lace": "white lace lingerie, delicate lace, elegant, beautiful, masterpiece",
     "black_silk": "black silk lingerie, glossy silk, sophisticated, seductive, masterpiece",
@@ -51,7 +51,7 @@ POSE_MAP = {
 
 
 class BedroomLingerie:
-    """卧室唯美�E衣技能"""
+    """卧室唯美内衣技能"""
 
     def __init__(self, config: Dict[str, Any] = None):
         self.config = config or {}
@@ -68,14 +68,14 @@ class BedroomLingerie:
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlnetImg2Img(config={'device': self.device})
-                logger.info("  ✁EControlNet 引擎初始化成功")
+                logger.info("  ✅ ControlNet 引擎初始化成功")
             except Exception as e:
                 logger.warning(f"  引擎初始化失败: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"BedroomLingerie v{self.version} 初始化完�E")
+        logger.info(f"BedroomLingerie v{self.version} 初始化完成")
 
     def _setup_logging(self):
         log_level = self.config.get('log_level', 'INFO')
@@ -101,22 +101,22 @@ class BedroomLingerie:
         try:
             image_path = kwargs.get('image_path')
             if not image_path:
-                return {"status": "error", "error": "image_path 是忁E��参数"}
+                return {"status": "error", "error": "image_path 是必填参数"}
 
             abs_image_path = Path(image_path).absolute()
             if not os.path.exists(abs_image_path):
-                return {"status": "error", "error": f"输�E图牁E��存在: {abs_image_path}"}
+                return {"status": "error", "error": f"输入图片不存在: {abs_image_path}"}
 
             # 获取参数
             outfit = kwargs.get('outfit', self.config.get('default_outfit', 'white_lace'))
             pose = kwargs.get('pose', self.config.get('default_pose', 'lying'))
 
             if outfit not in OUTFIT_MAP:
-                return {"status": "error", "error": f"未知冁E��风格: {outfit}�E�可用: {list(OUTFIT_MAP.keys())}"}
+                return {"status": "error", "error": f"未知内衣风格: {outfit}，可用: {list(OUTFIT_MAP.keys())}"}
             if pose not in POSE_MAP:
-                return {"status": "error", "error": f"未知姿态E {pose}�E�可用: {list(POSE_MAP.keys())}"}
+                return {"status": "error", "error": f"未知姿态: {pose}，可用: {list(POSE_MAP.keys())}"}
 
-            # 极E��完整 prompt
+            # 构建完整 prompt
             base_prompt = "1girl, full body, facing viewer, beautiful face, perfect body, large bust, hourglass figure, "
 
             if pose == "lying":
@@ -143,8 +143,8 @@ class BedroomLingerie:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 output_path = str(self.output_dir / f"{Path(abs_image_path).stem}_lingerie_{outfit}_{pose}_{timestamp}.png")
 
-            logger.info(f"冁E��风格: {outfit}, 姿态E {pose}")
-            logger.info(f"提示证E {prompt[:100]}...")
+            logger.info(f"内衣风格: {outfit}, 姿态: {pose}")
+            logger.info(f"提示词: {prompt[:100]}...")
 
             result = self.controlnet_engine.execute(
                 input_image_path=str(abs_image_path),

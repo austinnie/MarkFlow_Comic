@@ -1,7 +1,7 @@
 # skills/change_body_type/skill.py
 """
-改变体型 Skill - 改变人物体型�E�瘦/胁E肌肉/苗条等），保持站位和骨骼走向绝对不变
-复用通用 ControlNet 引擎�E�EpenPose 锁E��架�E�高幁E��重构肉体曲线�E�E
+改变体型 Skill - 改变人物体型（瘦/胖/肌肉/苗条等），保持站位和骨骼走向绝对不变
+复用通用 ControlNet 引擎（OpenPose 锁骨架，高幅度重构肉体曲线）
 """
 
 import time
@@ -26,9 +26,9 @@ try:
     DIFFUSERS_AVAILABLE = True
 except ImportError:
     DIFFUSERS_AVAILABLE = False
-    logger.warning("torch 戁EPIL 未安裁E)
+    logger.warning("torch 或 PIL 未安装")
 
-# ==================== 引�E通用引擎�E�方桁E�E�E====================
+# ==================== 引入通用引擎（方案1） ====================
 try:
     from skills.image.controlnet_img2img.skill import ControlNetImg2Img
     CONTROLNET_ENGINE_AVAILABLE = True
@@ -70,7 +70,7 @@ class ChangeBodyType:
 
         self.skill_dir = Path(__file__).parent.absolute()
         self.project_root = self.skill_dir.parent.parent.parent
-        # ==================== 强制本技能输�E目彁E====================
+        # ==================== 强制本技能输出目录 ====================
         self.output_dir = self.skill_dir / "output"
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -82,16 +82,16 @@ class ChangeBodyType:
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlNetImg2Img(config={'device': self.device})
-                logger.info("  ✁E底屁EControlNet 引擎初始化成功")
+                logger.info("  ✅ 底层 ControlNet 引擎初始化成功")
             except Exception as e:
                 logger.warning(f"  底层引擎初始化失败: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"ChangeBodyType v{self.version} 初始化完�E")
-        logger.info(f"  设夁E {self.device}")
-        logger.info(f"  体型类垁E {list(BODY_TYPES.keys())}")
+        logger.info(f"ChangeBodyType v{self.version} 初始化完成")
+        logger.info(f"  设备: {self.device}")
+        logger.info(f"  体型类型: {list(BODY_TYPES.keys())}")
 
     def _setup_logging(self):
         log_level = self.config.get('log_level', 'INFO')
@@ -101,7 +101,7 @@ class ChangeBodyType:
     def _setup_config(self):
         defaults = {
             'default_steps': 35,
-            'default_strength': 0.75,  # 改变体型需要辁E��强度�E��E许肉体彻底重极E
+            'default_strength': 0.75,  # 改变体型需要较高强度，允许肉体彻底重构
             'default_body': 'slim',
             'default_negative': 'ugly, deformed, bad anatomy, extra limbs, blurry, low quality',
         }
@@ -117,18 +117,18 @@ class ChangeBodyType:
         logger.info(f"执行技能: {self.name}")
 
         try:
-            # ==================== 严格路征E��骁E====================
+            # ==================== 严格路径校验 ====================
             image_path = kwargs.get('image_path')
             if not image_path:
-                return {"status": "error", "error": "image_path 是忁E��参数"}
+                return {"status": "error", "error": "image_path 是必填参数"}
             
             abs_image_path = Path(image_path).absolute()
             if not os.path.exists(abs_image_path):
-                return {"status": "error", "error": f"输�E图牁E��存在: {abs_image_path}。请检查路征E��否正确�E�E}
+                return {"status": "error", "error": f"输入图片不存在: {abs_image_path}。请检查路径是否正确！"}
 
             body_type = kwargs.get('body_type', self.config.get('default_body', 'slim'))
             if body_type not in BODY_TYPES:
-                return {"status": "error", "error": f"未知体型: {body_type}�E�可用: {list(BODY_TYPES.keys())}"}
+                return {"status": "error", "error": f"未知体型: {body_type}，可用: {list(BODY_TYPES.keys())}"}
 
             body_config = BODY_TYPES[body_type]
             prompt = kwargs.get('prompt') or body_config['prompt']
@@ -138,20 +138,20 @@ class ChangeBodyType:
             steps = kwargs.get('steps', self.config.get('default_steps', 35))
             seed = kwargs.get('seed', -1)
 
-            # ==================== 直接谁E��底层引擎 ====================
+            # ==================== 直接调用底层引擎 ====================
             if self.controlnet_engine is None:
-                return {"status": "error", "error": "底屁EControlNet 引擎不可用"}
+                return {"status": "error", "error": "底层 ControlNet 引擎不可用"}
 
-            # 默认输�E到本技能目彁E
+            # 默认输出到本技能目录
             output_path = kwargs.get('output_path')
             if output_path is None:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 output_path = str(self.output_dir / f"{Path(abs_image_path).stem}_body_{body_type}_{timestamp}.png")
 
             logger.info(f"体型: {body_type}")
-            logger.info(f"提示证E {prompt[:80]}...")
+            logger.info(f"提示词: {prompt[:80]}...")
 
-            # 使用 OpenPose 锁死全身骨架�E��E许重构肉佁E
+            # 使用 OpenPose 锁死全身骨架，允许重构肉体
             result = self.controlnet_engine.execute(
                 input_image_path=str(abs_image_path),
                 prompt=prompt,
@@ -192,13 +192,13 @@ class ChangeBodyType:
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="改变体型工具 v2.0")
-    parser.add_argument("--input", "-i", required=True, help="输�E图牁E��征E)
-    parser.add_argument("--output", "-o", help="输�E路征E)
+    parser.add_argument("--input", "-i", required=True, help="输入图片路径")
+    parser.add_argument("--output", "-o", help="输出路径")
     parser.add_argument("--body", "-b", default="slim",
-                        choices=list(BODY_TYPES.keys()), help="体型类垁E)
+                        choices=list(BODY_TYPES.keys()), help="体型类型")
     parser.add_argument("--strength", type=float, default=0.75, help="重绘强度")
     parser.add_argument("--steps", type=int, default=35, help="迭代步数")
-    parser.add_argument("--seed", type=int, default=-1, help="随机种孁E)
+    parser.add_argument("--seed", type=int, default=-1, help="随机种子")
     parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu")
 
     args = parser.parse_args()

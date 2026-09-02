@@ -1,7 +1,7 @@
 # skills/change_eye_color/skill.py
 """
-改变瞳色 Skill - 改变人物眼睛颜色�E�保持全脸五官不变
-复用通用 ControlNet 引擎�E�EED + Lineart 极低强度�E�完美精绁E��瞳色�E�E
+改变瞳色 Skill - 改变人物眼睛颜色，保持全脸五官不变
+复用通用 ControlNet 引擎（HED + Lineart 极低强度，完美精细换瞳色）
 """
 
 import time
@@ -26,9 +26,9 @@ try:
     DIFFUSERS_AVAILABLE = True
 except ImportError:
     DIFFUSERS_AVAILABLE = False
-    logger.warning("torch 戁EPIL 未安裁E)
+    logger.warning("torch 或 PIL 未安装")
 
-# ==================== 引�E通用引擎�E�方桁E�E�E====================
+# ==================== 引入通用引擎（方案1） ====================
 try:
     from skills.image.controlnet_img2img.skill import ControlNetImg2Img
     CONTROLNET_ENGINE_AVAILABLE = True
@@ -82,7 +82,7 @@ class ChangeEyeColor:
 
         self.skill_dir = Path(__file__).parent.absolute()
         self.project_root = self.skill_dir.parent.parent.parent
-        # ==================== 强制本技能输�E目彁E====================
+        # ==================== 强制本技能输出目录 ====================
         self.output_dir = self.skill_dir / "output"
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -94,16 +94,16 @@ class ChangeEyeColor:
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlNetImg2Img(config={'device': self.device})
-                logger.info("  ✁E底屁EControlNet 引擎初始化成功")
+                logger.info("  ✅ 底层 ControlNet 引擎初始化成功")
             except Exception as e:
                 logger.warning(f"  底层引擎初始化失败: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"ChangeEyeColor v{self.version} 初始化完�E")
-        logger.info(f"  设夁E {self.device}")
-        logger.info(f"  瞳色类垁E {list(EYE_COLORS.keys())}")
+        logger.info(f"ChangeEyeColor v{self.version} 初始化完成")
+        logger.info(f"  设备: {self.device}")
+        logger.info(f"  瞳色类型: {list(EYE_COLORS.keys())}")
 
     def _setup_logging(self):
         log_level = self.config.get('log_level', 'INFO')
@@ -113,7 +113,7 @@ class ChangeEyeColor:
     def _setup_config(self):
         defaults = {
             'default_steps': 25,
-            'default_strength': 0.30,  # 极低强度�E�绝对不�E改变脸型！E
+            'default_strength': 0.30,  # 极低强度，绝对不能改变脸型！
             'default_color': 'blue',
             'default_negative': 'ugly, deformed, bad anatomy, blurry, low quality',
         }
@@ -129,18 +129,18 @@ class ChangeEyeColor:
         logger.info(f"执行技能: {self.name}")
 
         try:
-            # ==================== 严格路征E��骁E====================
+            # ==================== 严格路径校验 ====================
             image_path = kwargs.get('image_path')
             if not image_path:
-                return {"status": "error", "error": "image_path 是忁E��参数"}
+                return {"status": "error", "error": "image_path 是必填参数"}
             
             abs_image_path = Path(image_path).absolute()
             if not os.path.exists(abs_image_path):
-                return {"status": "error", "error": f"输�E图牁E��存在: {abs_image_path}。请检查路征E��否正确�E�E}
+                return {"status": "error", "error": f"输入图片不存在: {abs_image_path}。请检查路径是否正确！"}
 
             color = kwargs.get('color', self.config.get('default_color', 'blue'))
             if color not in EYE_COLORS:
-                return {"status": "error", "error": f"未知瞳色: {color}�E�可用: {list(EYE_COLORS.keys())}"}
+                return {"status": "error", "error": f"未知瞳色: {color}，可用: {list(EYE_COLORS.keys())}"}
 
             color_config = EYE_COLORS[color]
             prompt = kwargs.get('prompt') or color_config['prompt']
@@ -150,20 +150,20 @@ class ChangeEyeColor:
             steps = kwargs.get('steps', self.config.get('default_steps', 25))
             seed = kwargs.get('seed', -1)
 
-            # ==================== 直接谁E��底层引擎 ====================
+            # ==================== 直接调用底层引擎 ====================
             if self.controlnet_engine is None:
-                return {"status": "error", "error": "底屁EControlNet 引擎不可用"}
+                return {"status": "error", "error": "底层 ControlNet 引擎不可用"}
 
-            # 默认输�E到本技能目彁E
+            # 默认输出到本技能目录
             output_path = kwargs.get('output_path')
             if output_path is None:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 output_path = str(self.output_dir / f"{Path(abs_image_path).stem}_eyes_{color}_{timestamp}.png")
 
             logger.info(f"瞳色: {color}")
-            logger.info(f"提示证E {prompt[:80]}...")
+            logger.info(f"提示词: {prompt[:80]}...")
 
-            # 使用 HED + Lineart 绁E���E�锁死全脸完美轮廁E
+            # 使用 HED + Lineart 组合，锁死全脸完美轮廓
             result = self.controlnet_engine.execute(
                 input_image_path=str(abs_image_path),
                 prompt=prompt,
@@ -204,13 +204,13 @@ class ChangeEyeColor:
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="改变瞳色工具 v2.0")
-    parser.add_argument("--input", "-i", required=True, help="输�E图牁E��征E)
-    parser.add_argument("--output", "-o", help="输�E路征E)
+    parser.add_argument("--input", "-i", required=True, help="输入图片路径")
+    parser.add_argument("--output", "-o", help="输出路径")
     parser.add_argument("--color", "-c", default="blue",
                         choices=list(EYE_COLORS.keys()), help="瞳色")
     parser.add_argument("--strength", type=float, default=0.30, help="重绘强度")
     parser.add_argument("--steps", type=int, default=25, help="迭代步数")
-    parser.add_argument("--seed", type=int, default=-1, help="随机种孁E)
+    parser.add_argument("--seed", type=int, default=-1, help="随机种子")
     parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu")
 
     args = parser.parse_args()

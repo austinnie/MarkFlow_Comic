@@ -1,6 +1,6 @@
 # skills/pool_nude/skill.py
 """
-泳池裸露 - 一键生�E
+æ³³æ± è£¸é² - ä¸é®çæE
 """
 
 import time
@@ -29,7 +29,7 @@ try:
     CONTROLNET_ENGINE_AVAILABLE = True
 except ImportError as e:
     CONTROLNET_ENGINE_AVAILABLE = False
-    logger.warning(f"ControlNet 引擎不可用: {e}")
+    logger.warning(f"ControlNet å¼æä¸å¯ç¨: {e}")
 
 POSE_MAP = {
     "standing": "standing in pool, water up to waist, full body, confident pose, masterpiece",
@@ -47,7 +47,7 @@ LIGHTING_MAP = {
 
 
 class PoolNude:
-    """泳池裸露技能"""
+    """æ³³æ± è£¸é²æè½"""
 
     def __init__(self, config: Dict[str, Any] = None):
         self.config = config or {}
@@ -64,14 +64,14 @@ class PoolNude:
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlnetImg2Img(config={'device': self.device})
-                logger.info("  ✁EControlNet 引擎初始化成功")
+                logger.info("  âEControlNet å¼æåå§åæå")
             except Exception as e:
-                logger.warning(f"  引擎初始化失败: {e}")
+                logger.warning(f"  å¼æåå§åå¤±è´¥: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"PoolNude v{self.version} 初始化完�E")
+        logger.info(f"PoolNude v{self.version} åå§åå®æE")
 
     def _setup_logging(self):
         log_level = self.config.get('log_level', 'INFO')
@@ -92,24 +92,24 @@ class PoolNude:
 
     def execute(self, **kwargs) -> Dict[str, Any]:
         start_time = time.time()
-        logger.info(f"执行技能: {self.name}")
+        logger.info(f"æ§è¡æè½: {self.name}")
 
         try:
             image_path = kwargs.get('image_path')
             if not image_path:
-                return {"status": "error", "error": "image_path 是忁E��参数"}
+                return {"status": "error", "error": "image_path æ¯å¿E¡«åæ°"}
 
             abs_image_path = Path(image_path).absolute()
             if not os.path.exists(abs_image_path):
-                return {"status": "error", "error": f"输�E图牁E��存在: {abs_image_path}"}
+                return {"status": "error", "error": f"è¾åEå¾çE¸å­å¨: {abs_image_path}"}
 
             pose = kwargs.get('pose', self.config.get('default_pose', 'standing'))
             lighting = kwargs.get('lighting', self.config.get('default_lighting', 'sunny'))
 
             if pose not in POSE_MAP:
-                return {"status": "error", "error": f"未知姿态E {pose}�E�可用: {list(POSE_MAP.keys())}"}
+                return {"status": "error", "error": f"æªç¥å§¿æE {pose}Eå¯ç¨: {list(POSE_MAP.keys())}"}
             if lighting not in LIGHTING_MAP:
-                return {"status": "error", "error": f"未知灯允E {lighting}�E�可用: {list(LIGHTING_MAP.keys())}"}
+                return {"status": "error", "error": f"æªç¥ç¯åE {lighting}Eå¯ç¨: {list(LIGHTING_MAP.keys())}"}
 
             prompt = f"1girl, full body, beautiful face, perfect body, large bust, hourglass figure, nude, naked, beautiful skin, wet skin, water droplets on skin, {POSE_MAP[pose]}, {LIGHTING_MAP[lighting]}, swimming pool background, blue water, high quality, masterpiece, 8k, photorealistic"
 
@@ -119,15 +119,15 @@ class PoolNude:
             seed = kwargs.get('seed', -1)
 
             if self.controlnet_engine is None:
-                return {"status": "error", "error": "ControlNet 引擎不可用"}
+                return {"status": "error", "error": "ControlNet å¼æä¸å¯ç¨"}
 
             output_path = kwargs.get('output_path')
             if output_path is None:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 output_path = str(self.output_dir / f"{Path(abs_image_path).stem}_pool_{pose}_{lighting}_{timestamp}.png")
 
-            logger.info(f"姿态E {pose}, 灯允E {lighting}")
-            logger.info(f"提示证E {prompt[:100]}...")
+            logger.info(f"å§¿æE {pose}, ç¯åE {lighting}")
+            logger.info(f"æç¤ºè¯E {prompt[:100]}...")
 
             result = self.controlnet_engine.execute(
                 input_image_path=str(abs_image_path),
@@ -158,7 +158,7 @@ class PoolNude:
             }
 
         except Exception as e:
-            logger.error(f"执行失败: {e}")
+            logger.error(f"æ§è¡å¤±è´¥: {e}")
             import traceback
             traceback.print_exc()
             return {"status": "error", "error": str(e)}

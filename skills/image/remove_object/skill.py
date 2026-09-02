@@ -1,7 +1,7 @@
 # skills/remove_object/skill.py
 """
-移除物佁ESkill - 从图牁E��移除持E��物佁E
-默认使用手动遮罩�E�若遮罩生�E成功�E��E复用通用 ControlNet 引擎并配合 Inpaint 兜庁E
+ç§»é¤ç©ä½ESkill - ä»å¾çE¸­ç§»é¤æE®ç©ä½E
+é»è®¤ä½¿ç¨æå¨é®ç½©Eè¥é®ç½©çæEæåEåEå¤ç¨éç¨ ControlNet å¼æå¹¶éå Inpaint ååºE
 """
 
 import time
@@ -29,19 +29,19 @@ try:
     DIFFUSERS_AVAILABLE = True
 except ImportError:
     DIFFUSERS_AVAILABLE = False
-    logger.warning("diffusers 未安裁E)
+    logger.warning("diffusers æªå®è£E)
 
-# ==================== 引�E通用引擎�E�方桁E�E�E====================
+# ==================== å¼åEéç¨å¼æEæ¹æ¡EEE====================
 try:
     from skills.image.controlnet_img2img.skill import ControlNetImg2Img
     CONTROLNET_ENGINE_AVAILABLE = True
 except ImportError as e:
     CONTROLNET_ENGINE_AVAILABLE = False
-    logger.warning(f"通用 ControlNet 引擎不可用: {e}")
+    logger.warning(f"éç¨ ControlNet å¼æä¸å¯ç¨: {e}")
 
 
 class RemoveObject:
-    """移除物体技能 v2.0"""
+    """ç§»é¤ç©ä½æè½ v2.0"""
 
     def __init__(self, config: Dict[str, Any] = None):
         self.config = config or {}
@@ -50,7 +50,7 @@ class RemoveObject:
 
         self.skill_dir = Path(__file__).parent.absolute()
         self.project_root = self.skill_dir.parent.parent.parent
-        # ==================== 强制本技能输�E目彁E====================
+        # ==================== å¼ºå¶æ¬æè½è¾åEç®å½E====================
         self.output_dir = self.skill_dir / "output"
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -60,21 +60,21 @@ class RemoveObject:
         self.pipeline = None
         self.current_model = None
 
-        # ==================== 初始化底层引擎 ====================
+        # ==================== åå§ååºå±å¼æ ====================
         self.controlnet_engine = None
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlNetImg2Img(config={'device': self.device})
-                logger.info("  ✁E底屁EControlNet 引擎初始化成功")
+                logger.info("  âEåºå±EControlNet å¼æåå§åæå")
             except Exception as e:
-                logger.warning(f"  底层引擎初始化失败: {e}")
+                logger.warning(f"  åºå±å¼æåå§åå¤±è´¥: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"RemoveObject v{self.version} 初始化完�E")
-        logger.info(f"  设夁E {self.device}")
-        logger.info(f"  底层引擎: {'✁E可用' if self.controlnet_engine else '❁E不可用'}")
+        logger.info(f"RemoveObject v{self.version} åå§åå®æE")
+        logger.info(f"  è®¾å¤E {self.device}")
+        logger.info(f"  åºå±å¼æ: {'âEå¯ç¨' if self.controlnet_engine else 'âEä¸å¯ç¨'}")
 
     def _setup_logging(self):
         log_level = self.config.get('log_level', 'INFO')
@@ -97,7 +97,7 @@ class RemoveObject:
         return Path(self.models_dir / "sd-v1-5" / model_name) if model_name else None
 
     def _load_pipeline(self, model_path: Path) -> bool:
-        """加载纯 Inpaint 管线�E�作为兜底！E""
+        """å è½½çº¯ Inpaint ç®¡çº¿Eä½ä¸ºååºï¼E""
         try:
             self.pipeline = StableDiffusionInpaintPipeline.from_single_file(
                 str(model_path),
@@ -110,18 +110,18 @@ class RemoveObject:
             self.current_model = model_path.name
             return True
         except Exception as e:
-            logger.error(f"  模型加载失败: {e}")
+            logger.error(f"  æ¨¡åå è½½å¤±è´¥: {e}")
             return False
 
     def _load_model(self, model_name: str) -> bool:
         model_path = self._find_model(model_name)
         if not model_path or not model_path.exists():
-            logger.error(f"模型不存在: {model_name}")
+            logger.error(f"æ¨¡åä¸å­å¨: {model_name}")
             return False
         return self._load_pipeline(model_path)
 
     def _generate_manual_mask(self, image: Image.Image) -> Image.Image:
-        """手动绘制要移除皁E��体�E罩"""
+        """æå¨ç»å¶è¦ç§»é¤çE©ä½éEç½©"""
         img_cv = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
         h, w = img_cv.shape[:2]
 
@@ -131,12 +131,12 @@ class RemoveObject:
         brush_size = 30
 
         print("\n" + "=" * 50)
-        print("手动绘制要移除皁E��佁E)
+        print("æå¨ç»å¶è¦ç§»é¤çE©ä½E)
         print("=" * 50)
-        print("  按住鼠栁E��键绘制要移除皁E��域（白色�E�E)
-        print("  滚轮谁E��画笔大封E)
-        print("  持ER 键重置")
-        print("  持EQ 戁E空格键 完�E")
+        print("  æä½é¼ æ E·¦é®ç»å¶è¦ç§»é¤çEºåï¼ç½è²EE)
+        print("  æ»è½®è°Eç»ç¬å¤§å°E)
+        print("  æER é®éç½®")
+        print("  æEQ æEç©ºæ ¼é® å®æE")
         print("=" * 50 + "\n")
 
         def draw_callback(event, x, y, flags, param):
@@ -154,7 +154,7 @@ class RemoveObject:
             elif event == cv2.EVENT_MOUSEWHEEL:
                 delta = flags
                 brush_size = min(100, max(5, brush_size + (5 if delta > 0 else -5)))
-                print(f"   画笔大封E {brush_size}")
+                print(f"   ç»ç¬å¤§å°E {brush_size}")
 
         cv2.namedWindow('Draw Object to Remove')
         cv2.setMouseCallback('Draw Object to Remove', draw_callback)
@@ -173,12 +173,12 @@ class RemoveObject:
             elif key == ord('r'):
                 mask = np.zeros((h, w), dtype=np.uint8)
                 overlay = np.zeros((h, w, 3), dtype=np.uint8)
-                print("  已重置")
+                print("  å·²éç½®")
 
         cv2.destroyAllWindows()
 
         if np.sum(mask > 0) < 100:
-            print("  未绘制任何区域，使用默认椭圁E�E罩")
+            print("  æªç»å¶ä»»ä½åºåï¼ä½¿ç¨é»è®¤æ¤­åEEç½©")
             mask = np.zeros((h, w), dtype=np.uint8)
             cx, cy = w // 2, h // 2
             cv2.ellipse(mask, (cx, cy), (w // 4, h // 4), 0, 0, 360, 255, -1)
@@ -197,17 +197,17 @@ class RemoveObject:
 
     def execute(self, **kwargs) -> Dict[str, Any]:
         start_time = time.time()
-        logger.info(f"执行技能: {self.name}")
+        logger.info(f"æ§è¡æè½: {self.name}")
 
         try:
-            # ==================== 严格路征E��骁E====================
+            # ==================== ä¸¥æ ¼è·¯å¾E ¡éªE====================
             image_path = kwargs.get('image_path')
             if not image_path:
-                return {"status": "error", "error": "image_path 是忁E��参数"}
+                return {"status": "error", "error": "image_path æ¯å¿E¡«åæ°"}
             
             abs_image_path = Path(image_path).absolute()
             if not os.path.exists(abs_image_path):
-                return {"status": "error", "error": f"输�E图牁E��存在: {abs_image_path}。请检查路征E��否正确�E�E}
+                return {"status": "error", "error": f"è¾åEå¾çE¸å­å¨: {abs_image_path}ãè¯·æ£æ¥è·¯å¾E¯å¦æ­£ç¡®EE}
 
             prompt = kwargs.get('prompt') or self.config.get('default_prompt')
             negative_prompt = kwargs.get('negative_prompt') or self.config.get('default_negative')
@@ -217,37 +217,37 @@ class RemoveObject:
             seed = kwargs.get('seed', -1)
             model_name = kwargs.get('model_name', self.config.get('default_model'))
 
-            # 加载原图
+            # å è½½åå¾
             image = Image.open(abs_image_path).convert("RGB")
             image, original_size = self._resize_image(image)
 
-            logger.info(f"提示证E {prompt[:80]}...")
+            logger.info(f"æç¤ºè¯E {prompt[:80]}...")
 
-            # ==================== 第一步�E�生成�E罩 ====================
-            # 如果你封E��想要�E动化，这里可以接入 YOLO/SAM、E
-            # 目前为亁E��定，直接谁E��手动绘制�E�可以传 skip_manual=True 跳迁E��E
+            # ==================== ç¬¬ä¸æ­¥EçæéEç½© ====================
+            # å¦æä½ å°E¥æ³è¦èEå¨åï¼è¿éå¯ä»¥æ¥å¥ YOLO/SAMãE
+            # ç®åä¸ºäºE¨³å®ï¼ç´æ¥è°E¨æå¨ç»å¶Eå¯ä»¥ä¼  skip_manual=True è·³è¿E¼E
             if not kwargs.get('skip_manual', False):
                 object_mask = self._generate_manual_mask(image)
             else:
-                # 如果跳迁E��动�E�生成一个全黑的遮罩�E�等同于�E局重绘！E
+                # å¦æè·³è¿Eå¨Eçæä¸ä¸ªå¨é»çé®ç½©Eç­åäºåEå±éç»ï¼E
                 object_mask = Image.new("L", image.size, 0)
 
-            # 默认输�E到本技能目彁E
+            # é»è®¤è¾åEå°æ¬æè½ç®å½E
             output_path = kwargs.get('output_path')
             if output_path is None:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 output_path = str(self.output_dir / f"{Path(abs_image_path).stem}_removed_{timestamp}.png")
 
-            # ==================== 第二步�E�执行（引擎优�E�E�Inpaint兜底！E====================
-            # 如果底层引擎可用�E�且用户允许�E�谁E��引擎生�E
+            # ==================== ç¬¬äºæ­¥Eæ§è¡ï¼å¼æä¼åEEInpaintååºï¼E====================
+            # å¦æåºå±å¼æå¯ç¨Eä¸ç¨æ·åè®¸Eè°E¨å¼æçæE
             if self.controlnet_engine is not None:
-                logger.info("  🔥 使用通用 ControlNet 引擎进行移除�E�保持原有结构�E�E..")
+                logger.info("  ð¥ ä½¿ç¨éç¨ ControlNet å¼æè¿è¡ç§»é¤Eä¿æåæç»æEE..")
                 result = self.controlnet_engine.execute(
                     input_image_path=str(abs_image_path),
                     prompt=prompt,
                     negative_prompt=negative_prompt,
-                    preprocessor_type="HED",      # 提取软边缘，保留背景
-                    controlnet_model="canny",     # 对应本地模垁E
+                    preprocessor_type="HED",      # æåè½¯è¾¹ç¼ï¼ä¿çèæ¯
+                    controlnet_model="canny",     # å¯¹åºæ¬å°æ¨¡åE
                     strength=strength,
                     output_path=output_path
                 )
@@ -259,11 +259,11 @@ class RemoveObject:
                         "parameters": {"strength": strength, "steps": steps, "seed": seed, "engine": "controlnet"}
                     }
                 else:
-                    logger.warning(f"  引擎谁E��失败: {result.get('error')}�E�回退到 Inpaint")
+                    logger.warning(f"  å¼æè°E¨å¤±è´¥: {result.get('error')}Eåéå° Inpaint")
 
-            # 兜底：加载纯 Inpaint 模型并生�E
+            # ååºï¼å è½½çº¯ Inpaint æ¨¡åå¹¶çæE
             if not self._load_model(model_name):
-                return {"status": "error", "error": f"无法加载模垁E {model_name}"}
+                return {"status": "error", "error": f"æ æ³å è½½æ¨¡åE {model_name}"}
 
             if seed == -1:
                 seed = random.randint(0, 2 ** 32 - 1)
@@ -294,19 +294,19 @@ class RemoveObject:
             }
 
         except Exception as e:
-            logger.error(f"执行失败: {e}")
+            logger.error(f"æ§è¡å¤±è´¥: {e}")
             return {"status": "error", "error": str(e)}
 
 
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser(description="移除物体工具 v2.0")
-    parser.add_argument("--input", "-i", required=True, help="输�E图牁E��征E)
-    parser.add_argument("--output", "-o", help="输�E路征E)
-    parser.add_argument("--skip-manual", action="store_true", help="跳迁E��动绘制遮罩")
-    parser.add_argument("--strength", type=float, default=0.7, help="重绘强度")
-    parser.add_argument("--steps", type=int, default=30, help="迭代步数")
-    parser.add_argument("--seed", type=int, default=-1, help="随机种孁E)
+    parser = argparse.ArgumentParser(description="ç§»é¤ç©ä½å·¥å· v2.0")
+    parser.add_argument("--input", "-i", required=True, help="è¾åEå¾çE·¯å¾E)
+    parser.add_argument("--output", "-o", help="è¾åEè·¯å¾E)
+    parser.add_argument("--skip-manual", action="store_true", help="è·³è¿Eå¨ç»å¶é®ç½©")
+    parser.add_argument("--strength", type=float, default=0.7, help="éç»å¼ºåº¦")
+    parser.add_argument("--steps", type=int, default=30, help="è¿­ä»£æ­¥æ°")
+    parser.add_argument("--seed", type=int, default=-1, help="éæºç§å­E)
     parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu")
 
     args = parser.parse_args()

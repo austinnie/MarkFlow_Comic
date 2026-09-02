@@ -1,7 +1,7 @@
 # skills/photo_realistic/skill.py
 """
-照牁E��实化 Skill - 结合 ControlNet 图生图丁EOpenCV 后期夁E��
-默认只做纯后期夁E���E�开启 ai_realistic 后可进行真实化重绁E
+ç§çEå®å Skill - ç»å ControlNet å¾çå¾ä¸EOpenCV åæå¤E
+é»è®¤åªåçº¯åæå¤EEå¼å¯ ai_realistic åå¯è¿è¡çå®åéç»E
 """
 
 import os
@@ -17,7 +17,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# 添加项目路征E
+# æ·»å é¡¹ç®è·¯å¾E
 project_root = Path(__file__).parent.parent.parent
 if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
@@ -29,17 +29,17 @@ try:
     CV2_AVAILABLE = True
 except ImportError:
     CV2_AVAILABLE = False
-    logger.warning("OpenCV 未安裁E��图像夁E��功�E不可用")
+    logger.warning("OpenCV æªå®è£E¼å¾åå¤EåèEä¸å¯ç¨")
 
-# ==================== 引�E通用 ControlNet 引擎�E�方桁E�E�E====================
+# ==================== å¼åEéç¨ ControlNet å¼æEæ¹æ¡EEE====================
 try:
     from skills.image.controlnet_img2img.skill import ControlNetImg2Img
     CONTROLNET_ENGINE_AVAILABLE = True
 except ImportError as e:
     CONTROLNET_ENGINE_AVAILABLE = False
-    logger.warning(f"通用 ControlNet 引擎不可用: {e}")
+    logger.warning(f"éç¨ ControlNet å¼æä¸å¯ç¨: {e}")
 
-# ==================== 相机颁E�� ====================
+# ==================== ç¸æºé¢E®¾ ====================
 CAMERA_PRESETS = {
     "sony_a7iv": {
         "Make": "Sony", "Model": "ILCE-7M4",
@@ -88,7 +88,7 @@ PHOTO_STYLES = {
 
 
 class PhotoRealistic:
-    """照牁E��实化技能"""
+    """ç§çEå®åæè½"""
 
     def __init__(self, config: Dict[str, Any] = None):
         self.config = config or {}
@@ -96,25 +96,25 @@ class PhotoRealistic:
         self.version = "2.0.0"
 
         self.skill_dir = Path(__file__).parent.absolute()
-        # ==================== 强制本技能输�E目彁E====================
+        # ==================== å¼ºå¶æ¬æè½è¾åEç®å½E====================
         self.output_dir = self.skill_dir / "output"
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
-        # ==================== ControlNet 引擎实例化 ====================
+        # ==================== ControlNet å¼æå®ä¾å ====================
         self.controlnet_engine = None
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlNetImg2Img(config={'device': self.config.get('device', 'cpu')})
-                logger.info("  ✁E底屁EControlNet 引擎初始化成功")
+                logger.info("  âEåºå±EControlNet å¼æåå§åæå")
             except Exception as e:
-                logger.warning(f"  底层引擎初始化失败: {e}")
+                logger.warning(f"  åºå±å¼æåå§åå¤±è´¥: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"照牁E��实化技能 v{self.version} 初始化完�E")
-        logger.info(f"  ControlNet: {'✁E可用' if self.controlnet_engine else '❁E不可用'}")
-        logger.info(f"  OpenCV: {'✁E可用' if CV2_AVAILABLE else '❁E不可用'}")
+        logger.info(f"ç§çEå®åæè½ v{self.version} åå§åå®æE")
+        logger.info(f"  ControlNet: {'âEå¯ç¨' if self.controlnet_engine else 'âEä¸å¯ç¨'}")
+        logger.info(f"  OpenCV: {'âEå¯ç¨' if CV2_AVAILABLE else 'âEä¸å¯ç¨'}")
 
     def _setup_logging(self):
         log_level = self.config.get('log_level', 'INFO')
@@ -134,7 +134,7 @@ class PhotoRealistic:
                 self.config[key] = value
 
     def _inject_exif(self, image_path: str, camera: str = "sony_a7iv", style: str = "portrait", randomize: bool = True) -> Dict[str, Any]:
-        """注入 EXIF 允E��据�E�使用 ExifTool�E�E""
+        """æ³¨å¥ EXIF åE°æ®Eä½¿ç¨ ExifToolEE""
         camera_preset = CAMERA_PRESETS.get(camera, CAMERA_PRESETS["sony_a7iv"])
         style_preset = PHOTO_STYLES.get(style, PHOTO_STYLES["portrait"])
 
@@ -159,7 +159,7 @@ class PhotoRealistic:
 
         exiftool = shutil.which("exiftool")
         if exiftool is None:
-            return {"status": "warning", "message": "exiftool 未找到"}
+            return {"status": "warning", "message": "exiftool æªæ¾å°"}
 
         try:
             cmd = [exiftool, "-overwrite_original"]
@@ -170,13 +170,13 @@ class PhotoRealistic:
 
             result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
             if result.returncode != 0:
-                return {"status": "warning", "message": f"EXIF 注入失败: {result.stderr}"}
+                return {"status": "warning", "message": f"EXIF æ³¨å¥å¤±è´¥: {result.stderr}"}
             return {"status": "success", "exif_params": exif_params}
         except Exception as e:
             return {"status": "error", "error": str(e)}
 
     def add_realistic_features(self, image: Image.Image, iso: int = 400, add_noise: bool = True, add_vignette: bool = True, add_sharpening: bool = True) -> Image.Image:
-        """添加真实相机特征E��EpenCV�E�E""
+        """æ·»å çå®ç¸æºç¹å¾E¼EpenCVEE""
         if not CV2_AVAILABLE:
             return image
 
@@ -187,7 +187,7 @@ class PhotoRealistic:
             noise_strength = max(1, min(20, iso / 50))
             noise = np.random.normal(0, noise_strength, img_cv.shape).astype(np.uint8)
             img_cv = cv2.add(img_cv, noise)
-            logger.info(f"  ✁E添加噪点 (ISO {iso})")
+            logger.info(f"  âEæ·»å åªç¹ (ISO {iso})")
 
         if add_vignette:
             kernel_x = cv2.getGaussianKernel(w, w * 0.3)
@@ -196,13 +196,13 @@ class PhotoRealistic:
             mask = 1 - kernel * 0.25
             for i in range(3):
                 img_cv[:, :, i] = (img_cv[:, :, i] * mask).astype(np.uint8)
-            logger.info("  ✁E添加暗见E)
+            logger.info("  âEæ·»å æè§E)
 
         if add_sharpening:
             kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]]) * 0.8 + 0.2 * np.eye(3)
             kernel = kernel / np.sum(kernel)
             img_cv = cv2.filter2D(img_cv, -1, kernel)
-            logger.info("  ✁E锐化")
+            logger.info("  âEéå")
 
         return Image.fromarray(cv2.cvtColor(img_cv, cv2.COLOR_BGR2RGB))
 
@@ -210,13 +210,13 @@ class PhotoRealistic:
         self,
         image_path: str,
         output_path: Optional[str] = None,
-        # ===== 核忁E��关 =====
-        ai_realistic: bool = False,       # 是否开启 ControlNet 重绁E
+        # ===== æ ¸å¿E¼å³ =====
+        ai_realistic: bool = False,       # æ¯å¦å¼å¯ ControlNet éç»E
         enable_noise: bool = False,
         enable_vignette: bool = False,
         enable_sharpen: bool = False,
         enable_exif: bool = False,
-        # ===== 参数 =====
+        # ===== åæ° =====
         camera: str = "sony_a7iv",
         style: str = "portrait",
         strength: str = "medium",
@@ -224,54 +224,54 @@ class PhotoRealistic:
         randomize: bool = True
     ) -> Dict[str, Any]:
         """
-        夁E��图牁E
+        å¤Eå¾çE
         Args:
-            image_path: 输�E图牁E��征E
-            output_path: 输�E路征E
-            ai_realistic: 是否开启 ControlNet AI 真实化重绁E(设为 True 封E���E谁E�� controlnet_img2img)
-            enable_noise: 是否添加噪点
-            enable_vignette: 是否添加暗见E
-            enable_sharpen: 是否锐化
-            enable_exif: 是否注入 EXIF
+            image_path: è¾åEå¾çE·¯å¾E
+            output_path: è¾åEè·¯å¾E
+            ai_realistic: æ¯å¦å¼å¯ ControlNet AI çå®åéç»E(è®¾ä¸º True å°E¼åEè°E¨ controlnet_img2img)
+            enable_noise: æ¯å¦æ·»å åªç¹
+            enable_vignette: æ¯å¦æ·»å æè§E
+            enable_sharpen: æ¯å¦éå
+            enable_exif: æ¯å¦æ³¨å¥ EXIF
         """
-        # ==================== 严格路征E��骁E====================
+        # ==================== ä¸¥æ ¼è·¯å¾E ¡éªE====================
         if not image_path:
-            return {"status": "error", "error": "image_path 是忁E��参数"}
+            return {"status": "error", "error": "image_path æ¯å¿E¡«åæ°"}
         abs_image_path = Path(image_path).absolute()
         if not os.path.exists(abs_image_path):
-            return {"status": "error", "error": f"输�E图牁E��存在: {abs_image_path}"}
+            return {"status": "error", "error": f"è¾åEå¾çE¸å­å¨: {abs_image_path}"}
 
-        # 默认输�E到本技能目彁E
+        # é»è®¤è¾åEå°æ¬æè½ç®å½E
         if output_path is None:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             output_path = str(self.output_dir / f"{Path(abs_image_path).stem}_realistic_{timestamp}.jpg")
 
-        # 1. 先判断是否谁E�� ControlNet 进行重绁E
+        # 1. åå¤æ­æ¯å¦è°E¨ ControlNet è¿è¡éç»E
         if ai_realistic:
             if self.controlnet_engine is None:
-                return {"status": "error", "error": "ControlNet 引擎不可用"}
-            logger.info("  🔥 开启 ControlNet AI 真实化重绁E..")
+                return {"status": "error", "error": "ControlNet å¼æä¸å¯ç¨"}
+            logger.info("  ð¥ å¼å¯ ControlNet AI çå®åéç»E..")
             result = self.controlnet_engine.execute(
                 input_image_path=str(abs_image_path),
                 prompt="photorealistic, real person, realistic skin texture, natural lighting, detailed, masterpiece, high quality, 8k",
                 negative_prompt="anime, cartoon, 2d, illustration, drawing, painting, sketch, blurry, low quality",
                 preprocessor_type="HED",
                 controlnet_model="canny",
-                strength=0.45,  # 低重绘幁E���E�保持原图结构
+                strength=0.45,  # ä½éç»å¹Eº¦Eä¿æåå¾ç»æ
                 output_path=output_path
             )
             if result['status'] != 'success':
                 return result
-            # 重绘后皁E��牁E
+            # éç»åçE¾çE
             image = Image.open(output_path).convert("RGB")
         else:
-            # 不重绘，直接读取原图
+            # ä¸éç»ï¼ç´æ¥è¯»ååå¾
             image = Image.open(abs_image_path).convert("RGB")
 
-        # 2. OpenCV 后期效果�E�基于重绘后皁E��牁E��E
+        # 2. OpenCV åæææEåºäºéç»åçE¾çE¼E
         applied = {"noise": False, "vignette": False, "sharpen": False, "exif": False}
 
-        # 确宁EISO
+        # ç¡®å®EISO
         strength_map = {"light": {"iso": 200}, "medium": {"iso": 400}, "strong": {"iso": 800}}
         if iso is None:
             iso = strength_map.get(strength, strength_map["medium"])["iso"]
@@ -289,7 +289,7 @@ class PhotoRealistic:
             applied["vignette"] = enable_vignette
             applied["sharpen"] = enable_sharpen
 
-        # 3. 保存最终结果
+        # 3. ä¿å­æç»ç»æ
         image.save(output_path, format='JPEG', quality=92, optimize=True)
 
         result = {
@@ -300,24 +300,24 @@ class PhotoRealistic:
             "iso": iso,
         }
 
-        # 4. EXIF 注入
+        # 4. EXIF æ³¨å¥
         if enable_exif:
             exif_result = self._inject_exif(output_path, camera=camera, style=style, randomize=randomize)
             applied["exif"] = True
             result["exif"] = exif_result
-            logger.info(f"  ✁EEXIF 注入成功 (相机: {camera})")
+            logger.info(f"  âEEXIF æ³¨å¥æå (ç¸æº: {camera})")
 
-        logger.info(f"✁E夁E��完�E: {output_path}")
+        logger.info(f"âEå¤Eå®æE: {output_path}")
         return result
 
     def execute(self, **kwargs) -> Dict[str, Any]:
-        """执行技能"""
+        """æ§è¡æè½"""
         action = kwargs.get('action', 'process')
 
         if action == 'process':
             image_path = kwargs.get('image_path')
             if not image_path:
-                return {"status": "error", "error": "image_path 是忁E��参数"}
+                return {"status": "error", "error": "image_path æ¯å¿E¡«åæ°"}
 
             return self.process(
                 image_path=image_path,
@@ -341,31 +341,31 @@ class PhotoRealistic:
             return {"status": "success", "styles": list(PHOTO_STYLES.keys())}
 
         else:
-            return {"status": "error", "error": f"未知操佁E {action}"}
+            return {"status": "error", "error": f"æªç¥æä½E {action}"}
 
     def __repr__(self):
         return f"<PhotoRealistic(name={self.name}, version={self.version})>"
 
 
-# ==================== 命令行�E口 ====================
+# ==================== å½ä»¤è¡åEå£ ====================
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description="照牁E��实化工具 v2.0")
+    parser = argparse.ArgumentParser(description="ç§çEå®åå·¥å· v2.0")
 
-    parser.add_argument("--input", "-i", help="输�E图牁E��征E)
-    parser.add_argument("--output", "-o", help="输�E路征E)
+    parser.add_argument("--input", "-i", help="è¾åEå¾çE·¯å¾E)
+    parser.add_argument("--output", "-o", help="è¾åEè·¯å¾E)
 
-    parser.add_argument("--ai-realistic", action="store_true", help="开启 ControlNet AI 真实化")
-    parser.add_argument("--noise", action="store_true", help="添加噪点")
-    parser.add_argument("--vignette", action="store_true", help="添加暗见E)
-    parser.add_argument("--sharpen", action="store_true", help="锐化")
-    parser.add_argument("--exif", action="store_true", help="注入 EXIF")
+    parser.add_argument("--ai-realistic", action="store_true", help="å¼å¯ ControlNet AI çå®å")
+    parser.add_argument("--noise", action="store_true", help="æ·»å åªç¹")
+    parser.add_argument("--vignette", action="store_true", help="æ·»å æè§E)
+    parser.add_argument("--sharpen", action="store_true", help="éå")
+    parser.add_argument("--exif", action="store_true", help="æ³¨å¥ EXIF")
 
-    parser.add_argument("--camera", default="sony_a7iv", choices=list(CAMERA_PRESETS.keys()), help="相机颁E��")
-    parser.add_argument("--style", default="portrait", choices=list(PHOTO_STYLES.keys()), help="照牁E��格")
-    parser.add_argument("--strength", default="medium", choices=["light", "medium", "strong"], help="强度")
-    parser.add_argument("--iso", type=int, help="ISO 值")
+    parser.add_argument("--camera", default="sony_a7iv", choices=list(CAMERA_PRESETS.keys()), help="ç¸æºé¢E®¾")
+    parser.add_argument("--style", default="portrait", choices=list(PHOTO_STYLES.keys()), help="ç§çE£æ ¼")
+    parser.add_argument("--strength", default="medium", choices=["light", "medium", "strong"], help="å¼ºåº¦")
+    parser.add_argument("--iso", type=int, help="ISO å¼")
 
     args = parser.parse_args()
 

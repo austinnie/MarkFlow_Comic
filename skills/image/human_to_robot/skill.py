@@ -1,18 +1,18 @@
 # skills/human_to_robot/skill.py
 """
-HumanToRobot - 封E��物照牁E��换为机器人/机械风格
+HumanToRobot - å°Eººç©ç§çE½¬æ¢ä¸ºæºå¨äºº/æºæ¢°é£æ ¼
 
-输�E参数:
-  - image_path (string): 输�E图牁E��征E(忁E��)
-  - output_path (string): 输�E图牁E��征E(忁E��为 .png)
-  - ai_convert (boolean): 是否开启 AI 图生图转换 (默认: False�E�使用 OpenCV 机械滤镁E
-  - style (string): 机器人风格 (cyberpunk_robot / mechanical / android)
-  - save_result (boolean): 是否保存夁E��日忁E
+è¾åEåæ°:
+  - image_path (string): è¾åEå¾çE·¯å¾E(å¿E¡«)
+  - output_path (string): è¾åEå¾çE·¯å¾E(å¿E¡»ä¸º .png)
+  - ai_convert (boolean): æ¯å¦å¼å¯ AI å¾çå¾è½¬æ¢ (é»è®¤: FalseEä½¿ç¨ OpenCV æºæ¢°æ»¤éE
+  - style (string): æºå¨äººé£æ ¼ (cyberpunk_robot / mechanical / android)
+  - save_result (boolean): æ¯å¦ä¿å­å¤Eæ¥å¿E
 
-输�E:
-  - status: 执行状态E��success / error
-  - result: 匁E��输�E路征E��转换详惁E��字�E
-  - metadata: 技能执行�E数据
+è¾åE:
+  - status: æ§è¡ç¶æE¼success / error
+  - result: åE«è¾åEè·¯å¾Eè½¬æ¢è¯¦æEå­åE
+  - metadata: æè½æ§è¡åEæ°æ®
 """
 
 import os
@@ -23,12 +23,12 @@ import logging
 from pathlib import Path
 from typing import Dict, Any
 
-# 添加项目路征E
+# æ·»å é¡¹ç®è·¯å¾E
 project_root = Path(__file__).parent.parent.parent
 if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
-# 依赖检查
+# ä¾èµæ£æ¥
 try:
     import cv2
     import numpy as np
@@ -37,7 +37,7 @@ try:
 except ImportError:
     CV2_AVAILABLE = False
 
-# 尝试引�E ControlNet 引擎
+# å°è¯å¼åE ControlNet å¼æ
 try:
     from skills.image.controlnet_img2img.skill import ControlNetImg2Img
     CONTROLNET_ENGINE_AVAILABLE = True
@@ -48,25 +48,25 @@ logger = logging.getLogger(__name__)
 
 
 class HumanToRobot:
-    """人物转机器人技能"""
+    """äººç©è½¬æºå¨äººæè½"""
 
     def __init__(self, config: Dict[str, Any] = None):
         self.config = config or {}
         self.name = "HumanToRobot"
         self.version = "1.0.0"
 
-        # 设定输�E目彁E
+        # è®¾å®è¾åEç®å½E
         self.skill_dir = Path(__file__).parent.absolute()
         self.output_dir = self.skill_dir / "output"
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
-        # 初始化 ControlNet
+        # åå§å ControlNet
         self.controlnet_engine = None
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlNetImg2Img(config={'device': self.config.get('device', 'cpu')})
             except Exception as e:
-                logger.warning(f"ControlNet 初始化失败: {e}")
+                logger.warning(f"ControlNet åå§åå¤±è´¥: {e}")
 
         self._setup_logging()
         self._setup_config()
@@ -89,73 +89,73 @@ class HumanToRobot:
                 self.config[key] = value
 
     def _apply_cyberpunk_filters(self, image: Image.Image, style: str = "cyberpunk_robot") -> Image.Image:
-        """使用 OpenCV 赛博朋�E滤镁E""
+        """ä½¿ç¨ OpenCV èµåæåEæ»¤éE""
         if not CV2_AVAILABLE:
             return image
 
         img_cv = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
         h, w = img_cv.shape[:2]
 
-        # 1. 提取边缁E
+        # 1. æåè¾¹ç¼E
         gray = cv2.cvtColor(img_cv, cv2.COLOR_BGR2GRAY)
         edges = cv2.Canny(gray, 50, 150)
         edges = cv2.dilate(edges, np.ones((2, 2), np.uint8), iterations=1)
 
-        # 2. 赛博朋�E颜色偏移 (青色/洋红)
+        # 2. èµåæåEé¢è²åç§» (éè²/æ´çº¢)
         b, g, r = cv2.split(img_cv)
         b = cv2.add(b, 60)
         r = cv2.add(r, 30)
         cyber_img = cv2.merge((b, g, r))
 
-        # 3. 添加机械网格纹琁E
+        # 3. æ·»å æºæ¢°ç½æ ¼çº¹çE
         noise = np.random.randint(0, 30, (h, w), dtype=np.uint8)
         grid = np.zeros((h, w), dtype=np.uint8)
         grid[::4, :] = 255
         grid[:, ::4] = 255
         grid = cv2.bitwise_and(grid, noise)
 
-        # 4. 合并图屁E
+        # 4. åå¹¶å¾å±E
         cyber_img[edges > 0] = [255, 255, 255]
         cyber_img[grid > 0] = [0, 255, 255]
 
         return Image.fromarray(cv2.cvtColor(cyber_img, cv2.COLOR_BGR2RGB))
 
     def execute(self, **kwargs) -> Dict[str, Any]:
-        """执行技能�E�支持单张和批量目录！E""
-        logger.info(f"执行技能: {self.name} (v{self.version})")
+        """æ§è¡æè½Eæ¯æåå¼ åæ¹éç®å½ï¼E""
+        logger.info(f"æ§è¡æè½: {self.name} (v{self.version})")
         
         try:
-            # 1. 验证输�E
+            # 1. éªè¯è¾åE
             image_path = kwargs.get('image_path')
             if not image_path:
-                return {"status": "error", "error": "缺少忁E��参数: image_path"}
+                return {"status": "error", "error": "ç¼ºå°å¿E¡«åæ°: image_path"}
             
             abs_image_path = Path(image_path).absolute()
             if not abs_image_path.exists():
-                return {"status": "error", "error": f"输�E图牁E��存在: {abs_image_path}"}
+                return {"status": "error", "error": f"è¾åEå¾çE¸å­å¨: {abs_image_path}"}
 
-            # 读取参数
+            # è¯»ååæ°
             ai_convert = kwargs.get('ai_convert', self.config.get('default_ai_convert', False))
             style = kwargs.get('style', self.config.get('default_style', 'cyberpunk_robot'))
 
-            # ================= 支持批量模弁E=================
-            # 如果传入皁E��目录，�E批量夁E��
+            # ================= æ¯ææ¹éæ¨¡å¼E=================
+            # å¦æä¼ å¥çE¯ç®å½ï¼åEæ¹éå¤E
             if abs_image_path.is_dir():
                 valid_exts = ['.jpg', '.jpeg', '.png', '.bmp', '.webp']
                 images = [p for p in abs_image_path.iterdir() if p.suffix.lower() in valid_exts]
                 
                 if not images:
-                    return {"status": "error", "error": f"目录中没有找到图牁E {abs_image_path}"}
+                    return {"status": "error", "error": f"ç®å½ä¸­æ²¡ææ¾å°å¾çE {abs_image_path}"}
                 
-                logger.info(f"📂 发现 {len(images)} 张图牁E��开始批量夁E��...")
+                logger.info(f"ð åç° {len(images)} å¼ å¾çE¼å¼å§æ¹éå¤E...")
                 results = []
                 
                 for idx, img_path in enumerate(images):
-                    # 自动生�E输�E路征E
+                    # èªå¨çæEè¾åEè·¯å¾E
                     output_filename = f"{img_path.stem}_robot_{idx}.png"
                     output_path = str(self.output_dir / output_filename)
                     
-                    # 谁E��冁E��夁E��方況E
+                    # è°E¨åE¨å¤Eæ¹æ³E
                     result = self._process_single_image(str(img_path), output_path, ai_convert, style)
                     results.append(result)
                 
@@ -173,7 +173,7 @@ class HumanToRobot:
                     }
                 }
             
-            # ================= 单张模弁E=================
+            # ================= åå¼ æ¨¡å¼E=================
             output_path = kwargs.get('output_path')
             if not output_path:
                 timestamp = Path(abs_image_path).stem
@@ -192,7 +192,7 @@ class HumanToRobot:
             }
 
         except Exception as e:
-            logger.error(f"执行失败: {e}")
+            logger.error(f"æ§è¡å¤±è´¥: {e}")
             return {
                 "status": "error",
                 "error": str(e),
@@ -201,7 +201,7 @@ class HumanToRobot:
             }
 
     def _process_single_image(self, input_path: str, output_path: str, ai_convert: bool, style: str) -> Dict:
-        """夁E��单张图牁E��私有方況E""
+        """å¤Eåå¼ å¾çEç§ææ¹æ³E""
         try:
             if ai_convert and self.controlnet_engine:
                 style_prompts = {

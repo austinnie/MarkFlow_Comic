@@ -1,7 +1,7 @@
 # skills/old_photo_restore/skill.py
 """
-老�E牁E��夁E+ 上色 Skill - 修复破捁E褪色/黑白老�E牁E
-复用通用 ControlNet 引擎�E�EED + Lineart�E�保持原始结构
+èçEçE¿®å¤E+ ä¸è² Skill - ä¿®å¤ç ´æEè¤ªè²/é»ç½èçEçE
+å¤ç¨éç¨ ControlNet å¼æEEED + LineartEä¿æåå§ç»æ
 """
 
 import time
@@ -26,15 +26,15 @@ try:
     DIFFUSERS_AVAILABLE = True
 except ImportError:
     DIFFUSERS_AVAILABLE = False
-    logger.warning("torch 戁EPIL 未安裁E)
+    logger.warning("torch æEPIL æªå®è£E)
 
-# ==================== 引�E通用引擎�E�方桁E�E�E====================
+# ==================== å¼åEéç¨å¼æEæ¹æ¡EEE====================
 try:
     from skills.image.controlnet_img2img.skill import ControlNetImg2Img
     CONTROLNET_ENGINE_AVAILABLE = True
 except ImportError as e:
     CONTROLNET_ENGINE_AVAILABLE = False
-    logger.warning(f"通用 ControlNet 引擎不可用: {e}")
+    logger.warning(f"éç¨ ControlNet å¼æä¸å¯ç¨: {e}")
 
 STYLES = {
     "natural": {
@@ -57,7 +57,7 @@ STYLES = {
 
 
 class OldPhotoRestore:
-    """老�E牁E��夁E+ 上色技能"""
+    """èçEçE¿®å¤E+ ä¸è²æè½"""
 
     def __init__(self, config: Dict[str, Any] = None):
         self.config = config or {}
@@ -66,28 +66,28 @@ class OldPhotoRestore:
 
         self.skill_dir = Path(__file__).parent.absolute()
         self.project_root = self.skill_dir.parent.parent.parent
-        # ==================== 强制本技能输�E目彁E====================
+        # ==================== å¼ºå¶æ¬æè½è¾åEç®å½E====================
         self.output_dir = self.skill_dir / "output"
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
         self.models_dir = Path(self.config.get('models_dir', self.project_root / 'models'))
         self.device = self.config.get('device', 'cuda' if torch.cuda.is_available() else 'cpu')
 
-        # ==================== 初始化底层引擎 ====================
+        # ==================== åå§ååºå±å¼æ ====================
         self.controlnet_engine = None
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlNetImg2Img(config={'device': self.device})
-                logger.info("  ✁E底屁EControlNet 引擎初始化成功")
+                logger.info("  âEåºå±EControlNet å¼æåå§åæå")
             except Exception as e:
-                logger.warning(f"  底层引擎初始化失败: {e}")
+                logger.warning(f"  åºå±å¼æåå§åå¤±è´¥: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"OldPhotoRestore v{self.version} 初始化完�E")
-        logger.info(f"  设夁E {self.device}")
-        logger.info(f"  风格: {list(STYLES.keys())}")
+        logger.info(f"OldPhotoRestore v{self.version} åå§åå®æE")
+        logger.info(f"  è®¾å¤E {self.device}")
+        logger.info(f"  é£æ ¼: {list(STYLES.keys())}")
 
     def _setup_logging(self):
         log_level = self.config.get('log_level', 'INFO')
@@ -97,7 +97,7 @@ class OldPhotoRestore:
     def _setup_config(self):
         defaults = {
             'default_steps': 35,
-            'default_strength': 0.55,  # 修复老�E牁E���E�重绘幁E��建议稍低以保留原貁E
+            'default_strength': 0.55,  # ä¿®å¤èçEçE¶Eéç»å¹Eº¦å»ºè®®ç¨ä½ä»¥ä¿çåè²E
             'default_style': 'natural',
             'default_negative': 'ugly, deformed, blurry, low quality, damaged, torn, scratch',
         }
@@ -110,21 +110,21 @@ class OldPhotoRestore:
 
     def execute(self, **kwargs) -> Dict[str, Any]:
         start_time = time.time()
-        logger.info(f"执行技能: {self.name}")
+        logger.info(f"æ§è¡æè½: {self.name}")
 
         try:
-            # ==================== 严格路征E��骁E====================
+            # ==================== ä¸¥æ ¼è·¯å¾E ¡éªE====================
             image_path = kwargs.get('image_path')
             if not image_path:
-                return {"status": "error", "error": "image_path 是忁E��参数"}
+                return {"status": "error", "error": "image_path æ¯å¿E¡«åæ°"}
             
             abs_image_path = Path(image_path).absolute()
             if not os.path.exists(abs_image_path):
-                return {"status": "error", "error": f"输�E图牁E��存在: {abs_image_path}。请检查路征E��否正确�E�E}
+                return {"status": "error", "error": f"è¾åEå¾çE¸å­å¨: {abs_image_path}ãè¯·æ£æ¥è·¯å¾E¯å¦æ­£ç¡®EE}
 
             style = kwargs.get('style', self.config.get('default_style', 'natural'))
             if style not in STYLES:
-                return {"status": "error", "error": f"未知风格: {style}�E�可用: {list(STYLES.keys())}"}
+                return {"status": "error", "error": f"æªç¥é£æ ¼: {style}Eå¯ç¨: {list(STYLES.keys())}"}
 
             s_config = STYLES[style]
             prompt = kwargs.get('prompt') or s_config['prompt']
@@ -134,25 +134,25 @@ class OldPhotoRestore:
             steps = kwargs.get('steps', self.config.get('default_steps', 35))
             seed = kwargs.get('seed', -1)
 
-            # ==================== 直接谁E��底层引擎 ====================
+            # ==================== ç´æ¥è°E¨åºå±å¼æ ====================
             if self.controlnet_engine is None:
-                return {"status": "error", "error": "底屁EControlNet 引擎不可用"}
+                return {"status": "error", "error": "åºå±EControlNet å¼æä¸å¯ç¨"}
 
-            # 默认输�E到本技能目彁E
+            # é»è®¤è¾åEå°æ¬æè½ç®å½E
             output_path = kwargs.get('output_path')
             if output_path is None:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 output_path = str(self.output_dir / f"{Path(abs_image_path).stem}_restored_{style}_{timestamp}.png")
 
-            logger.info(f"风格: {style}")
-            logger.info(f"提示证E {prompt[:80]}...")
+            logger.info(f"é£æ ¼: {style}")
+            logger.info(f"æç¤ºè¯E {prompt[:80]}...")
 
             result = self.controlnet_engine.execute(
                 input_image_path=str(abs_image_path),
                 prompt=prompt,
                 negative_prompt=negative_prompt,
-                preprocessor_type="HED",      # 提取柔和边缘，保留老�E牁E��本皁E��廁E
-                controlnet_model="lineart",   # 使用本地 Lineart 模型，完美匹酁EHED
+                preprocessor_type="HED",      # æåæåè¾¹ç¼ï¼ä¿çèçEçEæ¬çE½®å»E
+                controlnet_model="lineart",   # ä½¿ç¨æ¬å° Lineart æ¨¡åï¼å®ç¾å¹éEHED
                 strength=strength,
                 steps=steps,
                 output_path=output_path
@@ -175,7 +175,7 @@ class OldPhotoRestore:
             }
 
         except Exception as e:
-            logger.error(f"执行失败: {e}")
+            logger.error(f"æ§è¡å¤±è´¥: {e}")
             import traceback
             traceback.print_exc()
             return {"status": "error", "error": str(e)}
@@ -186,14 +186,14 @@ class OldPhotoRestore:
 
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser(description="老�E牁E��复工具 v2.0")
-    parser.add_argument("--input", "-i", required=True, help="输�E老�E牁E��征E)
-    parser.add_argument("--output", "-o", help="输�E路征E)
+    parser = argparse.ArgumentParser(description="èçEçE¿®å¤å·¥å· v2.0")
+    parser.add_argument("--input", "-i", required=True, help="è¾åEèçEçE·¯å¾E)
+    parser.add_argument("--output", "-o", help="è¾åEè·¯å¾E)
     parser.add_argument("--style", "-s", default="natural",
-                        choices=list(STYLES.keys()), help="修复风格")
-    parser.add_argument("--strength", type=float, default=0.55, help="重绘强度")
-    parser.add_argument("--steps", type=int, default=35, help="迭代步数")
-    parser.add_argument("--seed", type=int, default=-1, help="随机种孁E)
+                        choices=list(STYLES.keys()), help="ä¿®å¤é£æ ¼")
+    parser.add_argument("--strength", type=float, default=0.55, help="éç»å¼ºåº¦")
+    parser.add_argument("--steps", type=int, default=35, help="è¿­ä»£æ­¥æ°")
+    parser.add_argument("--seed", type=int, default=-1, help="éæºç§å­E)
     parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu")
 
     args = parser.parse_args()

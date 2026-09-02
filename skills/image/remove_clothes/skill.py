@@ -1,8 +1,8 @@
 # markflow/skills/remove_clothes/skill.py
 """
-衣服移除 Skill - 使用本地 SD Inpaint 模垁E
-支持EYOLO / Manual 刁E���E�复用通用 ControlNet 引擎
-ControlNet 咁EInpaint 刁E��执衁E
+è¡£æç§»é¤ Skill - ä½¿ç¨æ¬å° SD Inpaint æ¨¡åE
+æ¯æEYOLO / Manual åE²Eå¤ç¨éç¨ ControlNet å¼æ
+ControlNet åEInpaint åE¦»æ§è¡E
 """
 
 import os
@@ -17,7 +17,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# ==================== 依赖导入 ====================
+# ==================== ä¾èµå¯¼å¥ ====================
 try:
     import torch
     import numpy as np
@@ -27,18 +27,18 @@ try:
     DIFFUSERS_AVAILABLE = True
 except ImportError as e:
     DIFFUSERS_AVAILABLE = False
-    logger.warning(f"依赖未安裁E {e}")
+    logger.warning(f"ä¾èµæªå®è£E {e}")
 
-# ==================== 引�E通用引擎�E�方桁E�E�E====================
+# ==================== å¼åEéç¨å¼æEæ¹æ¡EEE====================
 try:
     from skills.image.controlnet_img2img.skill import ControlNetImg2Img
     CONTROLNET_ENGINE_AVAILABLE = True
-    logger.info("通用 ControlNet 引擎加载成功")
+    logger.info("éç¨ ControlNet å¼æå è½½æå")
 except ImportError as e:
     CONTROLNET_ENGINE_AVAILABLE = False
-    logger.warning(f"通用 ControlNet 引擎不可用: {e}")
+    logger.warning(f"éç¨ ControlNet å¼æä¸å¯ç¨: {e}")
 
-# ==================== 刁E��模块（防御性导入�E�E====================
+# ==================== åE²æ¨¡åï¼é²å¾¡æ§å¯¼å¥EE====================
 try:
     from .segmentation import (
         segment_with_yolo,
@@ -50,7 +50,7 @@ try:
     SEGMENTATION_AVAILABLE = True
 except ImportError:
     SEGMENTATION_AVAILABLE = False
-    logger.warning("本地 segmentation 模块未找到�E�封E��用冁E��简化版 YOLO 或手动")
+    logger.warning("æ¬å° segmentation æ¨¡åæªæ¾å°Eå°E½¿ç¨åE½®ç®åç YOLO ææå¨")
 
 # YOLO
 try:
@@ -58,10 +58,10 @@ try:
     YOLO_AVAILABLE = True
 except ImportError:
     YOLO_AVAILABLE = False
-    logger.warning("YOLO 未安裁E��封E��用手动遮罩")
+    logger.warning("YOLO æªå®è£E¼å°E½¿ç¨æå¨é®ç½©")
 
 class ClothesRemover:
-    """衣服移除技能"""
+    """è¡£æç§»é¤æè½"""
 
     SUPPORTED_EXTENSIONS = ('.png', '.jpg', '.jpeg', '.webp', '.bmp')
     SEGMENTATION_METHODS = ['yolo', 'manual', 'clipseg', 'sam', 'grounding_dino']
@@ -73,7 +73,7 @@ class ClothesRemover:
 
         self.skill_dir = Path(__file__).parent.absolute()
         self.project_root = self.skill_dir.parent.parent.parent
-        # ==================== 强制本技能输�E目彁E====================
+        # ==================== å¼ºå¶æ¬æè½è¾åEç®å½E====================
         self.output_dir = self.skill_dir / "output"
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -89,23 +89,23 @@ class ClothesRemover:
         self.current_model = None
         self._yolo_model = None
 
-        # ==================== 引�E通用引擎 ====================
+        # ==================== å¼åEéç¨å¼æ ====================
         self.controlnet_engine = None
         if self.config.get('use_controlnet', True) and CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlNetImg2Img(config={'device': self.device})
-                logger.info("  ✁E通用保形引擎 (controlnet_img2img) 初始化成功")
+                logger.info("  âEéç¨ä¿å½¢å¼æ (controlnet_img2img) åå§åæå")
             except Exception as e:
-                logger.warning(f"  ❁E通用保形引擎初始化失败: {e}")
+                logger.warning(f"  âEéç¨ä¿å½¢å¼æåå§åå¤±è´¥: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"ClothesRemover v{self.version} 初始化完�E")
-        logger.info(f"  模型目彁E {self.models_dir}")
-        logger.info(f"  设夁E {self.device}")
-        logger.info(f"  ControlNet 引擎: {'✁E可用' if self.controlnet_engine else '❁E不可用'}")
-        logger.info(f"  YOLO: {'✁E可用' if YOLO_AVAILABLE else '❁E不可用'}")
+        logger.info(f"ClothesRemover v{self.version} åå§åå®æE")
+        logger.info(f"  æ¨¡åç®å½E {self.models_dir}")
+        logger.info(f"  è®¾å¤E {self.device}")
+        logger.info(f"  ControlNet å¼æ: {'âEå¯ç¨' if self.controlnet_engine else 'âEä¸å¯ç¨'}")
+        logger.info(f"  YOLO: {'âEå¯ç¨' if YOLO_AVAILABLE else 'âEä¸å¯ç¨'}")
 
     def _setup_logging(self):
         log_level = self.config.get('log_level', 'INFO')
@@ -128,7 +128,7 @@ class ClothesRemover:
 
         Path(self.config.get('output_dir', str(self.skill_dir / 'output'))).mkdir(parents=True, exist_ok=True)
 
-    # ==================== 模型管琁E====================
+    # ==================== æ¨¡åç®¡çE====================
     def _find_model(self, model_name: str) -> Optional[Path]:
         if not model_name:
             model_name = self.config.get('default_model', 'zenityXmix.inpainting.safetensors')
@@ -147,11 +147,11 @@ class ClothesRemover:
                 file_path = subdir / filename
                 if file_path.exists():
                     return file_path
-        logger.error(f"未找到模垁E {model_name}")
+        logger.error(f"æªæ¾å°æ¨¡åE {model_name}")
         return None
 
     def _load_pipeline(self, model_path: Path) -> bool:
-        """加载纯 SD Inpaint Pipeline�E�夁E��路线�E�E""
+        """å è½½çº¯ SD Inpaint PipelineEå¤E¨è·¯çº¿EE""
         try:
             self.pipeline = StableDiffusionInpaintPipeline.from_single_file(
                 str(model_path),
@@ -162,32 +162,32 @@ class ClothesRemover:
             self.pipeline.to(self.device)
             self.pipeline.enable_attention_slicing()
             self.current_model = model_path.name
-            logger.info(f"  ✁EInpaint 模型加载成功: {self.current_model}")
+            logger.info(f"  âEInpaint æ¨¡åå è½½æå: {self.current_model}")
             return True
         except Exception as e:
-            logger.error(f"  ❁EInpaint 模型加载失败: {e}")
+            logger.error(f"  âEInpaint æ¨¡åå è½½å¤±è´¥: {e}")
             return False
 
     def _load_model(self, model_name: str) -> bool:
         if not DIFFUSERS_AVAILABLE:
-            logger.error("diffusers 未安裁E)
+            logger.error("diffusers æªå®è£E)
             return False
         model_path = self._find_model(model_name)
         if not model_path:
-            logger.error(f"模型文件不存在: {model_name}")
+            logger.error(f"æ¨¡åæä»¶ä¸å­å¨: {model_name}")
             return False
         return self._load_pipeline(model_path)
 
     def _load_model_from_path(self, model_path: str) -> bool:
         if not DIFFUSERS_AVAILABLE:
-            logger.error("diffusers 未安裁E)
+            logger.error("diffusers æªå®è£E)
             return False
         if not os.path.exists(model_path):
-            logger.error(f"模型不存在: {model_path}")
+            logger.error(f"æ¨¡åä¸å­å¨: {model_path}")
             return False
         return self._load_pipeline(Path(model_path))
 
-    # ==================== 遮罩生�E ====================
+    # ==================== é®ç½©çæE ====================
     def _get_yolo_model(self):
         if not YOLO_AVAILABLE:
             return None
@@ -195,7 +195,7 @@ class ClothesRemover:
             try:
                 self._yolo_model = YOLO("yolov8n-seg.pt")
             except Exception as e:
-                logger.warning(f"  YOLO 加载失败: {e}")
+                logger.warning(f"  YOLO å è½½å¤±è´¥: {e}")
                 self._yolo_model = False
         return self._yolo_model
 
@@ -230,7 +230,7 @@ class ClothesRemover:
             if np.sum(clothes > 0) < 100: return None
             return Image.fromarray(clothes, mode="L")
         except Exception as e:
-            logger.warning(f"  YOLO 刁E��失败: {e}")
+            logger.warning(f"  YOLO åE²å¤±è´¥: {e}")
             return None
 
     def _generate_mask_manual(self, image: Image.Image) -> Image.Image:
@@ -241,12 +241,12 @@ class ClothesRemover:
         drawing = False
         brush_size = 30
         print("\n" + "=" * 50)
-        print("手动绘制遮罩模弁E)
+        print("æå¨ç»å¶é®ç½©æ¨¡å¼E)
         print("=" * 50)
-        print("  按住鼠栁E��键绘制遮罩�E�白色区域！E)
-        print("  滚轮谁E��画笔大封E)
-        print("  持ER 键重置遮罩")
-        print("  持EQ 戁E空格键 完�E绘制")
+        print("  æä½é¼ æ E·¦é®ç»å¶é®ç½©Eç½è²åºåï¼E)
+        print("  æ»è½®è°Eç»ç¬å¤§å°E)
+        print("  æER é®éç½®é®ç½©")
+        print("  æEQ æEç©ºæ ¼é® å®æEç»å¶")
         print("=" * 50 + "\n")
         def draw_callback(event, x, y, flags, param):
             nonlocal drawing, brush_size
@@ -263,7 +263,7 @@ class ClothesRemover:
             elif event == cv2.EVENT_MOUSEWHEEL:
                 delta = flags
                 brush_size = min(100, max(5, brush_size + (5 if delta > 0 else -5)))
-                print(f"   画笔大封E {brush_size}")
+                print(f"   ç»ç¬å¤§å°E {brush_size}")
         cv2.namedWindow('Draw Mask - Remove Clothes')
         cv2.setMouseCallback('Draw Mask - Remove Clothes', draw_callback)
         while True:
@@ -282,7 +282,7 @@ class ClothesRemover:
                 overlay = np.zeros((h, w, 3), dtype=np.uint8)
         cv2.destroyAllWindows()
         if np.sum(mask > 0) < 100:
-            print("  遮罩区域太小，使用椭圁E��认遮罩")
+            print("  é®ç½©åºåå¤ªå°ï¼ä½¿ç¨æ¤­åE»è®¤é®ç½©")
             mask = np.zeros((h, w), dtype=np.uint8)
             cx, cy = w // 2, h // 2
             cv2.ellipse(mask, (cx, cy), (w // 4, h // 3), 0, 0, 360, 255, -1)
@@ -291,18 +291,18 @@ class ClothesRemover:
 
     def _generate_mask(self, image: Image.Image, method: str = None, **kwargs) -> Image.Image:
         method = method or self.default_seg_method
-        logger.info(f"  使用刁E��方況E {method}")
+        logger.info(f"  ä½¿ç¨åE²æ¹æ³E {method}")
         if method == 'yolo':
             mask = self._generate_mask_auto(image)
             if mask is not None:
                 return mask
-            logger.info("  YOLO 失败�E�降级到手动绘制")
+            logger.info("  YOLO å¤±è´¥Eéçº§å°æå¨ç»å¶")
             return self._generate_mask_manual(image)
         elif method == 'manual':
             return self._generate_mask_manual(image)
         else:
-            # 简单降级
-            logger.warning(f"  暂不支持E��级刁E��方況E {method}�E�使用 YOLO 或手动")
+            # ç®åéçº§
+            logger.warning(f"  æä¸æ¯æE«çº§åE²æ¹æ³E {method}Eä½¿ç¨ YOLO ææå¨")
             mask = self._generate_mask_auto(image)
             if mask is not None:
                 return mask
@@ -323,7 +323,7 @@ class ClothesRemover:
             new_size = (int(original_size[0] * ratio), int(original_size[1] * ratio))
             need_resize = True
         if need_resize:
-            logger.info(f"  等比例缩放: {original_size[0]}x{original_size[1]} -> {new_size[0]}x{new_size[1]}")
+            logger.info(f"  ç­æ¯ä¾ç¼©æ¾: {original_size[0]}x{original_size[1]} -> {new_size[0]}x{new_size[1]}")
             image = image.resize(new_size, Image.Resampling.LANCZOS)
             original_size = new_size
         width = (original_size[0] // 8) * 8
@@ -338,16 +338,16 @@ class ClothesRemover:
 
     def execute(self, **kwargs) -> Dict[str, Any]:
         start_time = time.time()
-        logger.info(f"执行技能: {self.name} (v{self.version})")
+        logger.info(f"æ§è¡æè½: {self.name} (v{self.version})")
 
         try:
-            # ==================== 严格路征E��骁E====================
+            # ==================== ä¸¥æ ¼è·¯å¾E ¡éªE====================
             image_path = kwargs.get('image_path')
             if not image_path:
-                return {"status": "error", "error": "image_path 是忁E��参数"}
+                return {"status": "error", "error": "image_path æ¯å¿E¡«åæ°"}
             abs_image_path = Path(image_path).absolute()
             if not os.path.exists(abs_image_path):
-                return {"status": "error", "error": f"输�E图牁E��存在: {abs_image_path}。请检查路征E��否正确�E�E}
+                return {"status": "error", "error": f"è¾åEå¾çE¸å­å¨: {abs_image_path}ãè¯·æ£æ¥è·¯å¾E¯å¦æ­£ç¡®EE}
 
             output_path = kwargs.get('output_path')
             model_path = kwargs.get('model_path')
@@ -356,7 +356,7 @@ class ClothesRemover:
             controlnet_type = kwargs.get('controlnet_type', self.config.get('default_controlnet_type', 'canny'))
             use_controlnet = kwargs.get('use_controlnet', self.config.get('use_controlnet', True))
 
-            # 获取参数
+            # è·ååæ°
             prompt = kwargs.get('prompt') or 'nude body, beautiful skin, realistic skin texture, natural light, soft shadows, masterpiece, best quality, photorealistic'
             negative_prompt = kwargs.get('negative_prompt') or 'clothes, fabric, ugly, deformed, bad anatomy, extra limbs, missing limbs, bad proportions, blurry, low quality, cartoon, anime'
             strength = kwargs.get('strength', self.config.get('default_strength', 0.5))
@@ -364,24 +364,24 @@ class ClothesRemover:
             seed = kwargs.get('seed', -1)
             save_mask = kwargs.get('save_mask', False)
 
-            # 加载图牁E
+            # å è½½å¾çE
             image = Image.open(abs_image_path).convert("RGB")
             image, original_size = self._resize_image(image)
 
-            # 生�E遮罩
-            logger.info("生�E遮罩...")
+            # çæEé®ç½©
+            logger.info("çæEé®ç½©...")
             mask = self._generate_mask(image, method=seg_method)
 
             if save_mask:
                 mask_path = str(abs_image_path).replace('.png', '_mask.png').replace('.jpg', '_mask.png')
                 mask.save(mask_path)
 
-            # ==================== 核忁E��引擎谁E�� ====================
-            # 如果启用亁EControlNet 引擎�E�并且引擎可用
+            # ==================== æ ¸å¿E¼å¼æè°E¨ ====================
+            # å¦æå¯ç¨äºEControlNet å¼æEå¹¶ä¸å¼æå¯ç¨
             if use_controlnet and self.controlnet_engine is not None:
-                logger.info("  🔥 使用通用 ControlNet 引擎进行生戁E..")
+                logger.info("  ð¥ ä½¿ç¨éç¨ ControlNet å¼æè¿è¡çæE..")
                 
-                # 默认输�E到本技能目彁E
+                # é»è®¤è¾åEå°æ¬æè½ç®å½E
                 if output_path is None:
                     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                     output_path = str(self.output_dir / f"{Path(abs_image_path).stem}_remove_{timestamp}.png")
@@ -390,9 +390,9 @@ class ClothesRemover:
                     input_image_path=str(abs_image_path),
                     prompt=prompt,
                     negative_prompt=negative_prompt,
-                    preprocessor_type=controlnet_type.upper(), # 自动提取对应的姿态E线稿
+                    preprocessor_type=controlnet_type.upper(), # èªå¨æåå¯¹åºçå§¿æEçº¿ç¨¿
                     controlnet_model=controlnet_type,
-                    strength=strength,  # 传给引擎
+                    strength=strength,  # ä¼ ç»å¼æ
                     output_path=output_path
                 )
 
@@ -415,25 +415,25 @@ class ClothesRemover:
                         "generation_time": f"{time.time() - start_time:.2f}s"
                     }
                 else:
-                    # 引擎失败�E�回退
-                    logger.warning(f"  引擎谁E��失败: {result.get('error')}�E�回退到厁EInpaint")
+                    # å¼æå¤±è´¥Eåé
+                    logger.warning(f"  å¼æè°E¨å¤±è´¥: {result.get('error')}Eåéå°åEInpaint")
             
-            # ==================== 夁E���E�纯 Inpaint 路线 ====================
-            # 加载 Inpaint 模垁E
+            # ==================== å¤E¨Eçº¯ Inpaint è·¯çº¿ ====================
+            # å è½½ Inpaint æ¨¡åE
             if model_path:
                 if not self._load_model_from_path(model_path):
-                    return {"status": "error", "error": f"无法加载模垁E {model_path}"}
+                    return {"status": "error", "error": f"æ æ³å è½½æ¨¡åE {model_path}"}
             else:
                 model_name = model_name or self.config.get('default_model')
                 if self.pipeline is None or self.current_model != model_name:
                     if not self._load_model(model_name):
-                        return {"status": "error", "error": f"无法加载模垁E {model_name}"}
+                        return {"status": "error", "error": f"æ æ³å è½½æ¨¡åE {model_name}"}
 
             if seed == -1:
                 seed = random.randint(0, 2 ** 32 - 1)
             generator = torch.Generator(device=self.device).manual_seed(seed)
 
-            # 确保输�E路征E��在
+            # ç¡®ä¿è¾åEè·¯å¾E­å¨
             if output_path is None:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 output_path = str(self.output_dir / f"{Path(abs_image_path).stem}_remove_{timestamp}.png")
@@ -458,7 +458,7 @@ class ClothesRemover:
             }
 
         except Exception as e:
-            logger.error(f"执行失败: {e}")
+            logger.error(f"æ§è¡å¤±è´¥: {e}")
             import traceback
             traceback.print_exc()
             return {"status": "error", "error": str(e)}

@@ -1,7 +1,7 @@
 # skills/expand_to_full_body/skill.py
 """
-Expand to Full Body - 封E��物半身/头像图扩展为全身图
-复用通用 ControlNet 引擎�E�使用 MediaPipe 极E��轻量检测定位头部
+Expand to Full Body - å°Eººç©åèº«/å¤´åå¾æ©å±ä¸ºå¨èº«å¾
+å¤ç¨éç¨ ControlNet å¼æEä½¿ç¨ MediaPipe æEè½»éæ£æµå®ä½å¤´é¨
 """
 
 import os
@@ -27,24 +27,24 @@ try:
     DIFFUSERS_AVAILABLE = True
 except ImportError:
     DIFFUSERS_AVAILABLE = False
-    logger.warning("torch 戁EPIL 未安裁E)
+    logger.warning("torch æEPIL æªå®è£E)
 
-# ==================== 引�E通用引擎�E�方桁E�E�E====================
+# ==================== å¼åEéç¨å¼æEæ¹æ¡EEE====================
 try:
     from skills.image.controlnet_img2img.skill import ControlNetImg2Img
     CONTROLNET_ENGINE_AVAILABLE = True
 except ImportError as e:
     CONTROLNET_ENGINE_AVAILABLE = False
-    logger.warning(f"通用 ControlNet 引擎不可用: {e}")
+    logger.warning(f"éç¨ ControlNet å¼æä¸å¯ç¨: {e}")
 
 
 class ExpandToFullBody:
-    """半身图转全身图技能 v2.0 (MediaPipe + OpenPose 锁姿态E"""
+    """åèº«å¾è½¬å¨èº«å¾æè½ v2.0 (MediaPipe + OpenPose éå§¿æE"""
 
-    # 可用模型�E表�E�用于展示�E�E
+    # å¯ç¨æ¨¡ååEè¡¨Eç¨äºå±ç¤ºEE
     AVAILABLE_MODELS = {
-        "anytimeRealistic_v10.safetensors": {"name": "Anytime Realistic", "size": "2.13 GB", "type": "写宁E},
-        "aiiiii01_v10.safetensors": {"name": "AIiiii v1.0", "size": "2.13 GB", "type": "写宁E},
+        "anytimeRealistic_v10.safetensors": {"name": "Anytime Realistic", "size": "2.13 GB", "type": "åå®E},
+        "aiiiii01_v10.safetensors": {"name": "AIiiii v1.0", "size": "2.13 GB", "type": "åå®E},
     }
 
     def __init__(self, config: Dict[str, Any] = None):
@@ -54,7 +54,7 @@ class ExpandToFullBody:
 
         self.skill_dir = Path(__file__).parent.absolute()
         self.project_root = self.skill_dir.parent.parent.parent
-        # ==================== 强制本技能输�E目彁E====================
+        # ==================== å¼ºå¶æ¬æè½è¾åEç®å½E====================
         self.output_dir = self.skill_dir / "output"
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -66,53 +66,53 @@ class ExpandToFullBody:
         self.target_height = self.config.get('target_height', 1024)
         self.target_width = self.config.get('target_width', 768)
 
-        # 缓孁E
+        # ç¼å­E
         self.controlnet_engine = None
 
-        # ==================== 初始化底层引擎 ====================
+        # ==================== åå§ååºå±å¼æ ====================
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlNetImg2Img(config={'device': self.device})
-                logger.info("  ✁E底屁EControlNet 引擎初始化成功")
+                logger.info("  âEåºå±EControlNet å¼æåå§åæå")
             except Exception as e:
-                logger.warning(f"  底层引擎初始化失败: {e}")
+                logger.warning(f"  åºå±å¼æåå§åå¤±è´¥: {e}")
 
-        # ==================== 初始化 MediaPipe�E�新牁EAPI�E�E====================
+        # ==================== åå§å MediaPipeEæ°çEAPIEE====================
         self._mediapipe_pose = None
         self._init_mediapipe()
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"ExpandToFullBody v{self.version} 初始化完�E")
-        logger.info(f"  设夁E {self.device}")
-        logger.info(f"  目栁E��寸: {self.target_width}x{self.target_height}")
-        logger.info(f"  ControlNet: {'✁E if self.controlnet_engine else '❁E}")
+        logger.info(f"ExpandToFullBody v{self.version} åå§åå®æE")
+        logger.info(f"  è®¾å¤E {self.device}")
+        logger.info(f"  ç®æ E°ºå¯¸: {self.target_width}x{self.target_height}")
+        logger.info(f"  ControlNet: {'âE if self.controlnet_engine else 'âE}")
 
     def _init_mediapipe(self):
-        """初始化 MediaPipe�E�新牁EAPI�E�E""
+        """åå§å MediaPipeEæ°çEAPIEE""
         self._mediapipe_pose = None
         try:
             import mediapipe as mp
             from mediapipe.tasks import python
             from mediapipe.tasks.python import vision
 
-            # 模型文件路征E
+            # æ¨¡åæä»¶è·¯å¾E
             model_path = self.skill_dir / "pose_landmarker_heavy.task"
 
-            # 如果模型不存在�E�尝试下载
+            # å¦ææ¨¡åä¸å­å¨Eå°è¯ä¸è½½
             if not model_path.exists():
-                logger.info("  📥 下载 MediaPipe 姿态模垁E..")
+                logger.info("  ð¥ ä¸è½½ MediaPipe å§¿ææ¨¡åE..")
                 try:
                     import urllib.request
                     url = "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_heavy/float16/1/pose_landmarker_heavy.task"
                     urllib.request.urlretrieve(url, str(model_path))
-                    logger.info(f"  ✁E模型已下载: {model_path}")
+                    logger.info(f"  âEæ¨¡åå·²ä¸è½½: {model_path}")
                 except Exception as e:
-                    logger.warning(f"  ⚠�E�E模型下载失败: {e}")
+                    logger.warning(f"  â EEæ¨¡åä¸è½½å¤±è´¥: {e}")
                     return
 
-            # 初始化姿态检测器
+            # åå§åå§¿ææ£æµå¨
             pose_options = vision.PoseLandmarkerOptions(
                 base_options=python.BaseOptions(model_asset_path=str(model_path)),
                 running_mode=vision.RunningMode.IMAGE,
@@ -122,14 +122,14 @@ class ExpandToFullBody:
                 min_tracking_confidence=0.5
             )
             self._mediapipe_pose = vision.PoseLandmarker.create_from_options(pose_options)
-            logger.info("  ✁EMediaPipe (新牁EAPI) 初始化成功")
+            logger.info("  âEMediaPipe (æ°çEAPI) åå§åæå")
 
         except ImportError as e:
-            logger.warning(f"  ⚠�E�EMediaPipe 未安裁E {e}")
-            logger.warning("  封E��用默认扩展逻辁E)
+            logger.warning(f"  â EEMediaPipe æªå®è£E {e}")
+            logger.warning("  å°E½¿ç¨é»è®¤æ©å±é»è¾E)
         except Exception as e:
-            logger.warning(f"  ⚠�E�EMediaPipe 初始化失败: {e}")
-            logger.warning("  封E��用默认扩展逻辁E)
+            logger.warning(f"  â EEMediaPipe åå§åå¤±è´¥: {e}")
+            logger.warning("  å°E½¿ç¨é»è®¤æ©å±é»è¾E)
 
     def _setup_logging(self):
         log_level = self.config.get('log_level', 'INFO')
@@ -149,7 +149,7 @@ class ExpandToFullBody:
                 self.config[key] = value
 
     def _detect_head_position(self, image: Image.Image) -> tuple:
-        """使用 MediaPipe 检测头部在图像中皁EY 坐栁E��例（新牁EAPI�E�E""
+        """ä½¿ç¨ MediaPipe æ£æµå¤´é¨å¨å¾åä¸­çEY åæ E¯ä¾ï¼æ°çEAPIEE""
         try:
             if self._mediapipe_pose is None:
                 return image.size[1] * 0.15, image.size[0] // 2
@@ -158,48 +158,48 @@ class ExpandToFullBody:
             from mediapipe.tasks import python
             from mediapipe.tasks.python import vision
 
-            # 封EPIL Image 转换为 MediaPipe Image
+            # å°EPIL Image è½¬æ¢ä¸º MediaPipe Image
             img_rgb = image.convert('RGB')
             mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=np.array(img_rgb))
 
-            # 检测姿态E
+            # æ£æµå§¿æE
             detection_result = self._mediapipe_pose.detect(mp_image)
 
             if detection_result and detection_result.pose_landmarks:
                 landmarks = detection_result.pose_landmarks[0]
                 h, w = img_rgb.size[1], img_rgb.size[0]
-                # 0 是鼻孁E
+                # 0 æ¯é¼»å­E
                 nose = landmarks[0]
                 head_y = int(nose.y * h)
                 head_x = int(nose.x * w)
                 return head_y, head_x
         except Exception as e:
-            logger.warning(f"头部检测失败: {e}")
+            logger.warning(f"å¤´é¨æ£æµå¤±è´¥: {e}")
 
         return image.size[1] * 0.15, image.size[0] // 2
 
     def _expand_image_area(self, image: Image.Image, target_width: int, target_height: int,
                            head_y: float, head_x: float) -> Image.Image:
-        """扩展画币E��封E��图放置在头部位亁E15% 高度皁E��置"""
+        """æ©å±ç»å¸E¼å°Eå¾æ¾ç½®å¨å¤´é¨ä½äºE15% é«åº¦çE½ç½®"""
         src_w, src_h = image.size
 
-        # 计算缩放比例：让头部大约在 15% 位置
+        # è®¡ç®ç¼©æ¾æ¯ä¾ï¼è®©å¤´é¨å¤§çº¦å¨ 15% ä½ç½®
         head_ratio = 0.15
         scale = (target_height * head_ratio) / max(src_h * 0.15, head_y)
 
-        # 限制缩放茁E��
+        # éå¶ç¼©æ¾èE´
         scale = max(0.5, min(2.0, scale))
 
-        # 缩放图牁E
+        # ç¼©æ¾å¾çE
         new_w = int(src_w * scale)
         new_h = int(src_h * scale)
         resized = image.resize((new_w, new_h), Image.Resampling.LANCZOS)
 
-        # 计算粘贴位置
+        # è®¡ç®ç²è´´ä½ç½®
         offset_y = int(target_height * 0.15 - head_y * scale)
         offset_x = int((target_width - new_w) // 2)
 
-        # 创建扩展图牁E
+        # åå»ºæ©å±å¾çE
         expanded = Image.new("RGB", (target_width, target_height), (128, 128, 128))
         expanded.paste(resized, (offset_x, offset_y))
 
@@ -207,17 +207,17 @@ class ExpandToFullBody:
 
     def execute(self, **kwargs) -> Dict[str, Any]:
         start_time = time.time()
-        logger.info(f"执行技能: {self.name} (v{self.version})")
+        logger.info(f"æ§è¡æè½: {self.name} (v{self.version})")
 
         try:
-            # ==================== 严格路征E��骁E====================
+            # ==================== ä¸¥æ ¼è·¯å¾E ¡éªE====================
             image_path = kwargs.get('image_path')
             if not image_path:
-                return {"status": "error", "error": "image_path 是忁E��参数"}
+                return {"status": "error", "error": "image_path æ¯å¿E¡«åæ°"}
 
             abs_image_path = Path(image_path).absolute()
             if not os.path.exists(abs_image_path):
-                return {"status": "error", "error": f"输�E图牁E��存在: {abs_image_path}。请检查路征E��否正确�E�E}
+                return {"status": "error", "error": f"è¾åEå¾çE¸å­å¨: {abs_image_path}ãè¯·æ£æ¥è·¯å¾E¯å¦æ­£ç¡®EE}
 
             image = Image.open(abs_image_path).convert("RGB")
 
@@ -228,31 +228,31 @@ class ExpandToFullBody:
             steps = kwargs.get('steps', self.default_steps)
             seed = kwargs.get('seed', -1)
 
-            # 更新目栁E��寸
+            # æ´æ°ç®æ E°ºå¯¸
             target_w = kwargs.get('target_width', self.config.get('target_width', 768))
             target_h = kwargs.get('target_height', self.config.get('target_height', 1024))
 
-            # ==================== 1. 扩展画币E====================
+            # ==================== 1. æ©å±ç»å¸E====================
             head_y, head_x = self._detect_head_position(image)
             expanded = self._expand_image_area(image, target_w, target_h, head_y, head_x)
-            logger.info(f"画币E��展完�E: {target_w}x{target_h}")
+            logger.info(f"ç»å¸E©å±å®æE: {target_w}x{target_h}")
 
-            # ==================== 2. 保存扩展图作为临时输�E ====================
+            # ==================== 2. ä¿å­æ©å±å¾ä½ä¸ºä¸´æ¶è¾åE ====================
             temp_input = self.output_dir / "_temp_expanded.png"
             expanded.save(temp_input)
 
-            # ==================== 3. 直接谁E��底层引擎 ====================
+            # ==================== 3. ç´æ¥è°E¨åºå±å¼æ ====================
             if self.controlnet_engine is None:
-                return {"status": "error", "error": "底屁EControlNet 引擎不可用"}
+                return {"status": "error", "error": "åºå±EControlNet å¼æä¸å¯ç¨"}
 
-            # 默认输�E到本技能目彁E
+            # é»è®¤è¾åEå°æ¬æè½ç®å½E
             if output_path is None:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 output_path = str(self.output_dir / f"full_body_{timestamp}.png")
 
             prompt = f"{prompt}, full body, whole body, standing, detailed, masterpiece, best quality, photorealistic"
 
-            # 使用 OpenPose 锁死人物原始结构
+            # ä½¿ç¨ OpenPose éæ­»äººç©åå§ç»æ
             result = self.controlnet_engine.execute(
                 input_image_path=str(temp_input),
                 prompt=prompt,
@@ -264,7 +264,7 @@ class ExpandToFullBody:
                 output_path=output_path
             )
 
-            # 渁E��临时斁E��
+            # æ¸Eä¸´æ¶æE»¶
             if temp_input.exists():
                 temp_input.unlink()
 
@@ -290,7 +290,7 @@ class ExpandToFullBody:
             }
 
         except Exception as e:
-            logger.error(f"执行失败: {e}")
+            logger.error(f"æ§è¡å¤±è´¥: {e}")
             import traceback
             traceback.print_exc()
             return {"status": "error", "error": str(e)}
@@ -305,22 +305,22 @@ class ExpandToFullBody:
         return f"<ExpandToFullBody(name={self.name}, version={self.version})>"
 
 
-# ==================== 命令行�E口 ====================
+# ==================== å½ä»¤è¡åEå£ ====================
 if __name__ == "__main__":
     import argparse
 
     MODEL_CHOICES = list(ExpandToFullBody.AVAILABLE_MODELS.keys())
 
-    parser = argparse.ArgumentParser(description="半身图转全身图 v2.0")
-    parser.add_argument("--input", "-i", required=False, help="输�E图牁E��征E)
-    parser.add_argument("--output", "-o", help="输�E图牁E��征E)
-    parser.add_argument("--prompt", "-p", default="a person, beautiful, detailed, full body", help="人物描述提示证E)
-    parser.add_argument("--model", "-m", default="anytimeRealistic_v10.safetensors", choices=MODEL_CHOICES, help="模型名称")
-    parser.add_argument("--steps", "-s", type=int, default=30, help="推琁E��数")
-    parser.add_argument("--width", type=int, default=768, help="目栁E��度")
-    parser.add_argument("--height", type=int, default=1024, help="目栁E��度")
-    parser.add_argument("--device", default="cpu", choices=["cpu", "cuda"], help="设夁E)
-    parser.add_argument("--list-models", action="store_true", help="列�E所有可用模垁E)
+    parser = argparse.ArgumentParser(description="åèº«å¾è½¬å¨èº«å¾ v2.0")
+    parser.add_argument("--input", "-i", required=False, help="è¾åEå¾çE·¯å¾E)
+    parser.add_argument("--output", "-o", help="è¾åEå¾çE·¯å¾E)
+    parser.add_argument("--prompt", "-p", default="a person, beautiful, detailed, full body", help="äººç©æè¿°æç¤ºè¯E)
+    parser.add_argument("--model", "-m", default="anytimeRealistic_v10.safetensors", choices=MODEL_CHOICES, help="æ¨¡ååç§°")
+    parser.add_argument("--steps", "-s", type=int, default=30, help="æ¨çE­¥æ°")
+    parser.add_argument("--width", type=int, default=768, help="ç®æ E®½åº¦")
+    parser.add_argument("--height", type=int, default=1024, help="ç®æ E«åº¦")
+    parser.add_argument("--device", default="cpu", choices=["cpu", "cuda"], help="è®¾å¤E)
+    parser.add_argument("--list-models", action="store_true", help="ååEææå¯ç¨æ¨¡åE)
 
     args = parser.parse_args()
 
@@ -331,7 +331,7 @@ if __name__ == "__main__":
         sys.exit(0)
 
     if not args.input:
-        parser.error("--input 是忁E��参数")
+        parser.error("--input æ¯å¿E¡«åæ°")
 
     skill = ExpandToFullBody(config={'device': args.device, 'target_width': args.width, 'target_height': args.height})
 

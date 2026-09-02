@@ -1,6 +1,6 @@
 # skills/bathroom_nude/skill.py
 """
-浴室裸露 - 一键生�E
+浴室裸露 - 一键生成
 """
 
 import time
@@ -64,14 +64,14 @@ class BathroomNude:
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlnetImg2Img(config={'device': self.device})
-                logger.info("  ✁EControlNet 引擎初始化成功")
+                logger.info("  ✅ ControlNet 引擎初始化成功")
             except Exception as e:
                 logger.warning(f"  引擎初始化失败: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"BathroomNude v{self.version} 初始化完�E")
+        logger.info(f"BathroomNude v{self.version} 初始化完成")
 
     def _setup_logging(self):
         log_level = self.config.get('log_level', 'INFO')
@@ -97,19 +97,19 @@ class BathroomNude:
         try:
             image_path = kwargs.get('image_path')
             if not image_path:
-                return {"status": "error", "error": "image_path 是忁E��参数"}
+                return {"status": "error", "error": "image_path 是必填参数"}
 
             abs_image_path = Path(image_path).absolute()
             if not os.path.exists(abs_image_path):
-                return {"status": "error", "error": f"输�E图牁E��存在: {abs_image_path}"}
+                return {"status": "error", "error": f"输入图片不存在: {abs_image_path}"}
 
             pose = kwargs.get('pose', self.config.get('default_pose', 'standing'))
             atmosphere = kwargs.get('atmosphere', self.config.get('default_atmosphere', 'steamy'))
 
             if pose not in POSE_MAP:
-                return {"status": "error", "error": f"未知姿态E {pose}�E�可用: {list(POSE_MAP.keys())}"}
+                return {"status": "error", "error": f"未知姿态: {pose}，可用: {list(POSE_MAP.keys())}"}
             if atmosphere not in ATMOSPHERE_MAP:
-                return {"status": "error", "error": f"未知氛围: {atmosphere}�E�可用: {list(ATMOSPHERE_MAP.keys())}"}
+                return {"status": "error", "error": f"未知氛围: {atmosphere}，可用: {list(ATMOSPHERE_MAP.keys())}"}
 
             prompt = f"1girl, full body, beautiful face, perfect body, large bust, hourglass figure, nude, naked, beautiful skin, wet skin, water droplets, {POSE_MAP[pose]}, {ATMOSPHERE_MAP[atmosphere]}, bathroom interior, tiles, shower, high quality, masterpiece, 8k, photorealistic"
 
@@ -126,8 +126,8 @@ class BathroomNude:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 output_path = str(self.output_dir / f"{Path(abs_image_path).stem}_bathroom_{pose}_{atmosphere}_{timestamp}.png")
 
-            logger.info(f"姿态E {pose}, 氛围: {atmosphere}")
-            logger.info(f"提示证E {prompt[:100]}...")
+            logger.info(f"姿态: {pose}, 氛围: {atmosphere}")
+            logger.info(f"提示词: {prompt[:100]}...")
 
             result = self.controlnet_engine.execute(
                 input_image_path=str(abs_image_path),

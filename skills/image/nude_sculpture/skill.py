@@ -1,6 +1,6 @@
 # skills/nude_sculpture/skill.py
 """
-裸体雕塁E- 一键生�E大琁E��/青铜雕塑风格裸体人僁E
+è£¸ä½éå¡E- ä¸é®çæEå¤§çE³/éééå¡é£æ ¼è£¸ä½äººåE
 """
 
 import time
@@ -29,7 +29,7 @@ try:
     CONTROLNET_ENGINE_AVAILABLE = True
 except ImportError as e:
     CONTROLNET_ENGINE_AVAILABLE = False
-    logger.warning(f"ControlNet 引擎不可用: {e}")
+    logger.warning(f"ControlNet å¼æä¸å¯ç¨: {e}")
 
 MATERIAL_MAP = {
     "marble": "white marble sculpture, smooth polished surface, translucent effect, classical, masterpiece",
@@ -59,7 +59,7 @@ POSE_MAP = {
 
 
 class NudeSculpture:
-    """裸体雕塑技能"""
+    """è£¸ä½éå¡æè½"""
 
     def __init__(self, config: Dict[str, Any] = None):
         self.config = config or {}
@@ -76,14 +76,14 @@ class NudeSculpture:
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlnetImg2Img(config={'device': self.device})
-                logger.info("  ✁EControlNet 引擎初始化成功")
+                logger.info("  âEControlNet å¼æåå§åæå")
             except Exception as e:
-                logger.warning(f"  引擎初始化失败: {e}")
+                logger.warning(f"  å¼æåå§åå¤±è´¥: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"NudeSculpture v{self.version} 初始化完�E")
+        logger.info(f"NudeSculpture v{self.version} åå§åå®æE")
 
     def _setup_logging(self):
         log_level = self.config.get('log_level', 'INFO')
@@ -105,27 +105,27 @@ class NudeSculpture:
 
     def execute(self, **kwargs) -> Dict[str, Any]:
         start_time = time.time()
-        logger.info(f"执行技能: {self.name}")
+        logger.info(f"æ§è¡æè½: {self.name}")
 
         try:
             image_path = kwargs.get('image_path')
             if not image_path:
-                return {"status": "error", "error": "image_path 是忁E��参数"}
+                return {"status": "error", "error": "image_path æ¯å¿E¡«åæ°"}
 
             abs_image_path = Path(image_path).absolute()
             if not os.path.exists(abs_image_path):
-                return {"status": "error", "error": f"输�E图牁E��存在: {abs_image_path}"}
+                return {"status": "error", "error": f"è¾åEå¾çE¸å­å¨: {abs_image_path}"}
 
             material = kwargs.get('material', self.config.get('default_material', 'marble'))
             style = kwargs.get('style', self.config.get('default_style', 'classical'))
             pose = kwargs.get('pose', self.config.get('default_pose', 'standing'))
 
             if material not in MATERIAL_MAP:
-                return {"status": "error", "error": f"未知材质: {material}�E�可用: {list(MATERIAL_MAP.keys())}"}
+                return {"status": "error", "error": f"æªç¥æè´¨: {material}Eå¯ç¨: {list(MATERIAL_MAP.keys())}"}
             if style not in STYLE_MAP:
-                return {"status": "error", "error": f"未知风格: {style}�E�可用: {list(STYLE_MAP.keys())}"}
+                return {"status": "error", "error": f"æªç¥é£æ ¼: {style}Eå¯ç¨: {list(STYLE_MAP.keys())}"}
             if pose not in POSE_MAP:
-                return {"status": "error", "error": f"未知姿态E {pose}�E�可用: {list(POSE_MAP.keys())}"}
+                return {"status": "error", "error": f"æªç¥å§¿æE {pose}Eå¯ç¨: {list(POSE_MAP.keys())}"}
 
             prompt = f"1girl, full body, nude, sculpture, 3D statue, {MATERIAL_MAP[material]}, {STYLE_MAP[style]}, {POSE_MAP[pose]}, pedestal, museum lighting, high quality, masterpiece, 8k, photorealistic 3D render"
 
@@ -135,15 +135,15 @@ class NudeSculpture:
             seed = kwargs.get('seed', -1)
 
             if self.controlnet_engine is None:
-                return {"status": "error", "error": "ControlNet 引擎不可用"}
+                return {"status": "error", "error": "ControlNet å¼æä¸å¯ç¨"}
 
             output_path = kwargs.get('output_path')
             if output_path is None:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 output_path = str(self.output_dir / f"{Path(abs_image_path).stem}_sculpture_{material}_{style}_{timestamp}.png")
 
-            logger.info(f"材质: {material}, 风格: {style}, 姿态E {pose}")
-            logger.info(f"提示证E {prompt[:100]}...")
+            logger.info(f"æè´¨: {material}, é£æ ¼: {style}, å§¿æE {pose}")
+            logger.info(f"æç¤ºè¯E {prompt[:100]}...")
 
             result = self.controlnet_engine.execute(
                 input_image_path=str(abs_image_path),
@@ -175,7 +175,7 @@ class NudeSculpture:
             }
 
         except Exception as e:
-            logger.error(f"执行失败: {e}")
+            logger.error(f"æ§è¡å¤±è´¥: {e}")
             import traceback
             traceback.print_exc()
             return {"status": "error", "error": str(e)}

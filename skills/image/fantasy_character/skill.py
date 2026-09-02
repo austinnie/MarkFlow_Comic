@@ -1,7 +1,7 @@
 # skills/fantasy_character/skill.py
 """
-奁E��角色 Skill - 封E��物变�E奁E��角色�E�精灵/天使/恶魁E魔法师等！E
-复用通用 ControlNet 引擎�E�EpenPose锁姿态E��高幁E��重绘转奁E��风！E
+å¥E¹»è§è² Skill - å°Eººç©åæEå¥E¹»è§è²Eç²¾çµ/å¤©ä½¿/æ¶é­Eé­æ³å¸ç­ï¼E
+å¤ç¨éç¨ ControlNet å¼æEEpenPoseéå§¿æE¼é«å¹Eº¦éç»è½¬å¥E¹»é£ï¼E
 """
 
 import os
@@ -26,17 +26,17 @@ try:
     DIFFUSERS_AVAILABLE = True
 except ImportError as e:
     DIFFUSERS_AVAILABLE = False
-    logger.warning(f"torch 戁EPIL 未安裁E {e}")
+    logger.warning(f"torch æEPIL æªå®è£E {e}")
 
-# ==================== 引�E通用引擎�E�方桁E�E�E====================
+# ==================== å¼åEéç¨å¼æEæ¹æ¡EEE====================
 try:
     from skills.image.controlnet_img2img.skill import ControlNetImg2Img
     CONTROLNET_ENGINE_AVAILABLE = True
 except ImportError as e:
     CONTROLNET_ENGINE_AVAILABLE = False
-    logger.warning(f"通用 ControlNet 引擎不可用: {e}")
+    logger.warning(f"éç¨ ControlNet å¼æä¸å¯ç¨: {e}")
 
-# 奁E��角色提示词�E置
+# å¥E¹»è§è²æç¤ºè¯éEç½®
 FANTASY_PROMPTS = {
     "elf": {
         "prompt": "beautiful elf, long pointed ears, fantasy elf, elegant, magical, nature, fantasy character, masterpiece, high quality, detailed",
@@ -82,7 +82,7 @@ FANTASY_PROMPTS = {
 
 
 class FantasyCharacter:
-    """奁E��角色技能 v2.0"""
+    """å¥E¹»è§è²æè½ v2.0"""
 
     def __init__(self, config: Dict[str, Any] = None):
         self.config = config or {}
@@ -91,28 +91,28 @@ class FantasyCharacter:
 
         self.skill_dir = Path(__file__).parent.absolute()
         self.project_root = self.skill_dir.parent.parent.parent
-        # ==================== 强制本技能输�E目彁E====================
+        # ==================== å¼ºå¶æ¬æè½è¾åEç®å½E====================
         self.output_dir = Path(self.config.get('output_dir', self.skill_dir / 'output'))
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
         self.models_dir = Path(self.config.get('models_dir', self.project_root / 'models'))
         self.device = self.config.get('device', 'cuda' if torch.cuda.is_available() else 'cpu')
 
-        # ==================== 初始化底层引擎 ====================
+        # ==================== åå§ååºå±å¼æ ====================
         self.controlnet_engine = None
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlNetImg2Img(config={'device': self.device})
-                logger.info("  ✁E底屁EControlNet 引擎初始化成功")
+                logger.info("  âEåºå±EControlNet å¼æåå§åæå")
             except Exception as e:
-                logger.warning(f"  底层引擎初始化失败: {e}")
+                logger.warning(f"  åºå±å¼æåå§åå¤±è´¥: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"FantasyCharacter v{self.version} 初始化完�E")
-        logger.info(f"  设夁E {self.device}")
-        logger.info(f"  奁E��类垁E {list(FANTASY_PROMPTS.keys())}")
+        logger.info(f"FantasyCharacter v{self.version} åå§åå®æE")
+        logger.info(f"  è®¾å¤E {self.device}")
+        logger.info(f"  å¥E¹»ç±»åE {list(FANTASY_PROMPTS.keys())}")
 
     def _setup_logging(self):
         log_level = self.config.get('log_level', 'INFO')
@@ -139,26 +139,26 @@ class FantasyCharacter:
         return FANTASY_PROMPTS.get(fantasy_type)
 
     def execute(self, **kwargs) -> Dict[str, Any]:
-        """执行奁E��角色转换"""
+        """æ§è¡å¥E¹»è§è²è½¬æ¢"""
         start_time = time.time()
-        logger.info(f"执行技能: {self.name} v{self.version}")
+        logger.info(f"æ§è¡æè½: {self.name} v{self.version}")
 
         try:
-            # ==================== 严格路征E��骁E====================
+            # ==================== ä¸¥æ ¼è·¯å¾E ¡éªE====================
             image_path = kwargs.get('image_path')
             if not image_path:
-                return {"status": "error", "error": "缺封Eimage_path 参数"}
+                return {"status": "error", "error": "ç¼ºå°Eimage_path åæ°"}
             
             abs_image_path = Path(image_path).absolute()
             if not os.path.exists(abs_image_path):
-                return {"status": "error", "error": f"输�E图牁E��存在: {abs_image_path}。请检查路征E��否正确�E�E}
+                return {"status": "error", "error": f"è¾åEå¾çE¸å­å¨: {abs_image_path}ãè¯·æ£æ¥è·¯å¾E¯å¦æ­£ç¡®EE}
 
-            # 2. 获取参数
+            # 2. è·ååæ°
             fantasy_type = kwargs.get('fantasy_type', self.config.get('default_type', 'elf'))
             if fantasy_type not in FANTASY_PROMPTS:
                 return {
                     "status": "error",
-                    "error": f"未知奁E��类垁E {fantasy_type}�E�可用: {list(FANTASY_PROMPTS.keys())}"
+                    "error": f"æªç¥å¥E¹»ç±»åE {fantasy_type}Eå¯ç¨: {list(FANTASY_PROMPTS.keys())}"
                 }
 
             f_config = FANTASY_PROMPTS[fantasy_type]
@@ -169,23 +169,23 @@ class FantasyCharacter:
             steps = kwargs.get('steps', self.config.get('default_steps', 35))
             seed = kwargs.get('seed', -1)
 
-            # ==================== 直接谁E��底层引擎 ====================
+            # ==================== ç´æ¥è°E¨åºå±å¼æ ====================
             if self.controlnet_engine is None:
-                return {"status": "error", "error": "底屁EControlNet 引擎不可用"}
+                return {"status": "error", "error": "åºå±EControlNet å¼æä¸å¯ç¨"}
 
-            # 默认输�E到本技能目彁E
+            # é»è®¤è¾åEå°æ¬æè½ç®å½E
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             output_path = kwargs.get('output_path') or str(self.output_dir / f"{fantasy_type}_{timestamp}.png")
 
-            logger.info(f"奁E��类垁E {fantasy_type}")
-            logger.info(f"提示证E {prompt[:80]}...")
+            logger.info(f"å¥E¹»ç±»åE {fantasy_type}")
+            logger.info(f"æç¤ºè¯E {prompt[:80]}...")
 
             result = self.controlnet_engine.execute(
                 input_image_path=str(abs_image_path),
                 prompt=prompt,
                 negative_prompt=negative_prompt,
-                preprocessor_type="OPENPOSE",   # 提取人体骨架
-                controlnet_model="openpose",    # 锁死人体姿态E��防止奁E��化导致崩坁E
+                preprocessor_type="OPENPOSE",   # æåäººä½éª¨æ¶
+                controlnet_model="openpose",    # éæ­»äººä½å§¿æE¼é²æ­¢å¥E¹»åå¯¼è´å´©åE
                 strength=strength,
                 steps=steps,
                 output_path=output_path
@@ -194,7 +194,7 @@ class FantasyCharacter:
             if result['status'] != 'success':
                 return result
 
-            # 保存�E数据
+            # ä¿å­åEæ°æ®
             metadata = {
                 'skill': self.name,
                 'version': self.version,
@@ -224,7 +224,7 @@ class FantasyCharacter:
             }
 
         except Exception as e:
-            logger.error(f"执行失败: {e}", exc_info=True)
+            logger.error(f"æ§è¡å¤±è´¥: {e}", exc_info=True)
             return {
                 "status": "error",
                 "error": str(e),
@@ -232,11 +232,11 @@ class FantasyCharacter:
             }
 
     def batch_process(self, image_paths: List[str], fantasy_type: str = 'elf', **kwargs) -> List[Dict[str, Any]]:
-        """批量夁E��多张图牁E""
+        """æ¹éå¤Eå¤å¼ å¾çE""
         results = []
         total = len(image_paths)
         for idx, img_path in enumerate(image_paths):
-            logger.info(f"夁E�� {idx+1}/{total}: {img_path}")
+            logger.info(f"å¤E {idx+1}/{total}: {img_path}")
             result = self.execute(
                 image_path=img_path,
                 fantasy_type=fantasy_type,
@@ -255,25 +255,25 @@ if __name__ == "__main__":
     import argparse
     
     parser = argparse.ArgumentParser(
-        description='奁E��角色生�E器 v2.0 - 封E��物照牁E��换为奁E��角色',
+        description='å¥E¹»è§è²çæEå¨ v2.0 - å°Eººç©ç§çE½¬æ¢ä¸ºå¥E¹»è§è²',
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog=f'''可用皁E��E��类垁E {', '.join(FANTASY_PROMPTS.keys())}'''
+        epilog=f'''å¯ç¨çE¥E¹»ç±»åE {', '.join(FANTASY_PROMPTS.keys())}'''
     )
     
-    parser.add_argument('image', help='输�E图牁E��征E)
-    parser.add_argument('-t', '--type', default='elf', choices=list(FANTASY_PROMPTS.keys()), help='奁E��类垁E(默认: elf)')
-    parser.add_argument('-o', '--output', help='输�E目彁E)
-    parser.add_argument('-s', '--steps', type=int, default=35, help='推琁E��数')
-    parser.add_argument('-r', '--strength', type=float, default=0.8, help='变换强度 0.0-1.0')
-    parser.add_argument('--seed', type=int, default=-1, help='随机种孁E)
-    parser.add_argument('--prompt', help='自定义提示证E)
-    parser.add_argument('--negative', help='自定义负面提示证E)
-    parser.add_argument('--list-types', action='store_true', help='列�E所有奁E��类垁E)
+    parser.add_argument('image', help='è¾åEå¾çE·¯å¾E)
+    parser.add_argument('-t', '--type', default='elf', choices=list(FANTASY_PROMPTS.keys()), help='å¥E¹»ç±»åE(é»è®¤: elf)')
+    parser.add_argument('-o', '--output', help='è¾åEç®å½E)
+    parser.add_argument('-s', '--steps', type=int, default=35, help='æ¨çE­¥æ°')
+    parser.add_argument('-r', '--strength', type=float, default=0.8, help='åæ¢å¼ºåº¦ 0.0-1.0')
+    parser.add_argument('--seed', type=int, default=-1, help='éæºç§å­E)
+    parser.add_argument('--prompt', help='èªå®ä¹æç¤ºè¯E)
+    parser.add_argument('--negative', help='èªå®ä¹è´é¢æç¤ºè¯E)
+    parser.add_argument('--list-types', action='store_true', help='ååEææå¥E¹»ç±»åE)
     
     args = parser.parse_args()
     
     if args.list_types:
-        print("可用皁E��E��类垁E")
+        print("å¯ç¨çE¥E¹»ç±»åE")
         for t in FANTASY_PROMPTS.keys():
             print(f"  - {t}")
         sys.exit(0)
@@ -291,11 +291,11 @@ if __name__ == "__main__":
     )
     
     if result['status'] == 'success':
-        print(f"\n✁E生�E成功!")
-        print(f"  输�E: {result['output_path']}")
-        print(f"  类垁E {result['fantasy_type']}")
-        print(f"  种孁E {result['seed']}")
-        print(f"  耗时: {result['elapsed_time']:.2f}s")
+        print(f"\nâEçæEæå!")
+        print(f"  è¾åE: {result['output_path']}")
+        print(f"  ç±»åE {result['fantasy_type']}")
+        print(f"  ç§å­E {result['seed']}")
+        print(f"  èæ¶: {result['elapsed_time']:.2f}s")
     else:
-        print(f"\n❁E失败: {result.get('error', '未知错误')}")
+        print(f"\nâEå¤±è´¥: {result.get('error', 'æªç¥éè¯¯')}")
         sys.exit(1)

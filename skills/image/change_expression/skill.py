@@ -1,7 +1,7 @@
 # skills/change_expression/skill.py
 """
-改变表惁ESkill - 改变人物表惁E��微笁E生氁E惊讶/悲伤等），保持人物长相绝对不变
-复用通用 ControlNet 引擎�E�EED + Lineart 锁死五官，精凁E��E��惁E��E
+改变表情 Skill - 改变人物表情（微笑/生气/惊讶/悲伤等），保持人物长相绝对不变
+复用通用 ControlNet 引擎（HED + Lineart 锁死五官，精准调表情）
 """
 
 import time
@@ -26,9 +26,9 @@ try:
     DIFFUSERS_AVAILABLE = True
 except ImportError:
     DIFFUSERS_AVAILABLE = False
-    logger.warning("torch 戁EPIL 未安裁E)
+    logger.warning("torch 或 PIL 未安装")
 
-# ==================== 引�E通用引擎�E�方桁E�E�E====================
+# ==================== 引入通用引擎（方案1） ====================
 try:
     from skills.image.controlnet_img2img.skill import ControlNetImg2Img
     CONTROLNET_ENGINE_AVAILABLE = True
@@ -73,7 +73,7 @@ EXPRESSION_PROMPTS = {
 
 
 class ChangeExpression:
-    """改变表惁E��能 v2.0"""
+    """改变表情技能 v2.0"""
 
     def __init__(self, config: Dict[str, Any] = None):
         self.config = config or {}
@@ -82,7 +82,7 @@ class ChangeExpression:
 
         self.skill_dir = Path(__file__).parent.absolute()
         self.project_root = self.skill_dir.parent.parent.parent
-        # ==================== 强制本技能输�E目彁E====================
+        # ==================== 强制本技能输出目录 ====================
         self.output_dir = self.skill_dir / "output"
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -94,16 +94,16 @@ class ChangeExpression:
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlNetImg2Img(config={'device': self.device})
-                logger.info("  ✁E底屁EControlNet 引擎初始化成功")
+                logger.info("  ✅ 底层 ControlNet 引擎初始化成功")
             except Exception as e:
                 logger.warning(f"  底层引擎初始化失败: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"ChangeExpression v{self.version} 初始化完�E")
-        logger.info(f"  设夁E {self.device}")
-        logger.info(f"  表惁E��垁E {list(EXPRESSION_PROMPTS.keys())}")
+        logger.info(f"ChangeExpression v{self.version} 初始化完成")
+        logger.info(f"  设备: {self.device}")
+        logger.info(f"  表情类型: {list(EXPRESSION_PROMPTS.keys())}")
 
     def _setup_logging(self):
         log_level = self.config.get('log_level', 'INFO')
@@ -113,7 +113,7 @@ class ChangeExpression:
     def _setup_config(self):
         defaults = {
             'default_steps': 30,
-            'default_strength': 0.45,  # 改变表惁E��度不�E太高，否则会变成另一个人
+            'default_strength': 0.45,  # 改变表情强度不能太高，否则会变成另一个人
             'default_expression': 'smile',
             'default_negative': 'ugly, deformed, bad anatomy, blurry, low quality, extra limbs',
         }
@@ -129,18 +129,18 @@ class ChangeExpression:
         logger.info(f"执行技能: {self.name}")
 
         try:
-            # ==================== 严格路征E��骁E====================
+            # ==================== 严格路径校验 ====================
             image_path = kwargs.get('image_path')
             if not image_path:
-                return {"status": "error", "error": "image_path 是忁E��参数"}
+                return {"status": "error", "error": "image_path 是必填参数"}
             
             abs_image_path = Path(image_path).absolute()
             if not os.path.exists(abs_image_path):
-                return {"status": "error", "error": f"输�E图牁E��存在: {abs_image_path}。请检查路征E��否正确�E�E}
+                return {"status": "error", "error": f"输入图片不存在: {abs_image_path}。请检查路径是否正确！"}
 
             expression = kwargs.get('expression', self.config.get('default_expression', 'smile'))
             if expression not in EXPRESSION_PROMPTS:
-                return {"status": "error", "error": f"未知表惁E {expression}�E�可用: {list(EXPRESSION_PROMPTS.keys())}"}
+                return {"status": "error", "error": f"未知表情: {expression}，可用: {list(EXPRESSION_PROMPTS.keys())}"}
 
             expr_config = EXPRESSION_PROMPTS[expression]
             prompt = kwargs.get('prompt') or expr_config['prompt']
@@ -150,20 +150,20 @@ class ChangeExpression:
             steps = kwargs.get('steps', self.config.get('default_steps', 30))
             seed = kwargs.get('seed', -1)
 
-            # ==================== 直接谁E��底层引擎 ====================
+            # ==================== 直接调用底层引擎 ====================
             if self.controlnet_engine is None:
-                return {"status": "error", "error": "底屁EControlNet 引擎不可用"}
+                return {"status": "error", "error": "底层 ControlNet 引擎不可用"}
 
-            # 默认输�E到本技能目彁E
+            # 默认输出到本技能目录
             output_path = kwargs.get('output_path')
             if output_path is None:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 output_path = str(self.output_dir / f"{Path(abs_image_path).stem}_expr_{expression}_{timestamp}.png")
 
-            logger.info(f"表惁E {expression}")
-            logger.info(f"提示证E {prompt[:80]}...")
+            logger.info(f"表情: {expression}")
+            logger.info(f"提示词: {prompt[:80]}...")
 
-            # 使用 HED + Lineart 完美锁死五宁E
+            # 使用 HED + Lineart 完美锁死五官
             result = self.controlnet_engine.execute(
                 input_image_path=str(abs_image_path),
                 prompt=prompt,
@@ -203,14 +203,14 @@ class ChangeExpression:
 
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser(description="改变表惁E��具 v2.0")
-    parser.add_argument("--input", "-i", required=True, help="输�E图牁E��征E)
-    parser.add_argument("--output", "-o", help="输�E路征E)
+    parser = argparse.ArgumentParser(description="改变表情工具 v2.0")
+    parser.add_argument("--input", "-i", required=True, help="输入图片路径")
+    parser.add_argument("--output", "-o", help="输出路径")
     parser.add_argument("--expression", "-e", default="smile",
-                        choices=list(EXPRESSION_PROMPTS.keys()), help="表惁E��垁E)
+                        choices=list(EXPRESSION_PROMPTS.keys()), help="表情类型")
     parser.add_argument("--strength", type=float, default=0.45, help="重绘强度")
     parser.add_argument("--steps", type=int, default=30, help="迭代步数")
-    parser.add_argument("--seed", type=int, default=-1, help="随机种孁E)
+    parser.add_argument("--seed", type=int, default=-1, help="随机种子")
     parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu")
 
     args = parser.parse_args()

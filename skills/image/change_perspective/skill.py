@@ -1,7 +1,7 @@
 # skills/change_perspective/skill.py
 """
-改变见E��ESkill - 改变图牁E��见E��E景别�E�远景/中景/特冁E俯见E仰见E��！E
-复用通用 ControlNet 引擎�E�EED + Lineart 锁结构�E�高幁E��重绘转见E��！E
+改变视角 Skill - 改变图片的视角/景别（远景/中景/特写/俯视/仰视等）
+复用通用 ControlNet 引擎（HED + Lineart 锁结构，高幅度重绘转视角）
 """
 
 import time
@@ -26,9 +26,9 @@ try:
     DIFFUSERS_AVAILABLE = True
 except ImportError:
     DIFFUSERS_AVAILABLE = False
-    logger.warning("torch 戁EPIL 未安裁E)
+    logger.warning("torch 或 PIL 未安装")
 
-# ==================== 引�E通用引擎�E�方桁E�E�E====================
+# ==================== 引入通用引擎（方案1） ====================
 try:
     from skills.image.controlnet_img2img.skill import ControlNetImg2Img
     CONTROLNET_ENGINE_AVAILABLE = True
@@ -65,7 +65,7 @@ PERSPECTIVE_PROMPTS = {
 
 
 class ChangePerspective:
-    """改变见E��技能 v2.0"""
+    """改变视角技能 v2.0"""
 
     def __init__(self, config: Dict[str, Any] = None):
         self.config = config or {}
@@ -74,7 +74,7 @@ class ChangePerspective:
 
         self.skill_dir = Path(__file__).parent.absolute()
         self.project_root = self.skill_dir.parent.parent.parent
-        # ==================== 强制本技能输�E目彁E====================
+        # ==================== 强制本技能输出目录 ====================
         self.output_dir = self.skill_dir / "output"
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -86,16 +86,16 @@ class ChangePerspective:
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlNetImg2Img(config={'device': self.device})
-                logger.info("  ✁E底屁EControlNet 引擎初始化成功")
+                logger.info("  ✅ 底层 ControlNet 引擎初始化成功")
             except Exception as e:
                 logger.warning(f"  底层引擎初始化失败: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"ChangePerspective v{self.version} 初始化完�E")
-        logger.info(f"  设夁E {self.device}")
-        logger.info(f"  见E��类垁E {list(PERSPECTIVE_PROMPTS.keys())}")
+        logger.info(f"ChangePerspective v{self.version} 初始化完成")
+        logger.info(f"  设备: {self.device}")
+        logger.info(f"  视角类型: {list(PERSPECTIVE_PROMPTS.keys())}")
 
     def _setup_logging(self):
         log_level = self.config.get('log_level', 'INFO')
@@ -121,18 +121,18 @@ class ChangePerspective:
         logger.info(f"执行技能: {self.name}")
 
         try:
-            # ==================== 严格路征E��骁E====================
+            # ==================== 严格路径校验 ====================
             image_path = kwargs.get('image_path')
             if not image_path:
-                return {"status": "error", "error": "image_path 是忁E��参数"}
+                return {"status": "error", "error": "image_path 是必填参数"}
             
             abs_image_path = Path(image_path).absolute()
             if not os.path.exists(abs_image_path):
-                return {"status": "error", "error": f"输�E图牁E��存在: {abs_image_path}。请检查路征E��否正确�E�E}
+                return {"status": "error", "error": f"输入图片不存在: {abs_image_path}。请检查路径是否正确！"}
 
             perspective = kwargs.get('perspective', self.config.get('default_perspective', 'eye_level'))
             if perspective not in PERSPECTIVE_PROMPTS:
-                return {"status": "error", "error": f"未知见E��E {perspective}�E�可用: {list(PERSPECTIVE_PROMPTS.keys())}"}
+                return {"status": "error", "error": f"未知视角: {perspective}，可用: {list(PERSPECTIVE_PROMPTS.keys())}"}
 
             p_config = PERSPECTIVE_PROMPTS[perspective]
             prompt = kwargs.get('prompt') or p_config['prompt']
@@ -142,25 +142,25 @@ class ChangePerspective:
             steps = kwargs.get('steps', self.config.get('default_steps', 30))
             seed = kwargs.get('seed', -1)
 
-            # ==================== 直接谁E��底层引擎 ====================
+            # ==================== 直接调用底层引擎 ====================
             if self.controlnet_engine is None:
-                return {"status": "error", "error": "底屁EControlNet 引擎不可用"}
+                return {"status": "error", "error": "底层 ControlNet 引擎不可用"}
 
-            # 默认输�E到本技能目彁E
+            # 默认输出到本技能目录
             output_path = kwargs.get('output_path')
             if output_path is None:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 output_path = str(self.output_dir / f"{Path(abs_image_path).stem}_perspective_{perspective}_{timestamp}.png")
 
-            logger.info(f"见E��E {perspective}")
-            logger.info(f"提示证E {prompt[:80]}...")
+            logger.info(f"视角: {perspective}")
+            logger.info(f"提示词: {prompt[:80]}...")
 
             result = self.controlnet_engine.execute(
                 input_image_path=str(abs_image_path),
                 prompt=prompt,
                 negative_prompt=negative_prompt,
-                preprocessor_type="HED",      # 提取软边缘，保留原图极E��
-                controlnet_model="lineart",   # 使用本地 Lineart 模垁E
+                preprocessor_type="HED",      # 提取软边缘，保留原图构图
+                controlnet_model="lineart",   # 使用本地 Lineart 模型
                 strength=strength,
                 steps=steps,
                 output_path=output_path
@@ -194,14 +194,14 @@ class ChangePerspective:
 
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser(description="改变见E��工具 v2.0")
-    parser.add_argument("--input", "-i", required=True, help="输�E图牁E��征E)
-    parser.add_argument("--output", "-o", help="输�E路征E)
+    parser = argparse.ArgumentParser(description="改变视角工具 v2.0")
+    parser.add_argument("--input", "-i", required=True, help="输入图片路径")
+    parser.add_argument("--output", "-o", help="输出路径")
     parser.add_argument("--perspective", "-p", default="eye_level",
-                        choices=list(PERSPECTIVE_PROMPTS.keys()), help="见E��类垁E)
+                        choices=list(PERSPECTIVE_PROMPTS.keys()), help="视角类型")
     parser.add_argument("--strength", type=float, default=0.75, help="重绘强度")
     parser.add_argument("--steps", type=int, default=30, help="迭代步数")
-    parser.add_argument("--seed", type=int, default=-1, help="随机种孁E)
+    parser.add_argument("--seed", type=int, default=-1, help="随机种子")
     parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu")
 
     args = parser.parse_args()

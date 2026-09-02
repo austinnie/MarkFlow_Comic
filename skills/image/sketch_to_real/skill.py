@@ -1,7 +1,7 @@
 # skills/sketch_to_real/skill.py
 """
-素描转真人 Skill - 封E��揁E线稿转换为真人照牁E
-使用 Lineart ControlNet 保持线条结构
+ç´ æè½¬çäºº Skill - å°E´ æEçº¿ç¨¿è½¬æ¢ä¸ºçäººç§çE
+ä½¿ç¨ Lineart ControlNet ä¿æçº¿æ¡ç»æ
 """
 
 import os
@@ -26,17 +26,17 @@ try:
     DIFFUSERS_AVAILABLE = True
 except ImportError:
     DIFFUSERS_AVAILABLE = False
-    logger.warning("torch 戁EPIL 未安裁E)
+    logger.warning("torch æEPIL æªå®è£E)
 
-# ==================== 引�E真正皁E��层引擎�E�方桁E�E�E====================
+# ==================== å¼åEçæ­£çEºå±å¼æEæ¹æ¡EEE====================
 try:
     from skills.image.controlnet_img2img.skill import ControlNetImg2Img
     CONTROLNET_ENGINE_AVAILABLE = True
 except ImportError as e:
     CONTROLNET_ENGINE_AVAILABLE = False
-    logger.warning(f"通用 ControlNet 引擎不可用: {e}")
+    logger.warning(f"éç¨ ControlNet å¼æä¸å¯ç¨: {e}")
 
-# ==================== 风格配置 ====================
+# ==================== é£æ ¼éç½® ====================
 REALISM_STYLES = {
     "realistic": {
         "prompt": "photorealistic, real person, realistic skin texture, natural lighting, detailed, masterpiece, high quality, 8k",
@@ -56,37 +56,37 @@ REALISM_STYLES = {
     }
 }
 
-# ==================== 可用模型�E表 ====================
+# ==================== å¯ç¨æ¨¡ååEè¡¨ ====================
 AVAILABLE_MODELS = {
     "anytimeRealistic_v10.safetensors": {
         "name": "Anytime Realistic",
         "size": "2.13 GB",
-        "type": "写宁E,
-        "description": "通用写实风格�E�推荁E
+        "type": "åå®E,
+        "description": "éç¨åå®é£æ ¼Eæ¨èE
     },
     "asianrealisticSdlife_v40.safetensors": {
         "name": "Asian Realistic SDLife",
         "size": "3.29 GB",
-        "type": "亚洲写宁E,
-        "description": "亚洲人像�E宁E
+        "type": "äºæ´²åå®E,
+        "description": "äºæ´²äººååEå®E
     },
     "DreamShaper_8_pruned.safetensors": {
         "name": "DreamShaper 8",
         "size": "2.13 GB",
-        "type": "艺术",
-        "description": "梦幻/艺术风格"
+        "type": "èºæ¯",
+        "description": "æ¢¦å¹»/èºæ¯é£æ ¼"
     },
     "nextphoto_v30.safetensors": {
         "name": "Next Photo v3.0",
         "size": "2.13 GB",
-        "type": "摁E��",
-        "description": "真实摄影风格"
+        "type": "æE½±",
+        "description": "çå®æå½±é£æ ¼"
     }
 }
 
 
 class SketchToReal:
-    """素描转真人技能�E�纯 ControlNet�E�无需 Inpaint�E�E""
+    """ç´ æè½¬çäººæè½Eçº¯ ControlNetEæ é InpaintEE""
 
     def __init__(self, config: Dict[str, Any] = None):
         self.config = config or {}
@@ -96,38 +96,38 @@ class SketchToReal:
         self.skill_dir = Path(__file__).parent.absolute()
         self.project_root = self.skill_dir.parent.parent.parent
         
-        # ==================== 强制本技能输�E目彁E====================
+        # ==================== å¼ºå¶æ¬æè½è¾åEç®å½E====================
         self.output_dir = self.skill_dir / "output"
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
         self.models_dir = Path(self.config.get('models_dir', self.project_root / 'models'))
         self.device = self.config.get('device', 'cpu')
 
-        # 默认参数
+        # é»è®¤åæ°
         self.default_model = self.config.get('default_model', 'anytimeRealistic_v10.safetensors')
         self.default_steps = self.config.get('default_steps', 35)
         self.default_strength = self.config.get('default_strength', 0.85)
         self.default_style = self.config.get('default_style', 'realistic')
         self.default_negative = self.config.get('default_negative', 'ugly, deformed, blurry, low quality, sketch, drawing, lineart, 2d')
 
-        # 缓孁E
+        # ç¼å­E
         self.controlnet_engine = None
 
-        # ==================== 初始化底层引擎 ====================
+        # ==================== åå§ååºå±å¼æ ====================
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlNetImg2Img(config={'device': self.device})
-                logger.info("  ✁E底层引擎初始化成功")
+                logger.info("  âEåºå±å¼æåå§åæå")
             except Exception as e:
-                logger.warning(f"  底层引擎初始化失败: {e}")
+                logger.warning(f"  åºå±å¼æåå§åå¤±è´¥: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"SketchToReal v{self.version} 初始化完�E")
-        logger.info(f"  设夁E {self.device}")
-        logger.info(f"  默认模垁E {self.default_model}")
-        logger.info(f"  风格: {list(REALISM_STYLES.keys())}")
+        logger.info(f"SketchToReal v{self.version} åå§åå®æE")
+        logger.info(f"  è®¾å¤E {self.device}")
+        logger.info(f"  é»è®¤æ¨¡åE {self.default_model}")
+        logger.info(f"  é£æ ¼: {list(REALISM_STYLES.keys())}")
 
     def _setup_logging(self):
         log_level = self.config.get('log_level', 'INFO')
@@ -148,7 +148,7 @@ class SketchToReal:
         Path(self.config.get('output_dir', str(self.output_dir))).mkdir(parents=True, exist_ok=True)
 
     def _find_model(self, model_name: str) -> Optional[Path]:
-        """查找模型文件"""
+        """æ¥æ¾æ¨¡åæä»¶"""
         if not model_name:
             model_name = self.default_model
 
@@ -168,14 +168,14 @@ class SketchToReal:
                 if file_path.exists():
                     return file_path
 
-        logger.error(f"未找到模垁E {model_name}")
+        logger.error(f"æªæ¾å°æ¨¡åE {model_name}")
         return None
 
     def list_styles(self) -> Dict[str, Any]:
         return {"status": "success", "styles": list(REALISM_STYLES.keys())}
 
     def list_models(self) -> Dict[str, Any]:
-        """列�E所有可用模垁E""
+        """ååEææå¯ç¨æ¨¡åE""
         models = {}
         for key, info in AVAILABLE_MODELS.items():
             models[key] = {
@@ -194,53 +194,53 @@ class SketchToReal:
 
     def execute(self, **kwargs) -> Dict[str, Any]:
         start_time = time.time()
-        logger.info(f"执行技能: {self.name} v{self.version}")
+        logger.info(f"æ§è¡æè½: {self.name} v{self.version}")
 
         try:
-            # ==================== 1. 严格路征E��骁E====================
+            # ==================== 1. ä¸¥æ ¼è·¯å¾E ¡éªE====================
             image_path = kwargs.get('image_path') or kwargs.get('input')
             if not image_path:
-                return {"status": "error", "error": "image_path 是忁E��参数"}
+                return {"status": "error", "error": "image_path æ¯å¿E¡«åæ°"}
             
             abs_image_path = Path(image_path).absolute()
             if not os.path.exists(abs_image_path):
-                return {"status": "error", "error": f"输�E图牁E��存在: {abs_image_path}。请检查路征E��否正确�E�E}
+                return {"status": "error", "error": f"è¾åEå¾çE¸å­å¨: {abs_image_path}ãè¯·æ£æ¥è·¯å¾E¯å¦æ­£ç¡®EE}
 
             output_path = kwargs.get('output_path') or kwargs.get('output')
 
-            # 提示词与风格配置
+            # æç¤ºè¯ä¸é£æ ¼éç½®
             style = kwargs.get('style', self.default_style)
             if style not in REALISM_STYLES:
-                return {"status": "error", "error": f"未知风格: {style}�E�可用: {list(REALISM_STYLES.keys())}"}
+                return {"status": "error", "error": f"æªç¥é£æ ¼: {style}Eå¯ç¨: {list(REALISM_STYLES.keys())}"}
 
             s_config = REALISM_STYLES[style]
             prompt = kwargs.get('prompt') or s_config['prompt']
             negative_prompt = kwargs.get('negative_prompt') or s_config.get('negative', self.default_negative)
 
-            # ==================== 2. 直接谁E��底屁EControlNet 引擎 ====================
+            # ==================== 2. ç´æ¥è°E¨åºå±EControlNet å¼æ ====================
             if self.controlnet_engine is None:
-                return {"status": "error", "error": "底屁EControlNet 引擎不可用"}
+                return {"status": "error", "error": "åºå±EControlNet å¼æä¸å¯ç¨"}
 
-            logger.info(f"风格: {style}")
-            logger.info(f"提示证E {prompt[:80]}...")
+            logger.info(f"é£æ ¼: {style}")
+            logger.info(f"æç¤ºè¯E {prompt[:80]}...")
 
-            # 如果没传 output_path�E�默认存到本技能皁Eoutput 目彁E
+            # å¦ææ²¡ä¼  output_pathEé»è®¤å­å°æ¬æè½çEoutput ç®å½E
             if output_path is None:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 output_path = str(self.output_dir / f"{Path(abs_image_path).stem}_sketch2real_{style}_{timestamp}.png")
 
-            # 核忁E��辑：传入 HED (提取线稿) + Lineart 底层模垁E
+            # æ ¸å¿E»è¾ï¼ä¼ å¥ HED (æåçº¿ç¨¿) + Lineart åºå±æ¨¡åE
             result = self.controlnet_engine.execute(
-                input_image_path=str(abs_image_path),  # 绝对路征E
+                input_image_path=str(abs_image_path),  # ç»å¯¹è·¯å¾E
                 prompt=prompt,
                 negative_prompt=negative_prompt,
-                preprocessor_type="HED",               # 提取线稿
-                controlnet_model="lineart",            # 强制使用本地 lineart 模型（你本地皁Emodels--lllyasviel--control_v11p_sd15_lineart�E�E
-                strength=0.85,                         # 高强度重绘，让线稿变真人
-                output_path=output_path                # 强制持E��输�E
+                preprocessor_type="HED",               # æåçº¿ç¨¿
+                controlnet_model="lineart",            # å¼ºå¶ä½¿ç¨æ¬å° lineart æ¨¡åï¼ä½ æ¬å°çEmodels--lllyasviel--control_v11p_sd15_lineartEE
+                strength=0.85,                         # é«å¼ºåº¦éç»ï¼è®©çº¿ç¨¿åçäºº
+                output_path=output_path                # å¼ºå¶æE®è¾åE
             )
 
-            # 检查引擎返回结果
+            # æ£æ¥å¼æè¿åç»æ
             if result['status'] == 'success':
                 return {
                     "status": "success",
@@ -257,11 +257,11 @@ class SketchToReal:
                     "timestamp": datetime.now().isoformat()
                 }
             else:
-                # 引擎报错，直接把引擎皁E��误原样抛�E
-                return {"status": "error", "error": result.get('error', '底层引擎谁E��失败')}
+                # å¼ææ¥éï¼ç´æ¥æå¼æçEè¯¯åæ ·æåE
+                return {"status": "error", "error": result.get('error', 'åºå±å¼æè°E¨å¤±è´¥')}
 
         except Exception as e:
-            logger.error(f"执行失败: {e}")
+            logger.error(f"æ§è¡å¤±è´¥: {e}")
             import traceback
             traceback.print_exc()
             return {"status": "error", "error": str(e)}
@@ -270,59 +270,59 @@ class SketchToReal:
         return f"<SketchToReal(name={self.name}, version={self.version})>"
 
 
-# ==================== 命令行�E口 ====================
+# ==================== å½ä»¤è¡åEå£ ====================
 if __name__ == "__main__":
     import argparse
 
     MODEL_CHOICES = list(AVAILABLE_MODELS.keys())
 
-    parser = argparse.ArgumentParser(description="素描转真人工具 v2.0")
-    parser.add_argument("--input", "-i", required=True, help="输�E素揁E线稿图牁E��征E)
-    parser.add_argument("--output", "-o", help="输�E路征E)
+    parser = argparse.ArgumentParser(description="ç´ æè½¬çäººå·¥å· v2.0")
+    parser.add_argument("--input", "-i", required=True, help="è¾åEç´ æEçº¿ç¨¿å¾çE·¯å¾E)
+    parser.add_argument("--output", "-o", help="è¾åEè·¯å¾E)
     parser.add_argument("--model", "-m", default="anytimeRealistic_v10.safetensors",
-                        choices=MODEL_CHOICES, help="SD 模型名称")
+                        choices=MODEL_CHOICES, help="SD æ¨¡ååç§°")
     parser.add_argument("--style", "-s", default="realistic",
-                        choices=list(REALISM_STYLES.keys()), help="真人风格")
-    parser.add_argument("--prompt", "-p", help="自定义提示词（要E��风格默认�E�E)
-    parser.add_argument("--negative", "-n", help="自定义负面提示词（要E��风格默认�E�E)
-    parser.add_argument("--steps", type=int, default=35, help="迭代步数")
-    parser.add_argument("--seed", type=int, default=-1, help="随机种孁E)
-    parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu", help="设夁E)
-    parser.add_argument("--list-models", action="store_true", help="列�E所有可用模垁E)
-    parser.add_argument("--list-styles", action="store_true", help="列�E所有可用风格")
+                        choices=list(REALISM_STYLES.keys()), help="çäººé£æ ¼")
+    parser.add_argument("--prompt", "-p", help="èªå®ä¹æç¤ºè¯ï¼è¦Eé£æ ¼é»è®¤EE)
+    parser.add_argument("--negative", "-n", help="èªå®ä¹è´é¢æç¤ºè¯ï¼è¦Eé£æ ¼é»è®¤EE)
+    parser.add_argument("--steps", type=int, default=35, help="è¿­ä»£æ­¥æ°")
+    parser.add_argument("--seed", type=int, default=-1, help="éæºç§å­E)
+    parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu", help="è®¾å¤E)
+    parser.add_argument("--list-models", action="store_true", help="ååEææå¯ç¨æ¨¡åE)
+    parser.add_argument("--list-styles", action="store_true", help="ååEææå¯ç¨é£æ ¼")
 
     args = parser.parse_args()
 
-    # 如果只是列�E模垁E
+    # å¦æåªæ¯ååEæ¨¡åE
     if args.list_models:
         skill = SketchToReal()
         result = skill.list_models()
         print("\n" + "=" * 60)
-        print("  可用模型�E表")
+        print("  å¯ç¨æ¨¡ååEè¡¨")
         print("=" * 60)
         for key, info in result['models'].items():
-            default_mark = " ⭁E(默认)" if key == result['default'] else ""
+            default_mark = " â­E(é»è®¤)" if key == result['default'] else ""
             print(f"  {key}")
-            print(f"    名称: {info['name']}{default_mark}")
-            print(f"    大封E {info['size']}")
-            print(f"    类垁E {info['type']}")
-            print(f"    说昁E {info['description']}")
+            print(f"    åç§°: {info['name']}{default_mark}")
+            print(f"    å¤§å°E {info['size']}")
+            print(f"    ç±»åE {info['type']}")
+            print(f"    è¯´æE {info['description']}")
             print()
-        print(f"  共 {result['count']} 个模垁E)
+        print(f"  å± {result['count']} ä¸ªæ¨¡åE)
         print("=" * 60)
         sys.exit(0)
 
-    # 如果只是列�E风格
+    # å¦æåªæ¯ååEé£æ ¼
     if args.list_styles:
         print("\n" + "=" * 60)
-        print("  可用风格列表")
+        print("  å¯ç¨é£æ ¼åè¡¨")
         print("=" * 60)
         for key, info in REALISM_STYLES.items():
             print(f"  {key}")
-            print(f"    提示证E {info['prompt'][:60]}...")
-            print(f"    负面: {info['negative'][:60]}...")
+            print(f"    æç¤ºè¯E {info['prompt'][:60]}...")
+            print(f"    è´é¢: {info['negative'][:60]}...")
             print()
-        print(f"  共 {len(REALISM_STYLES)} 种风格")
+        print(f"  å± {len(REALISM_STYLES)} ç§é£æ ¼")
         print("=" * 60)
         sys.exit(0)
 
@@ -345,12 +345,12 @@ if __name__ == "__main__":
     )
 
     if result['status'] == 'success':
-        print(f"\n✁E成功!")
-        print(f"  📁 输�E: {result['output_path']}")
-        print(f"  🎨 风格: {result['style']}")
-        print(f"  ⏱�E�E 耗时: {result['generation_time']}")
-        print(f"  📋 参数:")
+        print(f"\nâEæå!")
+        print(f"  ð è¾åE: {result['output_path']}")
+        print(f"  ð¨ é£æ ¼: {result['style']}")
+        print(f"  â±EE èæ¶: {result['generation_time']}")
+        print(f"  ð åæ°:")
         for key, value in result['parameters'].items():
             print(f"    {key}: {value}")
     else:
-        print(f"\n❁E失败: {result.get('error', '未知错误')}")
+        print(f"\nâEå¤±è´¥: {result.get('error', 'æªç¥éè¯¯')}")

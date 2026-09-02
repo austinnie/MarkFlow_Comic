@@ -1,6 +1,6 @@
 # skills/nude_oil_painting/skill.py
 """
-裸体油画 - 一键生�E古典/写实油画风格裸体人僁E
+è£¸ä½æ²¹ç» - ä¸é®çæEå¤å¸/åå®æ²¹ç»é£æ ¼è£¸ä½äººåE
 """
 
 import time
@@ -29,7 +29,7 @@ try:
     CONTROLNET_ENGINE_AVAILABLE = True
 except ImportError as e:
     CONTROLNET_ENGINE_AVAILABLE = False
-    logger.warning(f"ControlNet 引擎不可用: {e}")
+    logger.warning(f"ControlNet å¼æä¸å¯ç¨: {e}")
 
 STYLE_MAP = {
     "classical": "classical oil painting, Renaissance style, soft chiaroscuro, warm earth tones, masterpiece, high quality",
@@ -57,7 +57,7 @@ LIGHTING_MAP = {
 
 
 class NudeOilPainting:
-    """裸体油画技能"""
+    """è£¸ä½æ²¹ç»æè½"""
 
     def __init__(self, config: Dict[str, Any] = None):
         self.config = config or {}
@@ -74,14 +74,14 @@ class NudeOilPainting:
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlnetImg2Img(config={'device': self.device})
-                logger.info("  ✁EControlNet 引擎初始化成功")
+                logger.info("  âEControlNet å¼æåå§åæå")
             except Exception as e:
-                logger.warning(f"  引擎初始化失败: {e}")
+                logger.warning(f"  å¼æåå§åå¤±è´¥: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"NudeOilPainting v{self.version} 初始化完�E")
+        logger.info(f"NudeOilPainting v{self.version} åå§åå®æE")
 
     def _setup_logging(self):
         log_level = self.config.get('log_level', 'INFO')
@@ -103,27 +103,27 @@ class NudeOilPainting:
 
     def execute(self, **kwargs) -> Dict[str, Any]:
         start_time = time.time()
-        logger.info(f"执行技能: {self.name}")
+        logger.info(f"æ§è¡æè½: {self.name}")
 
         try:
             image_path = kwargs.get('image_path')
             if not image_path:
-                return {"status": "error", "error": "image_path 是忁E��参数"}
+                return {"status": "error", "error": "image_path æ¯å¿E¡«åæ°"}
 
             abs_image_path = Path(image_path).absolute()
             if not os.path.exists(abs_image_path):
-                return {"status": "error", "error": f"输�E图牁E��存在: {abs_image_path}"}
+                return {"status": "error", "error": f"è¾åEå¾çE¸å­å¨: {abs_image_path}"}
 
             style = kwargs.get('style', self.config.get('default_style', 'classical'))
             pose = kwargs.get('pose', self.config.get('default_pose', 'standing'))
             lighting = kwargs.get('lighting', self.config.get('default_lighting', 'studio'))
 
             if style not in STYLE_MAP:
-                return {"status": "error", "error": f"未知风格: {style}�E�可用: {list(STYLE_MAP.keys())}"}
+                return {"status": "error", "error": f"æªç¥é£æ ¼: {style}Eå¯ç¨: {list(STYLE_MAP.keys())}"}
             if pose not in POSE_MAP:
-                return {"status": "error", "error": f"未知姿态E {pose}�E�可用: {list(POSE_MAP.keys())}"}
+                return {"status": "error", "error": f"æªç¥å§¿æE {pose}Eå¯ç¨: {list(POSE_MAP.keys())}"}
             if lighting not in LIGHTING_MAP:
-                return {"status": "error", "error": f"未知灯允E {lighting}�E�可用: {list(LIGHTING_MAP.keys())}"}
+                return {"status": "error", "error": f"æªç¥ç¯åE {lighting}Eå¯ç¨: {list(LIGHTING_MAP.keys())}"}
 
             prompt = f"1girl, full body, beautiful face, perfect body, large bust, hourglass figure, nude, naked, oil painting, canvas texture, {STYLE_MAP[style]}, {POSE_MAP[pose]}, {LIGHTING_MAP[lighting]}, artistic, fine art, high quality, masterpiece"
 
@@ -133,15 +133,15 @@ class NudeOilPainting:
             seed = kwargs.get('seed', -1)
 
             if self.controlnet_engine is None:
-                return {"status": "error", "error": "ControlNet 引擎不可用"}
+                return {"status": "error", "error": "ControlNet å¼æä¸å¯ç¨"}
 
             output_path = kwargs.get('output_path')
             if output_path is None:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 output_path = str(self.output_dir / f"{Path(abs_image_path).stem}_oil_{style}_{pose}_{timestamp}.png")
 
-            logger.info(f"风格: {style}, 姿态E {pose}, 灯允E {lighting}")
-            logger.info(f"提示证E {prompt[:100]}...")
+            logger.info(f"é£æ ¼: {style}, å§¿æE {pose}, ç¯åE {lighting}")
+            logger.info(f"æç¤ºè¯E {prompt[:100]}...")
 
             result = self.controlnet_engine.execute(
                 input_image_path=str(abs_image_path),
@@ -173,7 +173,7 @@ class NudeOilPainting:
             }
 
         except Exception as e:
-            logger.error(f"执行失败: {e}")
+            logger.error(f"æ§è¡å¤±è´¥: {e}")
             import traceback
             traceback.print_exc()
             return {"status": "error", "error": str(e)}

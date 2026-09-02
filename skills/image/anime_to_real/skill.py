@@ -1,7 +1,7 @@
 # skills/anime_to_real/skill.py
 """
-动漫转真人 Skill - 封E��漫/二次允E��牁E��换为真人风格
-复用通用 ControlNet 引擎�E�EED + Lineart 保留动漫线条�E�高幁E��重绘真人质感！E
+动漫转真人 Skill - 将动漫/二次元图片转换为真人风格
+复用通用 ControlNet 引擎（HED + Lineart 保留动漫线条，高幅度重绘真人质感）
 """
 
 import time
@@ -26,9 +26,9 @@ try:
     DIFFUSERS_AVAILABLE = True
 except ImportError:
     DIFFUSERS_AVAILABLE = False
-    logger.warning("torch 戁EPIL 未安裁E)
+    logger.warning("torch 或 PIL 未安装")
 
-# ==================== 引�E通用引擎�E�方桁E�E�E====================
+# ==================== 引入通用引擎（方案1） ====================
 try:
     from skills.image.controlnet_img2img.skill import ControlNetImg2Img
     CONTROLNET_ENGINE_AVAILABLE = True
@@ -66,7 +66,7 @@ class AnimeToReal:
 
         self.skill_dir = Path(__file__).parent.absolute()
         self.project_root = self.skill_dir.parent.parent.parent
-        # ==================== 强制本技能输�E目彁E====================
+        # ==================== 强制本技能输出目录 ====================
         self.output_dir = self.skill_dir / "output"
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -78,15 +78,15 @@ class AnimeToReal:
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlNetImg2Img(config={'device': self.device})
-                logger.info("  ✁E底屁EControlNet 引擎初始化成功")
+                logger.info("  ✅ 底层 ControlNet 引擎初始化成功")
             except Exception as e:
                 logger.warning(f"  底层引擎初始化失败: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"AnimeToReal v{self.version} 初始化完�E")
-        logger.info(f"  设夁E {self.device}")
+        logger.info(f"AnimeToReal v{self.version} 初始化完成")
+        logger.info(f"  设备: {self.device}")
         logger.info(f"  风格: {list(REALISM_STYLES.keys())}")
 
     def _setup_logging(self):
@@ -97,7 +97,7 @@ class AnimeToReal:
     def _setup_config(self):
         defaults = {
             'default_steps': 35,
-            'default_strength': 0.8,  # 动漫转真人需要E��强度重绘添加真实绁E��
+            'default_strength': 0.8,  # 动漫转真人需要高强度重绘添加真实细节
             'default_style': 'photorealistic',
         }
         for key, value in defaults.items():
@@ -112,18 +112,18 @@ class AnimeToReal:
         logger.info(f"执行技能: {self.name}")
 
         try:
-            # ==================== 严格路征E��骁E====================
+            # ==================== 严格路径校验 ====================
             image_path = kwargs.get('image_path')
             if not image_path:
-                return {"status": "error", "error": "image_path 是忁E��参数"}
+                return {"status": "error", "error": "image_path 是必填参数"}
             
             abs_image_path = Path(image_path).absolute()
             if not os.path.exists(abs_image_path):
-                return {"status": "error", "error": f"输�E图牁E��存在: {abs_image_path}。请检查路征E��否正确�E�E}
+                return {"status": "error", "error": f"输入图片不存在: {abs_image_path}。请检查路径是否正确！"}
 
             style = kwargs.get('style', self.config.get('default_style', 'photorealistic'))
             if style not in REALISM_STYLES:
-                return {"status": "error", "error": f"未知风格: {style}�E�可用: {list(REALISM_STYLES.keys())}"}
+                return {"status": "error", "error": f"未知风格: {style}，可用: {list(REALISM_STYLES.keys())}"}
 
             style_config = REALISM_STYLES[style]
             prompt = kwargs.get('prompt') or style_config['prompt']
@@ -133,20 +133,20 @@ class AnimeToReal:
             steps = kwargs.get('steps', self.config.get('default_steps', 35))
             seed = kwargs.get('seed', -1)
 
-            # ==================== 直接谁E��底层引擎 ====================
+            # ==================== 直接调用底层引擎 ====================
             if self.controlnet_engine is None:
-                return {"status": "error", "error": "底屁EControlNet 引擎不可用"}
+                return {"status": "error", "error": "底层 ControlNet 引擎不可用"}
 
-            # 默认输�E到本技能目彁E
+            # 默认输出到本技能目录
             output_path = kwargs.get('output_path')
             if output_path is None:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 output_path = str(self.output_dir / f"{Path(abs_image_path).stem}_real_{style}_{timestamp}.png")
 
             logger.info(f"风格: {style}")
-            logger.info(f"提示证E {prompt[:80]}...")
+            logger.info(f"提示词: {prompt[:80]}...")
 
-            # 使用 HED 提取动漫边缁E+ Lineart 线稿模型，锁死动漫轮廁E
+            # 使用 HED 提取动漫边缘 + Lineart 线稿模型，锁死动漫轮廓
             result = self.controlnet_engine.execute(
                 input_image_path=str(abs_image_path),
                 prompt=prompt,
@@ -187,13 +187,13 @@ class AnimeToReal:
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="动漫转真人工具 v2.0")
-    parser.add_argument("--input", "-i", required=True, help="输�E动漫图牁E��征E)
-    parser.add_argument("--output", "-o", help="输�E路征E)
+    parser.add_argument("--input", "-i", required=True, help="输入动漫图片路径")
+    parser.add_argument("--output", "-o", help="输出路径")
     parser.add_argument("--style", "-s", default="photorealistic",
                         choices=list(REALISM_STYLES.keys()), help="真人风格")
     parser.add_argument("--strength", type=float, default=0.8, help="重绘强度")
     parser.add_argument("--steps", type=int, default=35, help="迭代步数")
-    parser.add_argument("--seed", type=int, default=-1, help="随机种孁E)
+    parser.add_argument("--seed", type=int, default=-1, help="随机种子")
     parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu")
 
     args = parser.parse_args()
