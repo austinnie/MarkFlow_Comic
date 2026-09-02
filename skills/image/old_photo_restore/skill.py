@@ -1,7 +1,7 @@
-# skills/old_photo_restore/skill.py
+# skills/image/old_photo_restore/skill.py
 """
-èçEçE¿®å¤E+ ä¸è² Skill - ä¿®å¤ç ´æEè¤ªè²/éç½èçEçE
-å¤ç¨éç¨ ControlNet å¼æEEED + LineartEä¿æååçæ
+老照片修复 Skill - 修复破损、模糊的老照片，上色和增强
+使用 ControlNet 保持原图结构
 """
 
 import time
@@ -26,38 +26,38 @@ try:
     DIFFUSERS_AVAILABLE = True
 except ImportError:
     DIFFUSERS_AVAILABLE = False
-    logger.warning("torch æEPIL æªå®è£E)
+    logger.warning("torch 或 PIL 未安装")
 
-# ==================== å¼åEéç¨å¼æEæ¹æ¡EEE====================
 try:
-    from skills.image.controlnet_img2img.skill import ControlNetImg2Img
+    from skills.image.controlnet_img2img.skill import ControlnetImg2Img
     CONTROLNET_ENGINE_AVAILABLE = True
 except ImportError as e:
     CONTROLNET_ENGINE_AVAILABLE = False
-    logger.warning(f"éç¨ ControlNet å¼æä¸å¯ç¨: {e}")
+    logger.warning(f"ControlNet 引擎不可用: {e}")
 
-STYLES = {
-    "natural": {
-        "prompt": "restored old photo, natural colors, vintage feel, clear, detailed, masterpiece, high quality",
-        "negative": "ugly, deformed, blurry, low quality, damaged, torn"
-    },
+# ==================== 修复风格配置 ====================
+STYLE_MAP = {
     "vibrant": {
-        "prompt": "restored old photo, vibrant colors, colorful, alive, beautiful, masterpiece, high quality",
-        "negative": "ugly, deformed, blurry, low quality, damaged, torn"
+        "prompt": "restored photo, vibrant colors, clear, sharp, high quality, detailed, masterpiece",
+        "negative": "ugly, deformed, blurry, low quality, damaged, scratched, faded, old"
     },
-    "sepia": {
-        "prompt": "restored old photo, sepia tone, vintage, warm, nostalgic, masterpiece, high quality",
-        "negative": "ugly, deformed, blurry, low quality, damaged, torn"
+    "natural": {
+        "prompt": "restored photo, natural colors, balanced, clear, high quality, detailed, masterpiece",
+        "negative": "ugly, deformed, blurry, low quality, damaged, scratched, faded"
     },
-    "bw": {
-        "prompt": "restored old photo, black and white, classic, timeless, detailed, masterpiece, high quality",
-        "negative": "ugly, deformed, blurry, low quality, damaged, torn"
+    "enhanced": {
+        "prompt": "restored photo, enhanced details, sharp, vivid, high quality, detailed, masterpiece",
+        "negative": "ugly, deformed, blurry, low quality, damaged, scratched, faded"
+    },
+    "vintage_preserve": {
+        "prompt": "restored photo, vintage style, warm tones, preserved character, high quality, masterpiece",
+        "negative": "ugly, deformed, blurry, low quality, oversaturated, modern"
     }
 }
 
 
 class OldPhotoRestore:
-    """èçEçE¿®å¤E+ ä¸è²æè½"""
+    """老照片修复技能 v2.0"""
 
     def __init__(self, config: Dict[str, Any] = None):
         self.config = config or {}
@@ -66,28 +66,30 @@ class OldPhotoRestore:
 
         self.skill_dir = Path(__file__).parent.absolute()
         self.project_root = self.skill_dir.parent.parent.parent
-        # ==================== å¼ºå¶æ¬æè½è¾åEç®å½E====================
+        # ==================== 强制本技能输出目录 ====================
         self.output_dir = self.skill_dir / "output"
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
         self.models_dir = Path(self.config.get('models_dir', self.project_root / 'models'))
         self.device = self.config.get('device', 'cuda' if torch.cuda.is_available() else 'cpu')
 
-        # ==================== ååååºå±å¼æ ====================
-        self.controlnet_engine = None
+        # ==================== 初始化 ControlNet 引擎 ====================
+        self._controlnet_engine = None
+
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
-                self.controlnet_engine = ControlNetImg2Img(config={'device': self.device})
-                logger.info("  âEåºå±EControlNet å¼æåååæå")
+                from skills.image.controlnet_img2img.skill import ControlnetImg2Img
+                self._controlnet_engine = ControlnetImg2Img(config={'device': self.device})
+                logger.info("  ✅ ControlNet 引擎初始化成功")
             except Exception as e:
-                logger.warning(f"  åºå±å¼æåååå¤±è´¥: {e}")
+                logger.warning(f"  引擎初始化失败: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"OldPhotoRestore v{self.version} åååå®æE")
-        logger.info(f"  è®¾å¤E {self.device}")
-        logger.info(f"  é£æ ¼: {list(STYLES.keys())}")
+        logger.info(f"OldPhotoRestore v{self.version} 初始化完成")
+        logger.info(f"  设备: {self.device}")
+        logger.info(f"  风格: {list(STYLE_MAP.keys())}")
 
     def _setup_logging(self):
         log_level = self.config.get('log_level', 'INFO')
@@ -97,63 +99,66 @@ class OldPhotoRestore:
     def _setup_config(self):
         defaults = {
             'default_steps': 35,
-            'default_strength': 0.55,  # ä¿®å¤èçEçE¶Eéçå¹Eº¦åºè®®ç¨ä½ä¥ä¿çåè²E
+            'default_strength': 0.5,
             'default_style': 'natural',
-            'default_negative': 'ugly, deformed, blurry, low quality, damaged, torn, scratch',
+            'default_negative': 'ugly, deformed, blurry, low quality, damaged, scratched, faded',
         }
         for key, value in defaults.items():
             if key not in self.config:
                 self.config[key] = value
 
     def list_styles(self) -> Dict[str, Any]:
-        return {"status": "success", "styles": list(STYLES.keys())}
+        """列出所有可用修复风格"""
+        return {"status": "success", "styles": list(STYLE_MAP.keys())}
 
     def execute(self, **kwargs) -> Dict[str, Any]:
         start_time = time.time()
-        logger.info(f"æè¡æè½: {self.name}")
+        logger.info(f"执行技能: {self.name}")
 
         try:
-            # ==================== ä¸¥æ ¼è·¯å¾E ¡éªE====================
+            # ==================== 严格路径校验 ====================
             image_path = kwargs.get('image_path')
             if not image_path:
-                return {"status": "error", "error": "image_path æ¯å¿E¡«åæ°"}
-            
+                return {"status": "error", "error": "image_path 是必填参数"}
+
             abs_image_path = Path(image_path).absolute()
             if not os.path.exists(abs_image_path):
-                return {"status": "error", "error": f"è¾åEå¾çE¸å­å¨: {abs_image_path}ãè¯·æ£æ¥è·¯å¾E¯å¦æ­£ç¡®EE}
+                return {"status": "error", "error": f"输入图片不存在: {abs_image_path}。请检查路径是否正确！"}
 
+            # ==================== 获取修复风格 ====================
             style = kwargs.get('style', self.config.get('default_style', 'natural'))
-            if style not in STYLES:
-                return {"status": "error", "error": f"æªç¥é£æ ¼: {style}Eå¯ç¨: {list(STYLES.keys())}"}
+            if style not in STYLE_MAP:
+                return {"status": "error", "error": f"未知风格: {style}，可用: {list(STYLE_MAP.keys())}"}
 
-            s_config = STYLES[style]
-            prompt = kwargs.get('prompt') or s_config['prompt']
-            negative_prompt = kwargs.get('negative_prompt') or s_config.get('negative', self.config.get('default_negative'))
+            style_config = STYLE_MAP[style]
+            prompt = kwargs.get('prompt') or style_config['prompt']
+            negative_prompt = kwargs.get('negative_prompt') or style_config.get('negative', self.config.get('default_negative'))
 
-            strength = kwargs.get('strength', self.config.get('default_strength', 0.55))
+            strength = kwargs.get('strength', self.config.get('default_strength', 0.5))
             steps = kwargs.get('steps', self.config.get('default_steps', 35))
             seed = kwargs.get('seed', -1)
 
-            # ==================== ç´æ¥è°E¨åºå±å¼æ ====================
-            if self.controlnet_engine is None:
-                return {"status": "error", "error": "åºå±EControlNet å¼æä¸å¯ç¨"}
-
-            # éè®¤è¾åEå°æ¬æè½ç®å½E
+            # ==================== 默认输出路径 ====================
             output_path = kwargs.get('output_path')
             if output_path is None:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 output_path = str(self.output_dir / f"{Path(abs_image_path).stem}_restored_{style}_{timestamp}.png")
 
-            logger.info(f"é£æ ¼: {style}")
-            logger.info(f"æç¤ºè¯E {prompt[:80]}...")
+            # ==================== 调用底层 ControlNet 引擎 ====================
+            if self._controlnet_engine is None:
+                return {"status": "error", "error": "ControlNet 引擎不可用"}
 
-            result = self.controlnet_engine.execute(
+            logger.info(f"修复风格: {style}")
+            logger.info(f"提示词: {prompt[:80]}...")
+
+            # 使用 Canny 保持边缘结构
+            result = self._controlnet_engine.execute(
                 input_image_path=str(abs_image_path),
                 prompt=prompt,
                 negative_prompt=negative_prompt,
-                preprocessor_type="HED",      # æåæåè¾¹ç¼ï¼ä¿çèçEçEæ¬çE½®åE
-                controlnet_model="lineart",   # ä½¿ç¨æ¬å° Lineart æ¨¡åï¼å®ç¾å¹éEHED
-                strength=strength,
+                preprocessor_type="HED",          # 提取边缘轮廓
+                controlnet_model="canny",         # 保持边缘结构
+                strength=strength,                # 较低强度以保留原图
                 steps=steps,
                 output_path=output_path
             )
@@ -167,15 +172,15 @@ class OldPhotoRestore:
                 "style": style,
                 "generation_time": f"{time.time() - start_time:.2f}s",
                 "parameters": {
-                    "strength": strength, 
-                    "steps": steps, 
+                    "strength": strength,
+                    "steps": steps,
                     "seed": seed,
-                    "controlnet": "lineart"
+                    "controlnet": "canny"
                 }
             }
 
         except Exception as e:
-            logger.error(f"æè¡å¤±è´¥: {e}")
+            logger.error(f"执行失败: {e}")
             import traceback
             traceback.print_exc()
             return {"status": "error", "error": str(e)}
@@ -186,14 +191,14 @@ class OldPhotoRestore:
 
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser(description="èçEçE¿®å¤å·¥å· v2.0")
-    parser.add_argument("--input", "-i", required=True, help="è¾åEèçEçE·¯å¾E)
-    parser.add_argument("--output", "-o", help="è¾åEè·¯å¾E)
+    parser = argparse.ArgumentParser(description="老照片修复工具 v2.0")
+    parser.add_argument("--input", "-i", required=True, help="输入老照片路径")
+    parser.add_argument("--output", "-o", help="输出路径")
     parser.add_argument("--style", "-s", default="natural",
-                        choices=list(STYLES.keys()), help="ä¿®å¤é£æ ¼")
-    parser.add_argument("--strength", type=float, default=0.55, help="éçå¼ºåº¦")
-    parser.add_argument("--steps", type=int, default=35, help="è¿­ä£æ­¥æ°")
-    parser.add_argument("--seed", type=int, default=-1, help="éæºçå­E)
+                        choices=list(STYLE_MAP.keys()), help="修复风格")
+    parser.add_argument("--strength", type=float, default=0.5, help="重绘强度 (0-1)")
+    parser.add_argument("--steps", type=int, default=35, help="迭代步数")
+    parser.add_argument("--seed", type=int, default=-1, help="随机种子")
     parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu")
 
     args = parser.parse_args()

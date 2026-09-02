@@ -1,17 +1,17 @@
-# skills/expand_to_full_body/skill.py
+# skills/image/expand_to_full_body/skill.py
 """
-Expand to Full Body - å°Eººç©åèº«/å¤´åå¾æ©å±ä¸ºå¨èº«å¾
-å¤ç¨éç¨ ControlNet å¼æEä½¿ç¨ MediaPipe æEè½éæ£æµå®ä½å¤´é¨
+扩展为全身图 Skill - 将半身/头像图扩展为全身图
+使用 ControlNet OpenPose 保持人物姿态一致
 """
 
+import time
 import os
 import sys
 import json
-import time
 import random
 from pathlib import Path
 from datetime import datetime
-from typing import Dict, Any, Optional, Union, List
+from typing import Dict, Any, Optional
 import logging
 
 logger = logging.getLogger(__name__)
@@ -22,30 +22,26 @@ if str(project_root) not in sys.path:
 
 try:
     import torch
-    import numpy as np
     from PIL import Image
     DIFFUSERS_AVAILABLE = True
 except ImportError:
     DIFFUSERS_AVAILABLE = False
-    logger.warning("torch æEPIL æªå®è£E)
+    logger.warning("torch 或 PIL 未安装")
 
-# ==================== å¼åEéç¨å¼æEæ¹æ¡EEE====================
 try:
-    from skills.image.controlnet_img2img.skill import ControlNetImg2Img
+    from skills.image.controlnet_img2img.skill import ControlnetImg2Img
     CONTROLNET_ENGINE_AVAILABLE = True
 except ImportError as e:
     CONTROLNET_ENGINE_AVAILABLE = False
-    logger.warning(f"éç¨ ControlNet å¼æä¸å¯ç¨: {e}")
+    logger.warning(f"ControlNet 引擎不可用: {e}")
+
+# ==================== 默认提示词 ====================
+DEFAULT_PROMPT = "full body, standing, complete figure, from head to toe, masterpiece, high quality"
+DEFAULT_NEGATIVE = "ugly, deformed, bad anatomy, extra limbs, missing limbs, bad proportions, blurry, low quality, cropped, out of frame, partial body"
 
 
 class ExpandToFullBody:
-    """åèº«å¾è½¬å¨èº«å¾æè½ v2.0 (MediaPipe + OpenPose éå¿æE"""
-
-    # å¯ç¨æ¨¡ååEè¡¨Eç¨äºå±ç¤ºEE
-    AVAILABLE_MODELS = {
-        "anytimeRealistic_v10.safetensors": {"name": "Anytime Realistic", "size": "2.13 GB", "type": "åå®E},
-        "aiiiii01_v10.safetensors": {"name": "AIiiii v1.0", "size": "2.13 GB", "type": "åå®E},
-    }
+    """扩展为全身图技能 v2.0"""
 
     def __init__(self, config: Dict[str, Any] = None):
         self.config = config or {}
@@ -54,82 +50,29 @@ class ExpandToFullBody:
 
         self.skill_dir = Path(__file__).parent.absolute()
         self.project_root = self.skill_dir.parent.parent.parent
-        # ==================== å¼ºå¶æ¬æè½è¾åEç®å½E====================
+        # ==================== 强制本技能输出目录 ====================
         self.output_dir = self.skill_dir / "output"
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
         self.models_dir = Path(self.config.get('models_dir', self.project_root / 'models'))
         self.device = self.config.get('device', 'cuda' if torch.cuda.is_available() else 'cpu')
 
-        self.default_model = self.config.get('default_model', 'anytimeRealistic_v10.safetensors')
-        self.default_steps = self.config.get('default_steps', 30)
-        self.target_height = self.config.get('target_height', 1024)
-        self.target_width = self.config.get('target_width', 768)
+        # ==================== 初始化 ControlNet 引擎 ====================
+        self._controlnet_engine = None
 
-        # ç¼å­E
-        self.controlnet_engine = None
-
-        # ==================== ååååºå±å¼æ ====================
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
-                self.controlnet_engine = ControlNetImg2Img(config={'device': self.device})
-                logger.info("  âEåºå±EControlNet å¼æåååæå")
+                from skills.image.controlnet_img2img.skill import ControlnetImg2Img
+                self._controlnet_engine = ControlnetImg2Img(config={'device': self.device})
+                logger.info("  ✅ ControlNet 引擎初始化成功")
             except Exception as e:
-                logger.warning(f"  åºå±å¼æåååå¤±è´¥: {e}")
-
-        # ==================== ååå MediaPipeEæ°çEAPIEE====================
-        self._mediapipe_pose = None
-        self._init_mediapipe()
+                logger.warning(f"  引擎初始化失败: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"ExpandToFullBody v{self.version} åååå®æE")
-        logger.info(f"  è®¾å¤E {self.device}")
-        logger.info(f"  ç®æ E°ºå¯¸: {self.target_width}x{self.target_height}")
-        logger.info(f"  ControlNet: {'âE if self.controlnet_engine else 'âE}")
-
-    def _init_mediapipe(self):
-        """ååå MediaPipeEæ°çEAPIEE""
-        self._mediapipe_pose = None
-        try:
-            import mediapipe as mp
-            from mediapipe.tasks import python
-            from mediapipe.tasks.python import vision
-
-            # æ¨¡åæä¶è·¯å¾E
-            model_path = self.skill_dir / "pose_landmarker_heavy.task"
-
-            # å¦ææ¨¡åä¸å­å¨Eå°è¯ä¸è½½
-            if not model_path.exists():
-                logger.info("  ð¥ ä¸è½½ MediaPipe å¿ææ¨¡åE..")
-                try:
-                    import urllib.request
-                    url = "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_heavy/float16/1/pose_landmarker_heavy.task"
-                    urllib.request.urlretrieve(url, str(model_path))
-                    logger.info(f"  âEæ¨¡åå·²ä¸è½½: {model_path}")
-                except Exception as e:
-                    logger.warning(f"  â EEæ¨¡åä¸è½½å¤±è´¥: {e}")
-                    return
-
-            # åååå¿ææ£æµå¨
-            pose_options = vision.PoseLandmarkerOptions(
-                base_options=python.BaseOptions(model_asset_path=str(model_path)),
-                running_mode=vision.RunningMode.IMAGE,
-                num_poses=1,
-                min_pose_detection_confidence=0.5,
-                min_pose_presence_confidence=0.5,
-                min_tracking_confidence=0.5
-            )
-            self._mediapipe_pose = vision.PoseLandmarker.create_from_options(pose_options)
-            logger.info("  âEMediaPipe (æ°çEAPI) åååæå")
-
-        except ImportError as e:
-            logger.warning(f"  â EEMediaPipe æªå®è£E {e}")
-            logger.warning("  å°E½¿ç¨éè®¤æ©å±éè¾E)
-        except Exception as e:
-            logger.warning(f"  â EEMediaPipe åååå¤±è´¥: {e}")
-            logger.warning("  å°E½¿ç¨éè®¤æ©å±éè¾E)
+        logger.info(f"ExpandToFullBody v{self.version} 初始化完成")
+        logger.info(f"  设备: {self.device}")
 
     def _setup_logging(self):
         log_level = self.config.get('log_level', 'INFO')
@@ -138,211 +81,106 @@ class ExpandToFullBody:
 
     def _setup_config(self):
         defaults = {
-            'output_dir': str(self.output_dir),
-            'target_width': 768,
-            'target_height': 1024,
-            'default_model': 'anytimeRealistic_v10.safetensors',
-            'default_steps': 30,
+            'default_steps': 35,
+            'default_strength': 0.6,
+            'default_negative': DEFAULT_NEGATIVE,
         }
         for key, value in defaults.items():
             if key not in self.config:
                 self.config[key] = value
 
-    def _detect_head_position(self, image: Image.Image) -> tuple:
-        """ä½¿ç¨ MediaPipe æ£æµå¤´é¨å¨å¾åä¸­çEY åæ E¯ä¾ï¼æ°çEAPIEE""
-        try:
-            if self._mediapipe_pose is None:
-                return image.size[1] * 0.15, image.size[0] // 2
-
-            import mediapipe as mp
-            from mediapipe.tasks import python
-            from mediapipe.tasks.python import vision
-
-            # å°EPIL Image è½¬æ¢ä¸º MediaPipe Image
-            img_rgb = image.convert('RGB')
-            mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=np.array(img_rgb))
-
-            # æ£æµå¿æE
-            detection_result = self._mediapipe_pose.detect(mp_image)
-
-            if detection_result and detection_result.pose_landmarks:
-                landmarks = detection_result.pose_landmarks[0]
-                h, w = img_rgb.size[1], img_rgb.size[0]
-                # 0 æ¯é¼å­E
-                nose = landmarks[0]
-                head_y = int(nose.y * h)
-                head_x = int(nose.x * w)
-                return head_y, head_x
-        except Exception as e:
-            logger.warning(f"å¤´é¨æ£æµå¤±è´¥: {e}")
-
-        return image.size[1] * 0.15, image.size[0] // 2
-
-    def _expand_image_area(self, image: Image.Image, target_width: int, target_height: int,
-                           head_y: float, head_x: float) -> Image.Image:
-        """æ©å±çå¸E¼å°Eå¾æ¾ç½®å¨å¤´é¨ä½äºE15% é«åº¦çE½ç½®"""
-        src_w, src_h = image.size
-
-        # è®¡ç®ç¼©æ¾æ¯ä¾ï¼è®©å¤´é¨å¤çº¦å¨ 15% ä½ç½®
-        head_ratio = 0.15
-        scale = (target_height * head_ratio) / max(src_h * 0.15, head_y)
-
-        # éå¶ç¼©æ¾èE´
-        scale = max(0.5, min(2.0, scale))
-
-        # ç¼©æ¾å¾çE
-        new_w = int(src_w * scale)
-        new_h = int(src_h * scale)
-        resized = image.resize((new_w, new_h), Image.Resampling.LANCZOS)
-
-        # è®¡ç®ç²è´´ä½ç½®
-        offset_y = int(target_height * 0.15 - head_y * scale)
-        offset_x = int((target_width - new_w) // 2)
-
-        # ååºæ©å±å¾çE
-        expanded = Image.new("RGB", (target_width, target_height), (128, 128, 128))
-        expanded.paste(resized, (offset_x, offset_y))
-
-        return expanded
-
     def execute(self, **kwargs) -> Dict[str, Any]:
         start_time = time.time()
-        logger.info(f"æè¡æè½: {self.name} (v{self.version})")
+        logger.info(f"执行技能: {self.name}")
 
         try:
-            # ==================== ä¸¥æ ¼è·¯å¾E ¡éªE====================
+            # ==================== 严格路径校验 ====================
             image_path = kwargs.get('image_path')
             if not image_path:
-                return {"status": "error", "error": "image_path æ¯å¿E¡«åæ°"}
+                return {"status": "error", "error": "image_path 是必填参数"}
 
             abs_image_path = Path(image_path).absolute()
             if not os.path.exists(abs_image_path):
-                return {"status": "error", "error": f"è¾åEå¾çE¸å­å¨: {abs_image_path}ãè¯·æ£æ¥è·¯å¾E¯å¦æ­£ç¡®EE}
+                return {"status": "error", "error": f"输入图片不存在: {abs_image_path}。请检查路径是否正确！"}
 
-            image = Image.open(abs_image_path).convert("RGB")
+            # ==================== 获取提示词 ====================
+            prompt = kwargs.get('prompt') or DEFAULT_PROMPT
+            negative_prompt = kwargs.get('negative_prompt') or self.config.get('default_negative')
 
-            output_path = kwargs.get('output_path')
-            model_name = kwargs.get('model_name', self.default_model)
-            prompt = kwargs.get('prompt', 'a person, beautiful, detailed, full body, standing')
-            negative_prompt = kwargs.get('negative_prompt', 'ugly, deformed, bad anatomy, extra limbs, blurry, low quality')
-            steps = kwargs.get('steps', self.default_steps)
+            strength = kwargs.get('strength', self.config.get('default_strength', 0.6))
+            steps = kwargs.get('steps', self.config.get('default_steps', 35))
             seed = kwargs.get('seed', -1)
 
-            # æ´æ°ç®æ E°ºå¯¸
-            target_w = kwargs.get('target_width', self.config.get('target_width', 768))
-            target_h = kwargs.get('target_height', self.config.get('target_height', 1024))
+            # ==================== 扩展为全身图，使用 OpenPose 保持姿态 ====================
+            controlnet_type = kwargs.get('controlnet_type', 'openpose')
 
-            # ==================== 1. æ©å±çå¸E====================
-            head_y, head_x = self._detect_head_position(image)
-            expanded = self._expand_image_area(image, target_w, target_h, head_y, head_x)
-            logger.info(f"çå¸E©å±å®æE: {target_w}x{target_h}")
-
-            # ==================== 2. ä¿å­æ©å±å¾ä½ä¸ºä¸´æ¶è¾åE ====================
-            temp_input = self.output_dir / "_temp_expanded.png"
-            expanded.save(temp_input)
-
-            # ==================== 3. ç´æ¥è°E¨åºå±å¼æ ====================
-            if self.controlnet_engine is None:
-                return {"status": "error", "error": "åºå±EControlNet å¼æä¸å¯ç¨"}
-
-            # éè®¤è¾åEå°æ¬æè½ç®å½E
+            # ==================== 默认输出路径 ====================
+            output_path = kwargs.get('output_path')
             if output_path is None:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-                output_path = str(self.output_dir / f"full_body_{timestamp}.png")
+                output_path = str(self.output_dir / f"{Path(abs_image_path).stem}_fullbody_{timestamp}.png")
 
-            prompt = f"{prompt}, full body, whole body, standing, detailed, masterpiece, best quality, photorealistic"
+            # ==================== 调用底层 ControlNet 引擎 ====================
+            if self._controlnet_engine is None:
+                return {"status": "error", "error": "ControlNet 引擎不可用"}
 
-            # ä½¿ç¨ OpenPose éæ­äººç©ååçæ
-            result = self.controlnet_engine.execute(
-                input_image_path=str(temp_input),
+            logger.info(f"提示词: {prompt[:80]}...")
+            logger.info(f"ControlNet: {controlnet_type}")
+
+            # 使用 OpenPose 检测人物姿态，保持人物一致
+            result = self._controlnet_engine.execute(
+                input_image_path=str(abs_image_path),
                 prompt=prompt,
                 negative_prompt=negative_prompt,
-                preprocessor_type="OPENPOSE",
-                controlnet_model="openpose",
-                strength=0.75,
+                preprocessor_type="HED",          # 提取边缘轮廓
+                controlnet_model=controlnet_type,  # 使用 OpenPose 保持姿态
+                strength=strength,
                 steps=steps,
                 output_path=output_path
             )
 
-            # æ¸Eä¸´æ¶æE¶
-            if temp_input.exists():
-                temp_input.unlink()
-
             if result['status'] != 'success':
                 return result
-
-            elapsed = time.time() - start_time
 
             return {
                 "status": "success",
                 "output_path": result.get('image_path', output_path),
+                "generation_time": f"{time.time() - start_time:.2f}s",
                 "parameters": {
-                    "model": model_name,
-                    "prompt": prompt,
-                    "negative_prompt": negative_prompt,
+                    "strength": strength,
                     "steps": steps,
                     "seed": seed,
-                    "controlnet_type": "openpose",
-                    "target_size": f"{target_w}x{target_h}",
-                },
-                "generation_time": f"{elapsed:.2f}s",
-                "timestamp": datetime.now().isoformat()
+                    "controlnet": controlnet_type
+                }
             }
 
         except Exception as e:
-            logger.error(f"æè¡å¤±è´¥: {e}")
+            logger.error(f"执行失败: {e}")
             import traceback
             traceback.print_exc()
             return {"status": "error", "error": str(e)}
-
-    def list_models(self) -> Dict[str, Any]:
-        models = {}
-        for key, info in self.AVAILABLE_MODELS.items():
-            models[key] = {"name": info["name"], "size": info["size"], "type": info["type"]}
-        return {"status": "success", "models": models, "count": len(models), "default": self.default_model}
 
     def __repr__(self):
         return f"<ExpandToFullBody(name={self.name}, version={self.version})>"
 
 
-# ==================== å½ä¤è¡åEå£ ====================
 if __name__ == "__main__":
     import argparse
-
-    MODEL_CHOICES = list(ExpandToFullBody.AVAILABLE_MODELS.keys())
-
-    parser = argparse.ArgumentParser(description="åèº«å¾è½¬å¨èº«å¾ v2.0")
-    parser.add_argument("--input", "-i", required=False, help="è¾åEå¾çE·¯å¾E)
-    parser.add_argument("--output", "-o", help="è¾åEå¾çE·¯å¾E)
-    parser.add_argument("--prompt", "-p", default="a person, beautiful, detailed, full body", help="äººç©æè¿°æç¤ºè¯E)
-    parser.add_argument("--model", "-m", default="anytimeRealistic_v10.safetensors", choices=MODEL_CHOICES, help="æ¨¡ååç°")
-    parser.add_argument("--steps", "-s", type=int, default=30, help="æ¨çE­¥æ°")
-    parser.add_argument("--width", type=int, default=768, help="ç®æ E®½åº¦")
-    parser.add_argument("--height", type=int, default=1024, help="ç®æ E«åº¦")
-    parser.add_argument("--device", default="cpu", choices=["cpu", "cuda"], help="è®¾å¤E)
-    parser.add_argument("--list-models", action="store_true", help="ååEææå¯ç¨æ¨¡åE)
+    parser = argparse.ArgumentParser(description="扩展为全身图工具 v2.0")
+    parser.add_argument("--input", "-i", required=True, help="输入图片路径（半身或头像）")
+    parser.add_argument("--output", "-o", help="输出路径")
+    parser.add_argument("--prompt", "-p", default=DEFAULT_PROMPT, help="生成提示词")
+    parser.add_argument("--negative", "-n", default=DEFAULT_NEGATIVE, help="负面提示词")
+    parser.add_argument("--strength", type=float, default=0.6, help="重绘强度 (0-1)")
+    parser.add_argument("--steps", type=int, default=35, help="迭代步数")
+    parser.add_argument("--seed", type=int, default=-1, help="随机种子")
+    parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu")
 
     args = parser.parse_args()
-
-    if args.list_models:
-        skill = ExpandToFullBody()
-        result = skill.list_models()
-        print(json.dumps(result, ensure_ascii=False, indent=2))
-        sys.exit(0)
-
-    if not args.input:
-        parser.error("--input æ¯å¿E¡«åæ°")
-
-    skill = ExpandToFullBody(config={'device': args.device, 'target_width': args.width, 'target_height': args.height})
-
+    skill = ExpandToFullBody(config={'device': args.device})
     result = skill.execute(
-        image_path=args.input,
-        output_path=args.output,
-        prompt=args.prompt,
-        model_name=args.model,
-        steps=args.steps,
-        target_width=args.width,
-        target_height=args.height,
+        image_path=args.input, output_path=args.output,
+        prompt=args.prompt, negative_prompt=args.negative,
+        strength=args.strength, steps=args.steps, seed=args.seed
     )
-
     print(json.dumps(result, ensure_ascii=False, indent=2))

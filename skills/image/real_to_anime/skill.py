@@ -1,7 +1,7 @@
-# skills/real_to_anime/skill.py
+# skills/image/real_to_anime/skill.py
 """
-çäººè½¬å¨æ¼« Skill - å°Eå®çEçE½¬æ¢ä¸ºå¨æ¼«é£æ ¼
-å¤ç¨éç¨ ControlNet å¼æEEpenPoseä¿æå¿æE¼é«å¹Eº¦éçè½¬é£æ ¼EE
+写实转动漫风格 Skill - 将真实照片转换为动漫风格
+使用 ControlNet 保持原图结构
 """
 
 import time
@@ -26,47 +26,42 @@ try:
     DIFFUSERS_AVAILABLE = True
 except ImportError:
     DIFFUSERS_AVAILABLE = False
-    logger.warning("torch æEPIL æªå®è£E)
+    logger.warning("torch 或 PIL 未安装")
 
-# ==================== å¼åEéç¨å¼æEæ¹æ¡EEE====================
 try:
-    from skills.image.controlnet_img2img.skill import ControlNetImg2Img
+    from skills.image.controlnet_img2img.skill import ControlnetImg2Img
     CONTROLNET_ENGINE_AVAILABLE = True
 except ImportError as e:
     CONTROLNET_ENGINE_AVAILABLE = False
-    logger.warning(f"éç¨ ControlNet å¼æä¸å¯ç¨: {e}")
+    logger.warning(f"ControlNet 引擎不可用: {e}")
 
-# å¨æ¼«é£æ ¼é¢E®¾
-ANIME_STYLES = {
-    "gibli": {
-        "prompt": "studio ghibli style, anime, beautiful, soft colors, masterpiece, best quality, 2d animation, hayao miyazaki style",
-        "negative": "photorealistic, 3d render, realistic, ugly, deformed"
-    },
-    "shinkai": {
-        "prompt": "makoto shinkai style, anime, vibrant colors, beautiful lighting, masterpiece, best quality, your name style, 2d animation",
-        "negative": "photorealistic, 3d render, realistic, ugly, deformed"
-    },
-    "jojo": {
-        "prompt": "jojo's bizarre adventure style, anime, bold colors, dynamic, masterpiece, best quality, 2d animation, dramatic",
-        "negative": "photorealistic, 3d render, realistic, ugly, deformed"
+# ==================== 动漫风格配置 ====================
+STYLE_MAP = {
+    "modern": {
+        "prompt": "anime style, modern anime, vibrant colors, beautiful, detailed, masterpiece, high quality",
+        "negative": "ugly, deformed, bad anatomy, extra limbs, missing limbs, bad proportions, blurry, low quality, realistic, photorealistic"
     },
     "classic": {
-        "prompt": "classic anime style, 90s anime, vibrant colors, beautiful, masterpiece, best quality, 2d illustration",
-        "negative": "photorealistic, 3d render, realistic, ugly, deformed"
+        "prompt": "classic anime style, retro anime, beautiful, detailed, masterpiece, high quality",
+        "negative": "ugly, deformed, bad anatomy, extra limbs, missing limbs, bad proportions, blurry, low quality, realistic"
     },
-    "modern": {
-        "prompt": "modern anime style, beautiful, vibrant colors, detailed, masterpiece, best quality, 2d illustration, high quality",
-        "negative": "photorealistic, 3d render, realistic, ugly, deformed"
+    "ghibli": {
+        "prompt": "studio ghibli style, soft colors, magical, beautiful, detailed, masterpiece, high quality",
+        "negative": "ugly, deformed, bad anatomy, extra limbs, missing limbs, bad proportions, blurry, low quality, realistic, dark"
     },
-    "manga": {
-        "prompt": "manga style, black and white, manga art, masterpiece, best quality, 2d illustration, comic style",
-        "negative": "photorealistic, 3d render, realistic, color, ugly, deformed"
+    "shinkai": {
+        "prompt": "makoto shinkai style, beautiful sky, vivid colors, detailed, masterpiece, high quality",
+        "negative": "ugly, deformed, bad anatomy, extra limbs, missing limbs, bad proportions, blurry, low quality, realistic"
+    },
+    "vibrant": {
+        "prompt": "vibrant anime style, colorful, vivid, eye-catching, detailed, masterpiece, high quality",
+        "negative": "ugly, deformed, bad anatomy, extra limbs, missing limbs, bad proportions, blurry, low quality, realistic, dull"
     }
 }
 
 
 class RealToAnime:
-    """çäººè½¬å¨æ¼«æè½ v2.0"""
+    """写实转动漫风格技能 v2.0"""
 
     def __init__(self, config: Dict[str, Any] = None):
         self.config = config or {}
@@ -75,28 +70,30 @@ class RealToAnime:
 
         self.skill_dir = Path(__file__).parent.absolute()
         self.project_root = self.skill_dir.parent.parent.parent
-        # ==================== å¼ºå¶æ¬æè½è¾åEç®å½E====================
+        # ==================== 强制本技能输出目录 ====================
         self.output_dir = self.skill_dir / "output"
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
         self.models_dir = Path(self.config.get('models_dir', self.project_root / 'models'))
         self.device = self.config.get('device', 'cuda' if torch.cuda.is_available() else 'cpu')
 
-        # ==================== ååååºå±å¼æ ====================
-        self.controlnet_engine = None
+        # ==================== 初始化 ControlNet 引擎 ====================
+        self._controlnet_engine = None
+
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
-                self.controlnet_engine = ControlNetImg2Img(config={'device': self.device})
-                logger.info("  âEåºå±EControlNet å¼æåååæå")
+                from skills.image.controlnet_img2img.skill import ControlnetImg2Img
+                self._controlnet_engine = ControlnetImg2Img(config={'device': self.device})
+                logger.info("  ✅ ControlNet 引擎初始化成功")
             except Exception as e:
-                logger.warning(f"  åºå±å¼æåååå¤±è´¥: {e}")
+                logger.warning(f"  引擎初始化失败: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"RealToAnime v{self.version} åååå®æE")
-        logger.info(f"  è®¾å¤E {self.device}")
-        logger.info(f"  å¨æ¼«é£æ ¼: {len(ANIME_STYLES)} çE)
+        logger.info(f"RealToAnime v{self.version} 初始化完成")
+        logger.info(f"  设备: {self.device}")
+        logger.info(f"  风格: {list(STYLE_MAP.keys())}")
 
     def _setup_logging(self):
         log_level = self.config.get('log_level', 'INFO')
@@ -105,64 +102,66 @@ class RealToAnime:
 
     def _setup_config(self):
         defaults = {
-            'default_steps': 35,
-            'default_strength': 0.8, # è½¬å¨æ¼«éè¦è¾E«çéçå¹Eº¦æ¥æ¹åçé£E
+            'default_steps': 30,
+            'default_strength': 0.6,
             'default_style': 'modern',
+            'default_negative': 'ugly, deformed, bad anatomy, extra limbs, missing limbs, bad proportions, blurry, low quality',
         }
         for key, value in defaults.items():
             if key not in self.config:
                 self.config[key] = value
 
     def list_styles(self) -> Dict[str, Any]:
-        return {"status": "success", "styles": list(ANIME_STYLES.keys())}
+        """列出所有可用动漫风格"""
+        return {"status": "success", "styles": list(STYLE_MAP.keys())}
 
     def execute(self, **kwargs) -> Dict[str, Any]:
-        """æè¡çäººè½¬å¨æ¼«"""
         start_time = time.time()
-        logger.info(f"æè¡æè½: {self.name}")
+        logger.info(f"执行技能: {self.name}")
 
         try:
-            # ==================== ä¸¥æ ¼è·¯å¾E ¡éªE====================
+            # ==================== 严格路径校验 ====================
             image_path = kwargs.get('image_path')
             if not image_path:
-                return {"status": "error", "error": "image_path æ¯å¿E¡«åæ°"}
-            
+                return {"status": "error", "error": "image_path 是必填参数"}
+
             abs_image_path = Path(image_path).absolute()
             if not os.path.exists(abs_image_path):
-                return {"status": "error", "error": f"è¾åEå¾çE¸å­å¨: {abs_image_path}ãè¯·æ£æ¥è·¯å¾E¯å¦æ­£ç¡®EE}
+                return {"status": "error", "error": f"输入图片不存在: {abs_image_path}。请检查路径是否正确！"}
 
+            # ==================== 获取动漫风格 ====================
             style = kwargs.get('style', self.config.get('default_style', 'modern'))
-            if style not in ANIME_STYLES:
-                return {"status": "error", "error": f"æªç¥é£æ ¼: {style}Eå¯ç¨: {list(ANIME_STYLES.keys())}"}
+            if style not in STYLE_MAP:
+                return {"status": "error", "error": f"未知风格: {style}，可用: {list(STYLE_MAP.keys())}"}
 
-            style_config = ANIME_STYLES[style]
+            style_config = STYLE_MAP[style]
             prompt = kwargs.get('prompt') or style_config['prompt']
-            negative_prompt = kwargs.get('negative_prompt') or style_config['negative']
+            negative_prompt = kwargs.get('negative_prompt') or style_config.get('negative', self.config.get('default_negative'))
 
-            strength = kwargs.get('strength', self.config.get('default_strength', 0.8))
-            steps = kwargs.get('steps', self.config.get('default_steps', 35))
+            strength = kwargs.get('strength', self.config.get('default_strength', 0.6))
+            steps = kwargs.get('steps', self.config.get('default_steps', 30))
             seed = kwargs.get('seed', -1)
 
-            # ==================== ç´æ¥è°E¨åºå±å¼æ ====================
-            if self.controlnet_engine is None:
-                return {"status": "error", "error": "åºå±EControlNet å¼æä¸å¯ç¨"}
-
-            # éè®¤è¾åEå°æ¬æè½ç®å½E
+            # ==================== 默认输出路径 ====================
             output_path = kwargs.get('output_path')
             if output_path is None:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 output_path = str(self.output_dir / f"{Path(abs_image_path).stem}_anime_{style}_{timestamp}.png")
 
-            logger.info(f"å¨æ¼«é£æ ¼: {style}")
-            logger.info(f"æç¤ºè¯E {prompt[:80]}...")
+            # ==================== 调用底层 ControlNet 引擎 ====================
+            if self._controlnet_engine is None:
+                return {"status": "error", "error": "ControlNet 引擎不可用"}
 
-            result = self.controlnet_engine.execute(
+            logger.info(f"动漫风格: {style}")
+            logger.info(f"提示词: {prompt[:80]}...")
+
+            result = self._controlnet_engine.execute(
                 input_image_path=str(abs_image_path),
                 prompt=prompt,
                 negative_prompt=negative_prompt,
-                preprocessor_type="OPENPOSE",   # æåäººä½éª¨æ¶
-                controlnet_model="openpose",    # å¼ºå¶éæ­äººä½å¿æE¼é²æ­¢åå½¢
-                strength=strength,              # è¾E«çéçå¹Eº¦Eå®æEçé£è½¬åE
+                preprocessor_type="HED",          # 提取边缘轮廓
+                controlnet_model="canny",         # 保持边缘结构
+                strength=strength,
                 steps=steps,
                 output_path=output_path
             )
@@ -176,15 +175,15 @@ class RealToAnime:
                 "style": style,
                 "generation_time": f"{time.time() - start_time:.2f}s",
                 "parameters": {
-                    "strength": strength, 
-                    "steps": steps, 
+                    "strength": strength,
+                    "steps": steps,
                     "seed": seed,
-                    "controlnet": "openpose"
+                    "controlnet": "canny"
                 }
             }
 
         except Exception as e:
-            logger.error(f"æè¡å¤±è´¥: {e}")
+            logger.error(f"执行失败: {e}")
             import traceback
             traceback.print_exc()
             return {"status": "error", "error": str(e)}
@@ -195,22 +194,21 @@ class RealToAnime:
 
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser(description="çäººè½¬å¨æ¼«å·¥å· v2.0")
-    parser.add_argument("--input", "-i", required=True, help="è¾åEå¾çE·¯å¾E)
-    parser.add_argument("--output", "-o", help="è¾åEè·¯å¾E)
+    parser = argparse.ArgumentParser(description="写实转动漫风格工具 v2.0")
+    parser.add_argument("--input", "-i", required=True, help="输入真实照片路径")
+    parser.add_argument("--output", "-o", help="输出路径")
     parser.add_argument("--style", "-s", default="modern",
-                        choices=list(ANIME_STYLES.keys()), help="å¨æ¼«é£æ ¼")
-    parser.add_argument("--prompt", "-p", help="èªå®ä¹æç¤ºè¯E)
-    parser.add_argument("--strength", type=float, default=0.8, help="éçå¼ºåº¦")
-    parser.add_argument("--steps", type=int, default=35, help="è¿­ä£æ­¥æ°")
-    parser.add_argument("--seed", type=int, default=-1, help="éæºçå­E)
+                        choices=list(STYLE_MAP.keys()), help="动漫风格")
+    parser.add_argument("--strength", type=float, default=0.6, help="重绘强度 (0-1)")
+    parser.add_argument("--steps", type=int, default=30, help="迭代步数")
+    parser.add_argument("--seed", type=int, default=-1, help="随机种子")
     parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu")
 
     args = parser.parse_args()
     skill = RealToAnime(config={'device': args.device})
     result = skill.execute(
         image_path=args.input, output_path=args.output,
-        style=args.style, prompt=args.prompt,
+        style=args.style,
         strength=args.strength, steps=args.steps, seed=args.seed
     )
     print(json.dumps(result, ensure_ascii=False, indent=2))

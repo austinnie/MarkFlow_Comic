@@ -1,17 +1,17 @@
-# skills/fantasy_character/skill.py
+# skills/image/fantasy_character/skill.py
 """
-å¥E¹èè² Skill - å°Eººç©åæEå¥E¹èè²Eç²¾çµ/å¤©ä½¿/æ¶é­Eé­æ³å¸ç­ï¼E
-å¤ç¨éç¨ ControlNet å¼æEEpenPoseéå¿æE¼é«å¹Eº¦éçè½¬å¥E¹é£ï¼E
+幻想角色生成 Skill - 将人物转换为幻想角色（精灵、矮人、兽人等）
+使用 ControlNet OpenPose 保持人物姿态一致
 """
 
+import time
 import os
 import sys
 import json
-import time
 import random
 from pathlib import Path
 from datetime import datetime
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any, Optional
 import logging
 
 logger = logging.getLogger(__name__)
@@ -24,65 +24,56 @@ try:
     import torch
     from PIL import Image
     DIFFUSERS_AVAILABLE = True
-except ImportError as e:
+except ImportError:
     DIFFUSERS_AVAILABLE = False
-    logger.warning(f"torch æEPIL æªå®è£E {e}")
+    logger.warning("torch 或 PIL 未安装")
 
-# ==================== å¼åEéç¨å¼æEæ¹æ¡EEE====================
 try:
-    from skills.image.controlnet_img2img.skill import ControlNetImg2Img
+    from skills.image.controlnet_img2img.skill import ControlnetImg2Img
     CONTROLNET_ENGINE_AVAILABLE = True
 except ImportError as e:
     CONTROLNET_ENGINE_AVAILABLE = False
-    logger.warning(f"éç¨ ControlNet å¼æä¸å¯ç¨: {e}")
+    logger.warning(f"ControlNet 引擎不可用: {e}")
 
-# å¥E¹èè²æç¤ºè¯éEç½®
-FANTASY_PROMPTS = {
+# ==================== 幻想角色类型配置 ====================
+FANTASY_TYPES = {
     "elf": {
-        "prompt": "beautiful elf, long pointed ears, fantasy elf, elegant, magical, nature, fantasy character, masterpiece, high quality, detailed",
-        "negative": "ugly, deformed, human, modern, realistic, bad anatomy"
+        "prompt": "elf, pointed ears, elegant, mystical, beautiful, fantasy, magical aura, masterpiece, high quality",
+        "negative": "ugly, deformed, bad anatomy, extra limbs, missing limbs, bad proportions, blurry, low quality"
     },
-    "angel": {
-        "prompt": "beautiful angel, white feathered wings, golden halo, divine, ethereal, heavenly, fantasy character, masterpiece, high quality",
-        "negative": "ugly, deformed, demon, devil, dark, evil"
+    "dwarf": {
+        "prompt": "dwarf, short, sturdy, beard, warrior, fantasy, rugged, strong, masterpiece, high quality",
+        "negative": "ugly, deformed, bad anatomy, extra limbs, missing limbs, bad proportions, blurry, low quality"
     },
-    "demon": {
-        "prompt": "beautiful demon, curved horns, dark bat wings, seductive, dark fantasy, hellfire, fantasy character, masterpiece, high quality",
-        "negative": "ugly, deformed, angel, holy, light, pure"
-    },
-    "mage": {
-        "prompt": "powerful mage, wizard, magical robes, staff, spellcasting, arcane energy, fantasy character, masterpiece, high quality",
-        "negative": "ugly, deformed, modern, realistic, casual"
-    },
-    "knight": {
-        "prompt": "majestic knight, full plate armor, fantasy knight, sword, shield, heroic, noble, fantasy character, masterpiece, high quality",
-        "negative": "ugly, deformed, modern, casual, civilian"
+    "orc": {
+        "prompt": "orc, green skin, muscular, fierce, fantasy, warrior, tusks, masterpiece, high quality",
+        "negative": "ugly, deformed, bad anatomy, extra limbs, missing limbs, bad proportions, blurry, low quality"
     },
     "fairy": {
-        "prompt": "beautiful fairy, translucent wings, glowing, magical, ethereal, nature spirit, fantasy character, masterpiece, high quality",
-        "negative": "ugly, deformed, human, modern, realistic"
-    },
-    "vampire": {
-        "prompt": "elegant vampire, pale skin, sharp fangs, gothic, aristocratic, dark fantasy, fantasy character, masterpiece, high quality",
-        "negative": "ugly, deformed, human, modern, realistic, cheerful"
-    },
-    "merfolk": {
-        "prompt": "beautiful mermaid, fish tail, underwater, coral, seashells, aquatic fantasy, fantasy character, masterpiece, high quality",
-        "negative": "ugly, deformed, human, modern, realistic, legs"
+        "prompt": "fairy, wings, magical, delicate, glowing, fantasy, ethereal, masterpiece, high quality",
+        "negative": "ugly, deformed, bad anatomy, extra limbs, missing limbs, bad proportions, blurry, low quality"
     },
     "dragonborn": {
-        "prompt": "dragonborn character, dragon scales, reptilian features, fantasy, powerful, elemental, fantasy character, masterpiece, high quality",
-        "negative": "ugly, deformed, human, modern, realistic"
+        "prompt": "dragonborn, scales, dragon features, reptilian, fantasy, warrior, masterpiece, high quality",
+        "negative": "ugly, deformed, bad anatomy, extra limbs, missing limbs, bad proportions, blurry, low quality"
     },
-    "phoenix": {
-        "prompt": "phoenix themed character, fiery, reborn, majestic, golden flames, fantasy, masterpiece, high quality",
-        "negative": "ugly, deformed, human, modern, realistic, cold"
+    "angel": {
+        "prompt": "angel, wings, halo, divine, ethereal, beautiful, fantasy, masterpiece, high quality",
+        "negative": "ugly, deformed, bad anatomy, extra limbs, missing limbs, bad proportions, blurry, low quality"
+    },
+    "demon": {
+        "prompt": "demon, horns, dark, fiery, fantasy, powerful, masterpiece, high quality",
+        "negative": "ugly, deformed, bad anatomy, extra limbs, missing limbs, bad proportions, blurry, low quality"
+    },
+    "dark_elf": {
+        "prompt": "dark elf, drow, dark skin, white hair, elegant, mysterious, fantasy, masterpiece, high quality",
+        "negative": "ugly, deformed, bad anatomy, extra limbs, missing limbs, bad proportions, blurry, low quality"
     }
 }
 
 
 class FantasyCharacter:
-    """å¥E¹èè²æè½ v2.0"""
+    """幻想角色生成技能 v2.0"""
 
     def __init__(self, config: Dict[str, Any] = None):
         self.config = config or {}
@@ -91,101 +82,98 @@ class FantasyCharacter:
 
         self.skill_dir = Path(__file__).parent.absolute()
         self.project_root = self.skill_dir.parent.parent.parent
-        # ==================== å¼ºå¶æ¬æè½è¾åEç®å½E====================
-        self.output_dir = Path(self.config.get('output_dir', self.skill_dir / 'output'))
+        # ==================== 强制本技能输出目录 ====================
+        self.output_dir = self.skill_dir / "output"
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
         self.models_dir = Path(self.config.get('models_dir', self.project_root / 'models'))
         self.device = self.config.get('device', 'cuda' if torch.cuda.is_available() else 'cpu')
 
-        # ==================== ååååºå±å¼æ ====================
-        self.controlnet_engine = None
+        # ==================== 初始化 ControlNet 引擎 ====================
+        self._controlnet_engine = None
+
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
-                self.controlnet_engine = ControlNetImg2Img(config={'device': self.device})
-                logger.info("  âEåºå±EControlNet å¼æåååæå")
+                from skills.image.controlnet_img2img.skill import ControlnetImg2Img
+                self._controlnet_engine = ControlnetImg2Img(config={'device': self.device})
+                logger.info("  ✅ ControlNet 引擎初始化成功")
             except Exception as e:
-                logger.warning(f"  åºå±å¼æåååå¤±è´¥: {e}")
+                logger.warning(f"  引擎初始化失败: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"FantasyCharacter v{self.version} åååå®æE")
-        logger.info(f"  è®¾å¤E {self.device}")
-        logger.info(f"  å¥E¹ç±åE {list(FANTASY_PROMPTS.keys())}")
+        logger.info(f"FantasyCharacter v{self.version} 初始化完成")
+        logger.info(f"  设备: {self.device}")
+        logger.info(f"  角色类型: {list(FANTASY_TYPES.keys())}")
 
     def _setup_logging(self):
         log_level = self.config.get('log_level', 'INFO')
-        logging.basicConfig(
-            level=getattr(logging, log_level.upper()),
-            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-        )
+        logging.basicConfig(level=getattr(logging, log_level.upper()),
+                           format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
     def _setup_config(self):
         defaults = {
-            'default_steps': 35,
-            'default_strength': 0.8,
+            'default_steps': 30,
+            'default_strength': 0.6,
             'default_type': 'elf',
-            'default_negative': 'ugly, deformed, bad anatomy, extra limbs, blurry, low quality, modern, realistic, human',
+            'default_negative': 'ugly, deformed, bad anatomy, extra limbs, missing limbs, bad proportions, blurry, low quality',
         }
         for key, value in defaults.items():
             if key not in self.config:
                 self.config[key] = value
 
-    def get_available_types(self) -> Dict[str, str]:
-        return {k: v['prompt'][:50] + '...' for k, v in FANTASY_PROMPTS.items()}
-
-    def get_type_info(self, fantasy_type: str) -> Optional[Dict[str, str]]:
-        return FANTASY_PROMPTS.get(fantasy_type)
+    def list_types(self) -> Dict[str, Any]:
+        """列出所有可用幻想角色类型"""
+        return {"status": "success", "types": list(FANTASY_TYPES.keys())}
 
     def execute(self, **kwargs) -> Dict[str, Any]:
-        """æè¡å¥E¹èè²è½¬æ¢"""
         start_time = time.time()
-        logger.info(f"æè¡æè½: {self.name} v{self.version}")
+        logger.info(f"执行技能: {self.name}")
 
         try:
-            # ==================== ä¸¥æ ¼è·¯å¾E ¡éªE====================
+            # ==================== 严格路径校验 ====================
             image_path = kwargs.get('image_path')
             if not image_path:
-                return {"status": "error", "error": "ç¼ºå°Eimage_path åæ°"}
-            
+                return {"status": "error", "error": "image_path 是必填参数"}
+
             abs_image_path = Path(image_path).absolute()
             if not os.path.exists(abs_image_path):
-                return {"status": "error", "error": f"è¾åEå¾çE¸å­å¨: {abs_image_path}ãè¯·æ£æ¥è·¯å¾E¯å¦æ­£ç¡®EE}
+                return {"status": "error", "error": f"输入图片不存在: {abs_image_path}。请检查路径是否正确！"}
 
-            # 2. è·ååæ°
+            # ==================== 获取幻想角色类型 ====================
             fantasy_type = kwargs.get('fantasy_type', self.config.get('default_type', 'elf'))
-            if fantasy_type not in FANTASY_PROMPTS:
-                return {
-                    "status": "error",
-                    "error": f"æªç¥å¥E¹ç±åE {fantasy_type}Eå¯ç¨: {list(FANTASY_PROMPTS.keys())}"
-                }
+            if fantasy_type not in FANTASY_TYPES:
+                return {"status": "error", "error": f"未知角色类型: {fantasy_type}，可用: {list(FANTASY_TYPES.keys())}"}
 
-            f_config = FANTASY_PROMPTS[fantasy_type]
-            prompt = kwargs.get('prompt') or f_config['prompt']
-            negative_prompt = kwargs.get('negative_prompt') or f_config.get('negative', self.config.get('default_negative'))
+            type_config = FANTASY_TYPES[fantasy_type]
+            prompt = kwargs.get('prompt') or type_config['prompt']
+            negative_prompt = kwargs.get('negative_prompt') or type_config.get('negative', self.config.get('default_negative'))
 
-            strength = kwargs.get('strength', self.config.get('default_strength', 0.8))
-            steps = kwargs.get('steps', self.config.get('default_steps', 35))
+            strength = kwargs.get('strength', self.config.get('default_strength', 0.6))
+            steps = kwargs.get('steps', self.config.get('default_steps', 30))
             seed = kwargs.get('seed', -1)
 
-            # ==================== ç´æ¥è°E¨åºå±å¼æ ====================
-            if self.controlnet_engine is None:
-                return {"status": "error", "error": "åºå±EControlNet å¼æä¸å¯ç¨"}
+            # ==================== 默认输出路径 ====================
+            output_path = kwargs.get('output_path')
+            if output_path is None:
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                output_path = str(self.output_dir / f"{Path(abs_image_path).stem}_{fantasy_type}_{timestamp}.png")
 
-            # éè®¤è¾åEå°æ¬æè½ç®å½E
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            output_path = kwargs.get('output_path') or str(self.output_dir / f"{fantasy_type}_{timestamp}.png")
+            # ==================== 调用底层 ControlNet 引擎 ====================
+            if self._controlnet_engine is None:
+                return {"status": "error", "error": "ControlNet 引擎不可用"}
 
-            logger.info(f"å¥E¹ç±åE {fantasy_type}")
-            logger.info(f"æç¤ºè¯E {prompt[:80]}...")
+            logger.info(f"幻想角色类型: {fantasy_type}")
+            logger.info(f"提示词: {prompt[:80]}...")
 
-            result = self.controlnet_engine.execute(
+            # 使用 OpenPose 保持人物姿态
+            result = self._controlnet_engine.execute(
                 input_image_path=str(abs_image_path),
                 prompt=prompt,
                 negative_prompt=negative_prompt,
-                preprocessor_type="OPENPOSE",   # æåäººä½éª¨æ¶
-                controlnet_model="openpose",    # éæ­äººä½å¿æE¼é²æ­¢å¥E¹åå¯¼è´å´©åE
+                preprocessor_type="HED",          # 提取边缘轮廓
+                controlnet_model="openpose",      # 使用 OpenPose 保持姿态
                 strength=strength,
                 steps=steps,
                 output_path=output_path
@@ -194,109 +182,46 @@ class FantasyCharacter:
             if result['status'] != 'success':
                 return result
 
-            # ä¿å­åEæ°æ®
-            metadata = {
-                'skill': self.name,
-                'version': self.version,
-                'fantasy_type': fantasy_type,
-                'prompt': prompt,
-                'negative_prompt': negative_prompt,
-                'steps': steps,
-                'strength': strength,
-                'seed': seed,
-                'output_path': output_path,
-                'timestamp': timestamp,
-                'use_controlnet': True,
-            }
-
-            metadata_path = Path(output_path).with_suffix('.meta.json')
-            with open(metadata_path, 'w', encoding='utf-8') as f:
-                json.dump(metadata, f, ensure_ascii=False, indent=2)
-
             return {
                 "status": "success",
                 "output_path": result.get('image_path', output_path),
-                "metadata_path": str(metadata_path),
                 "fantasy_type": fantasy_type,
-                "seed": seed,
-                "elapsed_time": time.time() - start_time,
-                "metadata": metadata,
+                "generation_time": f"{time.time() - start_time:.2f}s",
+                "parameters": {
+                    "strength": strength,
+                    "steps": steps,
+                    "seed": seed,
+                    "controlnet": "openpose"
+                }
             }
 
         except Exception as e:
-            logger.error(f"æè¡å¤±è´¥: {e}", exc_info=True)
-            return {
-                "status": "error",
-                "error": str(e),
-                "elapsed_time": time.time() - start_time,
-            }
+            logger.error(f"执行失败: {e}")
+            import traceback
+            traceback.print_exc()
+            return {"status": "error", "error": str(e)}
 
-    def batch_process(self, image_paths: List[str], fantasy_type: str = 'elf', **kwargs) -> List[Dict[str, Any]]:
-        """æ¹éå¤Eå¤å¼ å¾çE""
-        results = []
-        total = len(image_paths)
-        for idx, img_path in enumerate(image_paths):
-            logger.info(f"å¤E {idx+1}/{total}: {img_path}")
-            result = self.execute(
-                image_path=img_path,
-                fantasy_type=fantasy_type,
-                **kwargs
-            )
-            results.append({'image': img_path, 'result': result})
-            if idx < total - 1:
-                time.sleep(0.5)
-        return results
-
-    def __repr__(self) -> str:
-        return f"<FantasyCharacter skill v{self.version} on {self.device}>"
+    def __repr__(self):
+        return f"<FantasyCharacter(name={self.name}, version={self.version})>"
 
 
 if __name__ == "__main__":
     import argparse
-    
-    parser = argparse.ArgumentParser(
-        description='å¥E¹èè²çæEå¨ v2.0 - å°Eººç©ççE½¬æ¢ä¸ºå¥E¹èè²',
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog=f'''å¯ç¨çE¥E¹ç±åE {', '.join(FANTASY_PROMPTS.keys())}'''
-    )
-    
-    parser.add_argument('image', help='è¾åEå¾çE·¯å¾E)
-    parser.add_argument('-t', '--type', default='elf', choices=list(FANTASY_PROMPTS.keys()), help='å¥E¹ç±åE(éè®¤: elf)')
-    parser.add_argument('-o', '--output', help='è¾åEç®å½E)
-    parser.add_argument('-s', '--steps', type=int, default=35, help='æ¨çE­¥æ°')
-    parser.add_argument('-r', '--strength', type=float, default=0.8, help='åæ¢å¼ºåº¦ 0.0-1.0')
-    parser.add_argument('--seed', type=int, default=-1, help='éæºçå­E)
-    parser.add_argument('--prompt', help='èªå®ä¹æç¤ºè¯E)
-    parser.add_argument('--negative', help='èªå®ä¹è´é¢æç¤ºè¯E)
-    parser.add_argument('--list-types', action='store_true', help='ååEææå¥E¹ç±åE)
-    
+    parser = argparse.ArgumentParser(description="幻想角色生成工具 v2.0")
+    parser.add_argument("--input", "-i", required=True, help="输入图片路径")
+    parser.add_argument("--output", "-o", help="输出路径")
+    parser.add_argument("--type", "-t", default="elf",
+                        choices=list(FANTASY_TYPES.keys()), help="幻想角色类型")
+    parser.add_argument("--strength", type=float, default=0.6, help="重绘强度 (0-1)")
+    parser.add_argument("--steps", type=int, default=30, help="迭代步数")
+    parser.add_argument("--seed", type=int, default=-1, help="随机种子")
+    parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu")
+
     args = parser.parse_args()
-    
-    if args.list_types:
-        print("å¯ç¨çE¥E¹ç±åE")
-        for t in FANTASY_PROMPTS.keys():
-            print(f"  - {t}")
-        sys.exit(0)
-    
-    skill = FantasyCharacter()
+    skill = FantasyCharacter(config={'device': args.device})
     result = skill.execute(
-        image_path=args.image,
+        image_path=args.input, output_path=args.output,
         fantasy_type=args.type,
-        output_dir=args.output,
-        steps=args.steps,
-        strength=args.strength,
-        seed=args.seed,
-        prompt=args.prompt,
-        negative_prompt=args.negative,
+        strength=args.strength, steps=args.steps, seed=args.seed
     )
-    
-    if result['status'] == 'success':
-        print(f"\nâEçæEæå!")
-        print(f"  è¾åE: {result['output_path']}")
-        print(f"  ç±åE {result['fantasy_type']}")
-        print(f"  çå­E {result['seed']}")
-        print(f"  èæ¶: {result['elapsed_time']:.2f}s")
-    else:
-        print(f"\nâEå¤±è´¥: {result.get('error', 'æªç¥éè¯¯')}")
-        sys.exit(1)
-"""
+    print(json.dumps(result, ensure_ascii=False, indent=2))

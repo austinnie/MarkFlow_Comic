@@ -1,7 +1,7 @@
-# skills/day_night_transfer/skill.py
+# skills/image/day_night_transfer/skill.py
 """
-æ¼å¤è½¬æ¢ Skill - å°E¾çEç½å¤©è½¬ä¸ºå¤ææåä¹E
-å¤ç¨éç¨ ControlNet å¼æEELSD + Depth éç©ºé´å ä½ï¼å®æEåæ¯è½¬æ¢EE
+Day Night Transfer - 昼夜转换 Skill
+将白天图片转换为夜晚，或夜晚转换为白天
 """
 
 import time
@@ -26,38 +26,29 @@ try:
     DIFFUSERS_AVAILABLE = True
 except ImportError:
     DIFFUSERS_AVAILABLE = False
-    logger.warning("torch æEPIL æªå®è£E)
+    logger.warning("torch 或 PIL 未安装")
 
-# ==================== å¼åEéç¨å¼æEæ¹æ¡EEE====================
 try:
-    from skills.image.controlnet_img2img.skill import ControlNetImg2Img
+    from skills.image.controlnet_img2img.skill import ControlnetImg2Img
     CONTROLNET_ENGINE_AVAILABLE = True
 except ImportError as e:
     CONTROLNET_ENGINE_AVAILABLE = False
-    logger.warning(f"éç¨ ControlNet å¼æä¸å¯ç¨: {e}")
+    logger.warning(f"ControlNet 引擎不可用: {e}")
 
-TIME_MODES = {
-    "day": {
-        "prompt": "bright sunny day, natural sunlight, clear sky, vibrant, masterpiece, high quality",
-        "negative": "night, dark, moonlight, stars, dim"
+MODE_MAP = {
+    "day_to_night": {
+        "prompt": "night scene, dark sky, moonlight, stars, night atmosphere, street lights, warm yellow lights, masterpiece, high quality",
+        "negative": "daylight, sunny, bright, sun, morning, afternoon, daytime"
     },
-    "night": {
-        "prompt": "night scene, moonlight, stars, dark sky, soft lighting, mysterious, masterpiece, high quality",
-        "negative": "day, sunlight, bright, sunny, daylight"
-    },
-    "sunset": {
-        "prompt": "sunset, golden hour, warm orange sky, beautiful sunset, masterpiece, high quality",
-        "negative": "night, dark, harsh sunlight"
-    },
-    "dawn": {
-        "prompt": "dawn, early morning, soft light, sunrise, misty, peaceful, masterpiece, high quality",
-        "negative": "night, harsh light, sunset"
+    "night_to_day": {
+        "prompt": "daytime, bright sunlight, clear sky, sunny, vibrant colors, daylight, masterpiece, high quality",
+        "negative": "night, dark, moonlight, stars, dim, shadowy"
     }
 }
 
 
 class DayNightTransfer:
-    """æ¼å¤è½¬æ¢æè½ v2.0"""
+    """昼夜转换技能 v2.0"""
 
     def __init__(self, config: Dict[str, Any] = None):
         self.config = config or {}
@@ -66,28 +57,28 @@ class DayNightTransfer:
 
         self.skill_dir = Path(__file__).parent.absolute()
         self.project_root = self.skill_dir.parent.parent.parent
-        # ==================== å¼ºå¶æ¬æè½è¾åEç®å½E====================
         self.output_dir = self.skill_dir / "output"
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
         self.models_dir = Path(self.config.get('models_dir', self.project_root / 'models'))
         self.device = self.config.get('device', 'cuda' if torch.cuda.is_available() else 'cpu')
 
-        # ==================== ååååºå±å¼æ ====================
-        self.controlnet_engine = None
+        self._controlnet_engine = None
+
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
-                self.controlnet_engine = ControlNetImg2Img(config={'device': self.device})
-                logger.info("  âEåºå±EControlNet å¼æåååæå")
+                from skills.image.controlnet_img2img.skill import ControlnetImg2Img
+                self._controlnet_engine = ControlnetImg2Img(config={'device': self.device})
+                logger.info("  ✅ ControlNet 引擎初始化成功")
             except Exception as e:
-                logger.warning(f"  åºå±å¼æåååå¤±è´¥: {e}")
+                logger.warning(f"  引擎初始化失败: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"DayNightTransfer v{self.version} åååå®æE")
-        logger.info(f"  è®¾å¤E {self.device}")
-        logger.info(f"  æ¨¡å¼E {list(TIME_MODES.keys())}")
+        logger.info(f"DayNightTransfer v{self.version} 初始化完成")
+        logger.info(f"  设备: {self.device}")
+        logger.info(f"  模式: {list(MODE_MAP.keys())}")
 
     def _setup_logging(self):
         log_level = self.config.get('log_level', 'INFO')
@@ -97,62 +88,59 @@ class DayNightTransfer:
     def _setup_config(self):
         defaults = {
             'default_steps': 30,
-            'default_strength': 0.7,
-            'default_mode': 'night',
+            'default_strength': 0.6,
+            'default_mode': 'day_to_night',
+            'default_negative': 'ugly, deformed, bad anatomy, extra limbs, blurry, low quality',
         }
         for key, value in defaults.items():
             if key not in self.config:
                 self.config[key] = value
 
     def list_modes(self) -> Dict[str, Any]:
-        return {"status": "success", "modes": list(TIME_MODES.keys())}
+        return {"status": "success", "modes": list(MODE_MAP.keys())}
 
     def execute(self, **kwargs) -> Dict[str, Any]:
         start_time = time.time()
-        logger.info(f"æè¡æè½: {self.name}")
+        logger.info(f"执行技能: {self.name}")
 
         try:
-            # ==================== ä¸¥æ ¼è·¯å¾E ¡éªE====================
             image_path = kwargs.get('image_path')
             if not image_path:
-                return {"status": "error", "error": "image_path æ¯å¿E¡«åæ°"}
-            
+                return {"status": "error", "error": "image_path 是必填参数"}
+
             abs_image_path = Path(image_path).absolute()
             if not os.path.exists(abs_image_path):
-                return {"status": "error", "error": f"è¾åEå¾çE¸å­å¨: {abs_image_path}ãè¯·æ£æ¥è·¯å¾E¯å¦æ­£ç¡®EE}
+                return {"status": "error", "error": f"输入图片不存在: {abs_image_path}"}
 
-            mode = kwargs.get('mode', self.config.get('default_mode', 'night'))
-            if mode not in TIME_MODES:
-                return {"status": "error", "error": f"æªç¥æ¨¡å¼E {mode}Eå¯ç¨: {list(TIME_MODES.keys())}"}
+            mode = kwargs.get('mode', self.config.get('default_mode', 'day_to_night'))
+            if mode not in MODE_MAP:
+                return {"status": "error", "error": f"未知模式: {mode}，可用: {list(MODE_MAP.keys())}"}
 
-            mode_config = TIME_MODES[mode]
+            mode_config = MODE_MAP[mode]
             prompt = kwargs.get('prompt') or mode_config['prompt']
-            negative_prompt = kwargs.get('negative_prompt') or mode_config['negative']
+            negative_prompt = kwargs.get('negative_prompt') or mode_config.get('negative', self.config.get('default_negative'))
 
-            strength = kwargs.get('strength', self.config.get('default_strength', 0.7))
+            strength = kwargs.get('strength', self.config.get('default_strength', 0.6))
             steps = kwargs.get('steps', self.config.get('default_steps', 30))
             seed = kwargs.get('seed', -1)
 
-            # ==================== ç´æ¥è°E¨åºå±å¼æ ====================
-            if self.controlnet_engine is None:
-                return {"status": "error", "error": "åºå±EControlNet å¼æä¸å¯ç¨"}
-
-            # éè®¤è¾åEå°æ¬æè½ç®å½E
             output_path = kwargs.get('output_path')
             if output_path is None:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 output_path = str(self.output_dir / f"{Path(abs_image_path).stem}_{mode}_{timestamp}.png")
 
-            logger.info(f"æ¨¡å¼E {mode}")
-            logger.info(f"æç¤ºè¯E {prompt[:80]}...")
+            if self._controlnet_engine is None:
+                return {"status": "error", "error": "ControlNet 引擎不可用"}
 
-            # ä½¿ç¨ MLSD æåå ä½çº¿æ¡ + åºå±EDepth æ¨¡åï¼å®ç¾ä¿æåºæ¯ç©ºé´çæ
-            result = self.controlnet_engine.execute(
+            logger.info(f"模式: {mode}")
+            logger.info(f"提示词: {prompt[:80]}...")
+
+            result = self._controlnet_engine.execute(
                 input_image_path=str(abs_image_path),
                 prompt=prompt,
                 negative_prompt=negative_prompt,
-                preprocessor_type="MLSD",      # æååºç­Eæ¯ç©ç´çº¿
-                controlnet_model="depth",      # ä½¿ç¨æ·±åº¦æ¨¡åéæ­ç©ºé´å³ç³
+                preprocessor_type="HED",
+                controlnet_model="canny",
                 strength=strength,
                 steps=steps,
                 output_path=output_path
@@ -167,15 +155,15 @@ class DayNightTransfer:
                 "mode": mode,
                 "generation_time": f"{time.time() - start_time:.2f}s",
                 "parameters": {
-                    "strength": strength, 
-                    "steps": steps, 
+                    "strength": strength,
+                    "steps": steps,
                     "seed": seed,
-                    "controlnet": "depth"
+                    "controlnet": "canny"
                 }
             }
 
         except Exception as e:
-            logger.error(f"æè¡å¤±è´¥: {e}")
+            logger.error(f"执行失败: {e}")
             import traceback
             traceback.print_exc()
             return {"status": "error", "error": str(e)}
@@ -186,14 +174,14 @@ class DayNightTransfer:
 
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser(description="æ¼å¤è½¬æ¢å·¥å· v2.0")
-    parser.add_argument("--input", "-i", required=True, help="è¾åEå¾çE·¯å¾E)
-    parser.add_argument("--output", "-o", help="è¾åEè·¯å¾E)
-    parser.add_argument("--mode", "-m", default="night",
-                        choices=list(TIME_MODES.keys()), help="æ¨¡å¼E)
-    parser.add_argument("--strength", type=float, default=0.7, help="éçå¼ºåº¦")
-    parser.add_argument("--steps", type=int, default=30, help="è¿­ä£æ­¥æ°")
-    parser.add_argument("--seed", type=int, default=-1, help="éæºçå­E)
+    parser = argparse.ArgumentParser(description="昼夜转换工具 v2.0")
+    parser.add_argument("--input", "-i", required=True, help="输入图片路径")
+    parser.add_argument("--output", "-o", help="输出路径")
+    parser.add_argument("--mode", "-m", default="day_to_night",
+                        choices=list(MODE_MAP.keys()), help="转换模式")
+    parser.add_argument("--strength", type=float, default=0.6, help="重绘强度")
+    parser.add_argument("--steps", type=int, default=30, help="迭代步数")
+    parser.add_argument("--seed", type=int, default=-1, help="随机种子")
     parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu")
 
     args = parser.parse_args()

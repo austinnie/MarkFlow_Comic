@@ -1,230 +1,215 @@
-# skills/photo_restorer/skill.py
+# skills/image/photo_restorer/skill.py
 """
-photo_restorer - èçEçE¿®å¤å·¥å·
-
-ä½¿ç¨AIææ¯ä¿®å¤ãä¸è²ãå¢å¼ºèçEçE
-åèE:
-  - ççE¿®å¤ï¼ååªãååçEE
-  - è¶EEè¾¨çE¼æ¾å¤EE
-  - æºè½ä¸è²
-  - äººè¸ä¿®å¤E
-  - å¤æ¨¡åæ¯æE
-
-æ³¨æï¼ä¸æçç¡¬æ ¸ä¿®å¤æ¨¡åï¼EodeFormer/GFPGAN/RealESRGANEè·¯å¾E·²å½æ¡£äºE
-E:/SD_OpenVINO/models/upscalers_and_restorers/
-çº¯CPUç¯å¢E¸ï¼ControlNet å¼æä½ä¸ºç¨³å®å¤E¨æ¹æ¡ãE
+老照片修复工具 Skill - 使用AI技术修复、上色、增强老照片
+基于 ControlNet 进行图像修复和增强
 """
 
+import time
 import os
 import sys
 import json
-import logging
+import random
 from pathlib import Path
-from typing import Dict, Any, Optional, List
 from datetime import datetime
-import time
+from typing import Dict, Any, Optional
+import logging
 
 logger = logging.getLogger(__name__)
 
-# æ·å é¡¹ç®è·¯å¾E
 project_root = Path(__file__).parent.parent.parent
 if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
 try:
     import torch
-    from PIL import Image
+    from PIL import Image, ImageEnhance, ImageFilter
+    import numpy as np
     DIFFUSERS_AVAILABLE = True
 except ImportError:
     DIFFUSERS_AVAILABLE = False
-    logger.warning("torch æEPIL æªå®è£E)
+    logger.warning("torch 或 PIL 未安装")
 
-# ==================== å¼åEéç¨å¼æEæ¹æ¡EEE====================
 try:
-    from skills.image.controlnet_img2img.skill import ControlNetImg2Img
+    from skills.image.controlnet_img2img.skill import ControlnetImg2Img
     CONTROLNET_ENGINE_AVAILABLE = True
 except ImportError as e:
     CONTROLNET_ENGINE_AVAILABLE = False
-    logger.warning(f"éç¨ ControlNet å¼æä¸å¯ç¨: {e}")
+    logger.warning(f"ControlNet 引擎不可用: {e}")
 
-# ==================== æ¨¡åè·¯å¾E å°E(åºäºä½ ååEæ´çEç®å½E ====================
-MODELS_DIR = Path(r"E:\SD_OpenVINO\models\upscalers_and_restorers")
+# ==================== 修复模式配置 ====================
+RESTORE_MODES = {
+    "repair": {
+        "prompt": "restored photo, repaired, clear, sharp, high quality, detailed, masterpiece",
+        "negative": "ugly, deformed, blurry, low quality, damaged, scratched, faded, torn"
+    },
+    "colorize": {
+        "prompt": "colorized photo, vibrant colors, natural, clear, high quality, detailed, masterpiece",
+        "negative": "ugly, deformed, blurry, low quality, black and white, faded"
+    },
+    "enhance": {
+        "prompt": "enhanced photo, sharp, vivid, clear, high quality, detailed, masterpiece",
+        "negative": "ugly, deformed, blurry, low quality, faded, damaged"
+    }
+}
 
 
 class PhotoRestorer:
-    """èçEçE¿®å¤å¨ v4.0 (åºç¡çE"""
-    SUPPORTED_MODELS = {
-        "controlnet": {
-            "name": "ControlNet Restore",
-            "description": "ä½¿ç¨æ¬å° ControlNet å¼æè¿è¡ç¨³å®ä¿®å¤E,
-            "type": "diffusion",
-            "default": True,
-        },
-        "codeformer": {
-            "name": "CodeFormer",
-            "description": "äººè¸ä¿®å¤E(é Python 3.10+ ä¸å®è£E®æ¡ä¾èµE",
-            "type": "gan",
-            "default": False,
-            "weights": MODELS_DIR / "codeformer" / "codeformer.pth",
-        }
-    }
+    """老照片修复工具 v2.0"""
 
     def __init__(self, config: Dict[str, Any] = None):
         self.config = config or {}
         self.name = "photo_restorer"
-        self.version = "4.0.0"
+        self.version = "2.0.0"
 
         self.skill_dir = Path(__file__).parent.absolute()
         self.project_root = self.skill_dir.parent.parent.parent
+        # ==================== 强制本技能输出目录 ====================
         self.output_dir = self.skill_dir / "output"
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
-        self.controlnet_engine = None
+        self.models_dir = Path(self.config.get('models_dir', self.project_root / 'models'))
+        self.device = self.config.get('device', 'cuda' if torch.cuda.is_available() else 'cpu')
+
+        # ==================== 初始化 ControlNet 引擎 ====================
+        self._controlnet_engine = None
+
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
-                self.controlnet_engine = ControlNetImg2Img(config={'device': self.config.get('device', 'cpu')})
-                logger.info("  âEåºå±EControlNet å¼æåååæå")
+                from skills.image.controlnet_img2img.skill import ControlnetImg2Img
+                self._controlnet_engine = ControlnetImg2Img(config={'device': self.device})
+                logger.info("  ✅ ControlNet 引擎初始化成功")
             except Exception as e:
-                logger.warning(f"  åºå±å¼æåååå¤±è´¥: {e}")
+                logger.warning(f"  引擎初始化失败: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"ççE¿®å¤å¨ v{self.version} åååå®æE")
+        logger.info(f"PhotoRestorer v{self.version} 初始化完成")
+        logger.info(f"  设备: {self.device}")
+        logger.info(f"  修复模式: {list(RESTORE_MODES.keys())}")
 
     def _setup_logging(self):
-        log_level = self.config.get("log_level", "INFO")
+        log_level = self.config.get('log_level', 'INFO')
         logging.basicConfig(level=getattr(logging, log_level.upper()),
-                           format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+                           format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
     def _setup_config(self):
         defaults = {
-            "default_model": "controlnet",
-            "output_dir": str(self.output_dir),
-            "log_level": "INFO",
+            'default_steps': 35,
+            'default_strength': 0.5,
+            'default_mode': 'repair',
+            'default_negative': 'ugly, deformed, blurry, low quality, damaged, scratched, faded, torn',
         }
         for key, value in defaults.items():
             if key not in self.config:
                 self.config[key] = value
 
-    def get_models(self) -> Dict[str, Dict]:
-        return self.SUPPORTED_MODELS
+    def list_modes(self) -> Dict[str, Any]:
+        """列出所有可用修复模式"""
+        return {"status": "success", "modes": list(RESTORE_MODES.keys())}
 
-    def _restore_with_controlnet(self, image_path: str, output_path: str, **kwargs) -> bool:
-        """ä½¿ç¨ ControlNet è¿è¡åºç¡éçä¿®å¤E(ç¨³å®æ¹æ¡E"""
-        if self.controlnet_engine is None:
-            logger.error("åºå±EControlNet å¼æä¸å¯ç¨")
-            return False
-
+    def _enhance_image(self, image_path: str, output_path: str) -> str:
+        """增强图像质量"""
         try:
-            result = self.controlnet_engine.execute(
-                input_image_path=image_path,
-                prompt="high quality, detailed, restored old photo, masterpiece, best quality",
-                negative_prompt="low quality, blurry, damaged, torn, noise, ugly, deformed",
-                preprocessor_type="HED",
-                controlnet_model="lineart",
-                strength=0.45,
-                output_path=output_path
-            )
-            if result['status'] != 'success':
-                logger.error(f"ControlNet å¼æè°E¨å¤±è´¥: {result.get('error')}")
-                return False
-            logger.info(f"ControlNet ä¿®å¤å®æE: {output_path}")
-            return True
+            img = Image.open(image_path)
+
+            # 锐化
+            enhancer = ImageEnhance.Sharpness(img)
+            img = enhancer.enhance(1.15)
+
+            # 对比度增强
+            enhancer = ImageEnhance.Contrast(img)
+            img = enhancer.enhance(1.05)
+
+            # 色彩增强
+            enhancer = ImageEnhance.Color(img)
+            img = enhancer.enhance(1.05)
+
+            img.save(output_path, quality=95)
+            return output_path
         except Exception as e:
-            logger.error(f"ControlNet ä¿®å¤å¤±è´¥: {e}")
-            return False
-
-    def _restore_with_codeformer(self, image_path: str, output_path: str) -> bool:
-        """ä½¿ç¨ CodeFormer ç¡¬æ ¸ä¿®å¤E(éè¦å®æ´ä¾èµE"""
-        try:
-            # é²åE£æ¥Eå¦ææ²¡æå®æ´çEºï¼ç´æ¥å¤±è´¥è¿å
-            try:
-                import facexlib
-                import gfpgan
-            except ImportError:
-                logger.error("ç¼ºå°ç¡¬æ ¸ä¾èµåºï¼å½åç¯å¢E æ³è¿è¡ECodeFormerãE)
-                return False
-
-            import cv2
-            from basicsr.utils import imwrite, img2tensor, tensor2img
-            # ... (æ­¤å¤E®éä£ç è¾E¤æEç±äºå½å Python ç¯å¢E æ³è¿è¡EbasicsrEè¿éä½ä¸ºé¢Eæ¥å£)
-            # å®éè¿è¡ä¼èµ°ä¸é¢çEControlNet
-            return False
-
-        except Exception as e:
-            logger.error(f"CodeFormer å è½½å¤±è´¥: {e}")
-            return False
-
-    def restore_image(self, image_path: str, model: str = None,
-                      output_path: str = None, **kwargs) -> Dict[str, Any]:
-        """ä¿®å¤åå¼ å¾çE""
-        start_time = time.time()
-        if not image_path:
-            return {"status": "error", "error": "image_path æ¯å¿E¡«åæ°"}
-        abs_image_path = Path(image_path).absolute()
-        if not os.path.exists(abs_image_path):
-            return {"status": "error", "error": f"è¾åEå¾çE¸å­å¨: {abs_image_path}ãè¯·æ£æ¥è·¯å¾E¯å¦æ­£ç¡®EE}
-
-        model = model or self.config.get("default_model", "controlnet")
-
-        if not output_path:
-            input_name = Path(abs_image_path).stem
-            ext = Path(abs_image_path).suffix or ".png"
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            output_path = str(self.output_dir / f"{input_name}_restored_{timestamp}{ext}")
-
-        logger.info(f"å¼åä¿®å¤E {abs_image_path}")
-        logger.info(f"ä½¿ç¨æ¨¡åE {model}")
-
-        success = False
-        error_msg = None
-
-        try:
-            if model == "controlnet":
-                success = self._restore_with_controlnet(str(abs_image_path), output_path, **kwargs)
-            elif model == "codeformer":
-                success = self._restore_with_codeformer(str(abs_image_path), output_path)
-            else:
-                error_msg = f"æ¨¡åE{model} ææ å®ç°"
-                success = False
-        except Exception as e:
-            error_msg = str(e)
-            success = False
-
-        result = {
-            "status": "success" if success else "error",
-            "action": "restore",
-            "model_used": model,
-            "input_path": str(abs_image_path),
-            "output_path": output_path if success else None,
-            "processing_time": round(time.time() - start_time, 2),
-            "timestamp": datetime.now().isoformat()
-        }
-
-        if error_msg:
-            result["error"] = error_msg
-        return result
+            logger.warning(f"  图像增强失败: {e}")
+            return image_path
 
     def execute(self, **kwargs) -> Dict[str, Any]:
-        logger.info(f"æè¡æè½: {self.name} (v{self.version})")
+        start_time = time.time()
+        logger.info(f"执行技能: {self.name}")
+
         try:
-            action = kwargs.get("action", "restore")
-            if action == "list_models":
-                models = {}
-                for key, info in self.SUPPORTED_MODELS.items():
-                    models[key] = {"name": info["name"], "description": info["description"]}
-                return {"status": "success", "action": "list_models", "models": models}
+            # ==================== 严格路径校验 ====================
+            image_path = kwargs.get('image_path')
+            if not image_path:
+                return {"status": "error", "error": "image_path 是必填参数"}
 
-            if action == "restore":
-                image_path = kwargs.get("image_path")
-                if not image_path:
-                    return {"status": "error", "error": "è¯·æä¾Eimage_path åæ°"}
-                return self.restore_image(image_path, kwargs.get("model"), kwargs.get("output_path"), **kwargs)
+            abs_image_path = Path(image_path).absolute()
+            if not os.path.exists(abs_image_path):
+                return {"status": "error", "error": f"输入图片不存在: {abs_image_path}。请检查路径是否正确！"}
 
-            return {"status": "error", "error": f"æªç¥æä½E {action}"}
+            # ==================== 获取修复模式 ====================
+            mode = kwargs.get('mode', self.config.get('default_mode', 'repair'))
+            if mode not in RESTORE_MODES:
+                return {"status": "error", "error": f"未知模式: {mode}，可用: {list(RESTORE_MODES.keys())}"}
+
+            mode_config = RESTORE_MODES[mode]
+            prompt = kwargs.get('prompt') or mode_config['prompt']
+            negative_prompt = kwargs.get('negative_prompt') or mode_config.get('negative', self.config.get('default_negative'))
+
+            strength = kwargs.get('strength', self.config.get('default_strength', 0.5))
+            steps = kwargs.get('steps', self.config.get('default_steps', 35))
+            seed = kwargs.get('seed', -1)
+
+            # ==================== 默认输出路径 ====================
+            output_path = kwargs.get('output_path')
+            if output_path is None:
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                output_path = str(self.output_dir / f"{Path(abs_image_path).stem}_restored_{mode}_{timestamp}.png")
+
+            # ==================== 调用底层 ControlNet 引擎 ====================
+            if self._controlnet_engine is None:
+                return {"status": "error", "error": "ControlNet 引擎不可用"}
+
+            logger.info(f"修复模式: {mode}")
+            logger.info(f"提示词: {prompt[:80]}...")
+
+            # 使用 Canny 保持边缘结构
+            result = self._controlnet_engine.execute(
+                input_image_path=str(abs_image_path),
+                prompt=prompt,
+                negative_prompt=negative_prompt,
+                preprocessor_type="HED",          # 提取边缘轮廓
+                controlnet_model="canny",         # 保持边缘结构
+                strength=strength,
+                steps=steps,
+                output_path=output_path
+            )
+
+            if result['status'] != 'success':
+                return result
+
+            final_path = result.get('image_path', output_path)
+
+            # ==================== 增强图像 ====================
+            if kwargs.get('enhance', True):
+                final_path = self._enhance_image(final_path, final_path)
+                logger.info("  ✅ 图像增强已应用")
+
+            return {
+                "status": "success",
+                "output_path": final_path,
+                "mode": mode,
+                "generation_time": f"{time.time() - start_time:.2f}s",
+                "parameters": {
+                    "strength": strength,
+                    "steps": steps,
+                    "seed": seed,
+                    "controlnet": "canny"
+                }
+            }
+
         except Exception as e:
-            logger.error(f"æè¡å¤±è´¥: {e}")
+            logger.error(f"执行失败: {e}")
+            import traceback
+            traceback.print_exc()
             return {"status": "error", "error": str(e)}
 
     def __repr__(self):
@@ -232,8 +217,24 @@ class PhotoRestorer:
 
 
 if __name__ == "__main__":
-    restorer = PhotoRestorer()
-    print("å½åå¯ç¨çE¿®å¤æ¨¡åE")
-    for name, info in restorer.get_models().items():
-        print(f"  {name}: {info['description']}")
-"""
+    import argparse
+    parser = argparse.ArgumentParser(description="老照片修复工具 v2.0")
+    parser.add_argument("--input", "-i", required=True, help="输入老照片路径")
+    parser.add_argument("--output", "-o", help="输出路径")
+    parser.add_argument("--mode", "-m", default="repair",
+                        choices=list(RESTORE_MODES.keys()), help="修复模式")
+    parser.add_argument("--strength", type=float, default=0.5, help="重绘强度 (0-1)")
+    parser.add_argument("--steps", type=int, default=35, help="迭代步数")
+    parser.add_argument("--seed", type=int, default=-1, help="随机种子")
+    parser.add_argument("--no-enhance", action="store_true", help="不增强图像")
+    parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu")
+
+    args = parser.parse_args()
+    skill = PhotoRestorer(config={'device': args.device})
+    result = skill.execute(
+        image_path=args.input, output_path=args.output,
+        mode=args.mode,
+        strength=args.strength, steps=args.steps, seed=args.seed,
+        enhance=not args.no_enhance
+    )
+    print(json.dumps(result, ensure_ascii=False, indent=2))

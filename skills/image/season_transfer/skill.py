@@ -1,7 +1,7 @@
-# skills/season_transfer/skill.py
+# skills/image/season_transfer/skill.py
 """
-å­£èè½¬æ¢ Skill - å°E¾çE½¬æ¢ä¸ºä¸åå­£èE(æ¥å¤çåE)
-å¤ç¨éç¨ ControlNet å¼æEELSD + Depth éç©ºé´çæEè½¬æ¢å­£èè²å½©æ°å´EE
+季节转换 Skill - 将图片转换为不同季节风格（春、夏、秋、冬）
+使用 ControlNet 保持原图结构
 """
 
 import time
@@ -26,38 +26,38 @@ try:
     DIFFUSERS_AVAILABLE = True
 except ImportError:
     DIFFUSERS_AVAILABLE = False
-    logger.warning("torch æEPIL æªå®è£E)
+    logger.warning("torch 或 PIL 未安装")
 
-# ==================== å¼åEéç¨å¼æEæ¹æ¡EEE====================
 try:
-    from skills.image.controlnet_img2img.skill import ControlNetImg2Img
+    from skills.image.controlnet_img2img.skill import ControlnetImg2Img
     CONTROLNET_ENGINE_AVAILABLE = True
 except ImportError as e:
     CONTROLNET_ENGINE_AVAILABLE = False
-    logger.warning(f"éç¨ ControlNet å¼æä¸å¯ç¨: {e}")
+    logger.warning(f"ControlNet 引擎不可用: {e}")
 
-SEASONS = {
+# ==================== 季节配置 ====================
+SEASON_MAP = {
     "spring": {
-        "prompt": "spring season, cherry blossoms, green trees, blooming flowers, warm sunlight, fresh, beautiful, masterpiece",
-        "negative": "snow, winter, autumn leaves, cold, dark"
+        "prompt": "spring season, cherry blossoms, blooming flowers, green grass, fresh, vibrant, masterpiece, high quality",
+        "negative": "winter, snow, cold, autumn leaves, summer heat, dry"
     },
     "summer": {
-        "prompt": "summer season, bright sunlight, green lush trees, blue sky, hot, vibrant, beautiful, masterpiece",
-        "negative": "snow, winter, autumn, cold, dark"
+        "prompt": "summer season, bright sunlight, green trees, blue sky, warm, vibrant, masterpiece, high quality",
+        "negative": "winter, snow, cold, autumn leaves, spring flowers"
     },
     "autumn": {
-        "prompt": "autumn season, golden leaves, orange and red colors, crisp air, beautiful fall scenery, masterpiece",
-        "negative": "snow, winter, green, spring, cold"
+        "prompt": "autumn season, golden leaves, orange and red foliage, warm tones, cozy, masterpiece, high quality",
+        "negative": "winter, snow, cold, spring flowers, summer green"
     },
     "winter": {
-        "prompt": "winter season, snow, white landscape, cold, beautiful winter scenery, frost, masterpiece",
-        "negative": "spring, summer, autumn, green, warm"
+        "prompt": "winter season, snow, white landscape, cold, serene, peaceful, masterpiece, high quality",
+        "negative": "summer, spring, autumn, green, warm"
     }
 }
 
 
 class SeasonTransfer:
-    """å­£èè½¬æ¢æè½ v2.0"""
+    """季节转换技能 v2.0"""
 
     def __init__(self, config: Dict[str, Any] = None):
         self.config = config or {}
@@ -66,28 +66,30 @@ class SeasonTransfer:
 
         self.skill_dir = Path(__file__).parent.absolute()
         self.project_root = self.skill_dir.parent.parent.parent
-        # ==================== å¼ºå¶æ¬æè½è¾åEç®å½E====================
+        # ==================== 强制本技能输出目录 ====================
         self.output_dir = self.skill_dir / "output"
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
         self.models_dir = Path(self.config.get('models_dir', self.project_root / 'models'))
         self.device = self.config.get('device', 'cuda' if torch.cuda.is_available() else 'cpu')
 
-        # ==================== ååååºå±å¼æ ====================
-        self.controlnet_engine = None
+        # ==================== 初始化 ControlNet 引擎 ====================
+        self._controlnet_engine = None
+
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
-                self.controlnet_engine = ControlNetImg2Img(config={'device': self.device})
-                logger.info("  âEåºå±EControlNet å¼æåååæå")
+                from skills.image.controlnet_img2img.skill import ControlnetImg2Img
+                self._controlnet_engine = ControlnetImg2Img(config={'device': self.device})
+                logger.info("  ✅ ControlNet 引擎初始化成功")
             except Exception as e:
-                logger.warning(f"  åºå±å¼æåååå¤±è´¥: {e}")
+                logger.warning(f"  引擎初始化失败: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"SeasonTransfer v{self.version} åååå®æE")
-        logger.info(f"  è®¾å¤E {self.device}")
-        logger.info(f"  å­£èE {list(SEASONS.keys())}")
+        logger.info(f"SeasonTransfer v{self.version} 初始化完成")
+        logger.info(f"  设备: {self.device}")
+        logger.info(f"  季节: {list(SEASON_MAP.keys())}")
 
     def _setup_logging(self):
         log_level = self.config.get('log_level', 'INFO')
@@ -97,62 +99,64 @@ class SeasonTransfer:
     def _setup_config(self):
         defaults = {
             'default_steps': 30,
-            'default_strength': 0.7,
-            'default_season': 'summer',
+            'default_strength': 0.55,
+            'default_season': 'spring',
+            'default_negative': 'ugly, deformed, bad anatomy, extra limbs, blurry, low quality',
         }
         for key, value in defaults.items():
             if key not in self.config:
                 self.config[key] = value
 
     def list_seasons(self) -> Dict[str, Any]:
-        return {"status": "success", "seasons": list(SEASONS.keys())}
+        """列出所有可用季节"""
+        return {"status": "success", "seasons": list(SEASON_MAP.keys())}
 
     def execute(self, **kwargs) -> Dict[str, Any]:
         start_time = time.time()
-        logger.info(f"æè¡æè½: {self.name}")
+        logger.info(f"执行技能: {self.name}")
 
         try:
-            # ==================== ä¸¥æ ¼è·¯å¾E ¡éªE====================
+            # ==================== 严格路径校验 ====================
             image_path = kwargs.get('image_path')
             if not image_path:
-                return {"status": "error", "error": "image_path æ¯å¿E¡«åæ°"}
-            
+                return {"status": "error", "error": "image_path 是必填参数"}
+
             abs_image_path = Path(image_path).absolute()
             if not os.path.exists(abs_image_path):
-                return {"status": "error", "error": f"è¾åEå¾çE¸å­å¨: {abs_image_path}ãè¯·æ£æ¥è·¯å¾E¯å¦æ­£ç¡®EE}
+                return {"status": "error", "error": f"输入图片不存在: {abs_image_path}。请检查路径是否正确！"}
 
-            season = kwargs.get('season', self.config.get('default_season', 'summer'))
-            if season not in SEASONS:
-                return {"status": "error", "error": f"æªç¥å­£èE {season}Eå¯ç¨: {list(SEASONS.keys())}"}
+            # ==================== 获取季节 ====================
+            season = kwargs.get('season', self.config.get('default_season', 'spring'))
+            if season not in SEASON_MAP:
+                return {"status": "error", "error": f"未知季节: {season}，可用: {list(SEASON_MAP.keys())}"}
 
-            season_config = SEASONS[season]
+            season_config = SEASON_MAP[season]
             prompt = kwargs.get('prompt') or season_config['prompt']
-            negative_prompt = kwargs.get('negative_prompt') or season_config['negative']
+            negative_prompt = kwargs.get('negative_prompt') or season_config.get('negative', self.config.get('default_negative'))
 
-            strength = kwargs.get('strength', self.config.get('default_strength', 0.7))
+            strength = kwargs.get('strength', self.config.get('default_strength', 0.55))
             steps = kwargs.get('steps', self.config.get('default_steps', 30))
             seed = kwargs.get('seed', -1)
 
-            # ==================== ç´æ¥è°E¨åºå±å¼æ ====================
-            if self.controlnet_engine is None:
-                return {"status": "error", "error": "åºå±EControlNet å¼æä¸å¯ç¨"}
-
-            # éè®¤è¾åEå°æ¬æè½ç®å½E
+            # ==================== 默认输出路径 ====================
             output_path = kwargs.get('output_path')
             if output_path is None:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 output_path = str(self.output_dir / f"{Path(abs_image_path).stem}_{season}_{timestamp}.png")
 
-            logger.info(f"å­£èE {season}")
-            logger.info(f"æç¤ºè¯E {prompt[:80]}...")
+            # ==================== 调用底层 ControlNet 引擎 ====================
+            if self._controlnet_engine is None:
+                return {"status": "error", "error": "ControlNet 引擎不可用"}
 
-            # ä½¿ç¨ MLSDEæåé£æ¯ç´çº¿EE DepthEéç©ºé´æ·±åº¦Eï¼è½¬æ¢å­£èè²å½©
-            result = self.controlnet_engine.execute(
+            logger.info(f"目标季节: {season}")
+            logger.info(f"提示词: {prompt[:80]}...")
+
+            result = self._controlnet_engine.execute(
                 input_image_path=str(abs_image_path),
                 prompt=prompt,
                 negative_prompt=negative_prompt,
-                preprocessor_type="MLSD",
-                controlnet_model="depth",
+                preprocessor_type="HED",          # 提取边缘轮廓
+                controlnet_model="canny",         # 保持结构
                 strength=strength,
                 steps=steps,
                 output_path=output_path
@@ -167,15 +171,15 @@ class SeasonTransfer:
                 "season": season,
                 "generation_time": f"{time.time() - start_time:.2f}s",
                 "parameters": {
-                    "strength": strength, 
-                    "steps": steps, 
+                    "strength": strength,
+                    "steps": steps,
                     "seed": seed,
-                    "controlnet": "depth"
+                    "controlnet": "canny"
                 }
             }
 
         except Exception as e:
-            logger.error(f"æè¡å¤±è´¥: {e}")
+            logger.error(f"执行失败: {e}")
             import traceback
             traceback.print_exc()
             return {"status": "error", "error": str(e)}
@@ -186,14 +190,14 @@ class SeasonTransfer:
 
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser(description="å­£èè½¬æ¢å·¥å· v2.0")
-    parser.add_argument("--input", "-i", required=True, help="è¾åEå¾çE·¯å¾E)
-    parser.add_argument("--output", "-o", help="è¾åEè·¯å¾E)
-    parser.add_argument("--season", "-s", default="summer",
-                        choices=list(SEASONS.keys()), help="å­£èE)
-    parser.add_argument("--strength", type=float, default=0.7, help="éçå¼ºåº¦")
-    parser.add_argument("--steps", type=int, default=30, help="è¿­ä£æ­¥æ°")
-    parser.add_argument("--seed", type=int, default=-1, help="éæºçå­E)
+    parser = argparse.ArgumentParser(description="季节转换工具 v2.0")
+    parser.add_argument("--input", "-i", required=True, help="输入图片路径")
+    parser.add_argument("--output", "-o", help="输出路径")
+    parser.add_argument("--season", "-s", default="spring",
+                        choices=list(SEASON_MAP.keys()), help="目标季节")
+    parser.add_argument("--strength", type=float, default=0.55, help="重绘强度 (0-1)")
+    parser.add_argument("--steps", type=int, default=30, help="迭代步数")
+    parser.add_argument("--seed", type=int, default=-1, help="随机种子")
     parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu")
 
     args = parser.parse_args()
