@@ -1,1 +1,1 @@
-from .skill import Mechagenerator
+from .skill import MechaGenerator 

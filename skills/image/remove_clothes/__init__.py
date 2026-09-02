@@ -1,1 +1,1 @@
-from .skill import ClothesRemover
+from .skill import ClothesRemover 
