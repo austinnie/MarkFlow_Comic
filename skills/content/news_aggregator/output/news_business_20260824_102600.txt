@@ -1,0 +1,41 @@
+============================================================
+   📰 每日新闻简报
+============================================================
+   生成时间: 2026-08-24 10:25:56
+   分类: business
+   新闻数: 10 条
+============================================================
+
+【AI 智能摘要】
+----------------------------------------
+AI 摘要生成失败: HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url: /api/generate (Caused by NewConnectionError("HTTPConnection(host='localhost', port=11434): Failed to establish a new connection: [WinError 10061] 由于目标计算机积极拒绝，无法连接。"))
+
+------------------------------------------------------------
+
+📌 International homepage (10 条)
+----------------------------------------
+  • Warsh seeks to soothe investors’ nerves as signs of economic strain mount
+    Economists criticise Fed chair’s communication strategy as policymakers prepare to gather at Jackson Hole symposium...
+    🔗 https://www.ft.com/content/40ae9cd3-fbc8-4a55-adaa-c24bc80481c9?syn-25a6b1a6=1
+
+  • How New Zealand’s biggest city solved its housing crisis
+    Rezoning has changed the face of Auckland though critics warn lessons hard to replicate...
+    🔗 https://www.ft.com/content/ec25a937-3dbd-417c-82a1-db223b62cca6?syn-25a6b1a6=1
+
+  • An economic D-Day is coming for Iran
+    Countries that calculate appeasement of the regime to be a safer choice should reconsider...
+    🔗 https://www.ft.com/content/cb865200-1a06-40be-86a3-10ee2bb05804
+
+  • Yahoo, the internet’s ‘OG’, wants to win over Gen Z
+    Group’s chief says vintage web name can help draw younger users...
+    🔗 https://www.ft.com/content/50c666af-1979-4411-9d62-34e18cc0ecc9?syn-25a6b1a6=1
+
+  • Anthropic’s best AI model struggles to attract users as cheaper tools thrive
+    AI lab’s Fable 5 has met with sluggish demand from corporate clients...
+    🔗 https://www.ft.com/content/5ee49718-c258-4f01-aa32-7e5b76ae5245?syn-25a6b1a6=1
+
+  ... 还有 5 条
+
+============================================================
+   简报结束
+============================================================

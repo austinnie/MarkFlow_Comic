@@ -265,9 +265,14 @@ def build_skill(args, executor, console):
         traceback.print_exc()
         sys.exit(1)
 
+# markflow/cli/commands.py
+
+# markflow/cli/commands.py
+
 def execute_skill(skill_name, **kwargs):
-    """执行技能"""
+    """执行技能 - 自动发现，支持子目录"""
     import importlib
+    import importlib.util
     import sys
     from pathlib import Path
     import ast
@@ -276,79 +281,204 @@ def execute_skill(skill_name, **kwargs):
     if str(project_root) not in sys.path:
         sys.path.insert(0, str(project_root))
     
-    try:
-        module = importlib.import_module(f"skills.{skill_name}.skill")
-        
-        skill_class = None
-        for attr_name in dir(module):
-            attr = getattr(module, attr_name)
-            if (isinstance(attr, type) and 
-                attr.__module__ == module.__name__ and
-                attr_name not in ['SkillSpec']):
-                skill_class = attr
-                break
-        
-        if not skill_class:
-            print(f"❌ 未找到技能类: {skill_name}")
-            return False
-        
-        skill = skill_class()
-        
-        # ✅ 改进参数解析
-        parsed_kwargs = {}
-        for key, value in kwargs.items():
-            if isinstance(value, str):
-                # 尝试解析为 Python 字面量
-                try:
-                    parsed = ast.literal_eval(value)
-                    parsed_kwargs[key] = parsed
-                except (ValueError, SyntaxError):
-                    # 如果不是字面量，保留字符串（去除可能的引号）
-                    cleaned = value.strip()
-                    if (cleaned.startswith('"') and cleaned.endswith('"')) or \
-                       (cleaned.startswith("'") and cleaned.endswith("'")):
-                        cleaned = cleaned[1:-1]
-                    parsed_kwargs[key] = cleaned
-            else:
-                parsed_kwargs[key] = value
-        
-        if hasattr(skill, 'execute'):
-            result = skill.execute(**parsed_kwargs)
-            
-            # ==================== 修复此处 ====================
-            # 严格检查返回结果，不再无脑打印成功！
-            if isinstance(result, dict):
-                if result.get('status') == 'success':
-                    print(f"✅ 执行成功")
-                else:
-                    print(f"❌ 执行失败: {result.get('error', '未知错误')}")
-            elif result is False:
-                print(f"❌ 执行失败: 返回值为 False")
-            else:
-                print(f"✅ 执行成功")
-            # ==================== 修复结束 ====================
-            
-            return result
-        else:
-            print(f"❌ 技能 {skill_name} 没有 execute 方法")
-            return False
-            
-    except ImportError as e:
-        print(f"❌ 导入失败: {e}")
-        return False
-    except Exception as e:
-        print(f"❌ 执行失败: {e}")
-        import traceback
-        traceback.print_exc()
-        return False
-        
-def list_skills(executor, console):
-    """列出所有技能"""
-    skill_dir = Path("./skills")
-    if skill_dir.exists():
-        executor.registry.load_from_directory(skill_dir)
+    skill_class = None
+    module = None
+    found_path = None
     
-    skills = executor.list_skills()
+    # ============================================================
+    # 1. 如果 skill_name 包含 '.'，直接按路径导入
+    # ============================================================
+    if '.' in skill_name:
+        try:
+            module = importlib.import_module(f"skills.{skill_name}")
+            if module:
+                for attr_name in dir(module):
+                    attr = getattr(module, attr_name)
+                    if (isinstance(attr, type) and 
+                        attr.__module__ == module.__name__ and
+                        attr_name not in ['SkillSpec']):
+                        skill_class = attr
+                        break
+        except ImportError:
+            pass
+    
+    # ============================================================
+    # 2. 自动扫描所有子目录查找 skill
+    # ============================================================
+    if skill_class is None:
+        skill_dir = Path("./skills")
+        if skill_dir.exists():
+            for subdir in skill_dir.iterdir():
+                if not subdir.is_dir():
+                    continue
+                # 检查 skill.py
+                skill_file = subdir / "skill.py"
+                if skill_file.exists():
+                    try:
+                        spec = importlib.util.spec_from_file_location(
+                            f"skills.{subdir.name}", 
+                            skill_file
+                        )
+                        temp_module = importlib.util.module_from_spec(spec)
+                        spec.loader.exec_module(temp_module)
+                        
+                        for attr_name in dir(temp_module):
+                            attr = getattr(temp_module, attr_name)
+                            if (isinstance(attr, type) and 
+                                attr.__module__ == temp_module.__name__ and
+                                attr_name not in ['SkillSpec'] and
+                                hasattr(attr, 'execute')):
+                                # 匹配类名（不区分大小写）
+                                if attr_name.lower() == skill_name.lower():
+                                    skill_class = attr
+                                    module = temp_module
+                                    found_path = skill_file
+                                    break
+                        if skill_class:
+                            break
+                    except Exception as e:
+                        continue
+    
+    # ============================================================
+    # 3. 在子目录的子目录中查找 (如 image/change_pose)
+    # ============================================================
+    if skill_class is None:
+        skill_dir = Path("./skills")
+        if skill_dir.exists():
+            for subdir in skill_dir.iterdir():
+                if not subdir.is_dir():
+                    continue
+                for subsubdir in subdir.iterdir():
+                    if not subsubdir.is_dir():
+                        continue
+                    skill_file = subsubdir / "skill.py"
+                    if skill_file.exists():
+                        try:
+                            spec = importlib.util.spec_from_file_location(
+                                f"skills.{subsubdir.name}", 
+                                skill_file
+                            )
+                            temp_module = importlib.util.module_from_spec(spec)
+                            spec.loader.exec_module(temp_module)
+                            
+                            for attr_name in dir(temp_module):
+                                attr = getattr(temp_module, attr_name)
+                                if (isinstance(attr, type) and 
+                                    attr.__module__ == temp_module.__name__ and
+                                    attr_name not in ['SkillSpec'] and
+                                    hasattr(attr, 'execute')):
+                                    if attr_name.lower() == skill_name.lower():
+                                        skill_class = attr
+                                        module = temp_module
+                                        found_path = skill_file
+                                        break
+                            if skill_class:
+                                break
+                        except Exception:
+                            continue
+                if skill_class:
+                    break
+    
+    # ============================================================
+    # 4. 最后尝试直接导入（兼容旧格式）
+    # ============================================================
+    if skill_class is None:
+        try:
+            module = importlib.import_module(f"skills.{skill_name}")
+            for attr_name in dir(module):
+                attr = getattr(module, attr_name)
+                if (isinstance(attr, type) and 
+                    attr.__module__ == module.__name__ and
+                    attr_name not in ['SkillSpec'] and
+                    hasattr(attr, 'execute')):
+                    skill_class = attr
+                    break
+        except ImportError:
+            pass
+    
+    if not skill_class:
+        print(f"❌ 未找到技能: {skill_name}")
+        return False
+    
+    # ============================================================
+    # 执行技能
+    # ============================================================
+    skill = skill_class()
+    
+    parsed_kwargs = {}
+    for key, value in kwargs.items():
+        if isinstance(value, str):
+            try:
+                parsed = ast.literal_eval(value)
+                parsed_kwargs[key] = parsed
+            except (ValueError, SyntaxError):
+                cleaned = value.strip()
+                if (cleaned.startswith('"') and cleaned.endswith('"')) or \
+                   (cleaned.startswith("'") and cleaned.endswith("'")):
+                    cleaned = cleaned[1:-1]
+                parsed_kwargs[key] = cleaned
+        else:
+            parsed_kwargs[key] = value
+    
+    if hasattr(skill, 'execute'):
+        result = skill.execute(**parsed_kwargs)
+        if isinstance(result, dict):
+            if result.get('status') == 'success':
+                print(f"✅ 执行成功")
+            else:
+                print(f"❌ 执行失败: {result.get('error', '未知错误')}")
+        elif result is False:
+            print(f"❌ 执行失败: 返回值为 False")
+        else:
+            print(f"✅ 执行成功")
+        return result
+    else:
+        print(f"❌ 技能 {skill_name} 没有 execute 方法")
+        return False
+        
+# markflow/cli/commands.py
+
+def list_skills(executor, console):
+    """列出所有技能 - 自动扫描所有子目录"""
+    from pathlib import Path
+    import json
+    
+    skill_dir = Path("./skills")
+    skills = {}
+    
+    if skill_dir.exists():
+        # 递归扫描所有子目录中的 skill.py
+        for skill_file in skill_dir.rglob("skill.py"):
+            # 跳过 __pycache__
+            if "__pycache__" in str(skill_file):
+                continue
+            
+            skill_dir_path = skill_file.parent
+            skill_name = skill_dir_path.name
+            
+            # 读取 meta.json
+            meta_file = skill_dir_path / "meta.json"
+            metadata = {}
+            if meta_file.exists():
+                try:
+                    with open(meta_file, 'r', encoding='utf-8') as f:
+                        metadata = json.load(f)
+                except:
+                    pass
+            
+            # 如果 meta.json 没有 name，使用目录名
+            if not metadata.get('name'):
+                metadata['name'] = skill_name
+            
+            # 获取相对路径（用于显示分类）
+            rel_path = skill_dir_path.relative_to(skill_dir)
+            category = str(rel_path.parent) if rel_path.parent != Path('.') else "根目录"
+            
+            skills[skill_name] = {
+                **metadata,
+                "_category": category,
+                "_path": str(rel_path)
+            }
     
     if not skills:
         console.print("[yellow]未找到任何技能[/yellow]")
@@ -357,29 +487,29 @@ def list_skills(executor, console):
     
     if RICH_AVAILABLE:
         table = Table(title="📚 已注册技能")
+        table.add_column("分类", style="dim", no_wrap=True)
         table.add_column("名称", style="cyan", no_wrap=True)
         table.add_column("描述", style="green")
         table.add_column("版本", style="yellow")
         table.add_column("依赖", style="magenta")
-        table.add_column("标签", style="blue")
         
-        for name, metadata in skills.items():
+        # 按分类排序
+        for name, metadata in sorted(skills.items(), key=lambda x: (x[1].get('_category', ''), x[0])):
             table.add_row(
+                metadata.get('_category', ''),
                 name,
-                metadata.get('description', '')[:50],
+                metadata.get('description', '')[:40],
                 metadata.get('version', '1.0.0'),
-                ", ".join(metadata.get('dependencies', [])),
-                ", ".join(metadata.get('tags', []))
+                ", ".join(metadata.get('dependencies', []))[:20]
             )
         
         console.print(table)
     else:
         console.print("已注册技能:")
-        for name, metadata in skills.items():
-            console.print("  - {}: {}".format(name, metadata.get('description', '')[:50]))
+        for name, metadata in sorted(skills.items()):
+            console.print(f"  [{metadata.get('_category', '')}] {name}: {metadata.get('description', '')[:40]}")
     
     console.print("\n总计: [bold]{}[/bold] 个技能".format(len(skills)))
-
 
 def show_info(args, executor, console):
     """显示技能详情"""

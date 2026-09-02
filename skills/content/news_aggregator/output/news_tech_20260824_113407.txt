@@ -1,0 +1,81 @@
+============================================================
+   📰 每日新闻简报
+============================================================
+   生成时间: 2026-08-24 11:32:57
+   分类: 科技
+   新闻数: 10 条
+============================================================
+
+【AI 智能摘要】
+----------------------------------------
+### 技术与创新类
+
+1. **Ox Alpha神秘新模型引发网络热议**
+   - A mysterious new AI model called Ox Alpha在互联网上引起了一阵猜测热潮。
+
+2. **Uber因自动驾驶司机禁用面临近10亿美元罚款**
+   - 荷兰数据保护机构对Uber处以8亿25百万欧元的罚款，这是GDPR下发布的第二大规模罚款。
+
+3. **Linkdaze智能日历不设付费墙，包含AI餐单规划工具**
+   - Linkdaze智能数字日历因其不设置付费墙而脱颖而出，并包含一个AI餐单规划工具。
+
+### 交通运输类
+
+1. **Waymo的定制芯片推动其自动驾驶出租车计划**
+   - 欢迎回到TechCrunch Mobility —— 关于未来交通的新闻和见解中心。
+
+### 视频监控与隐私类
+
+1. **Flock安全公司面临公众抗议，因担心其监视技术可能被滥用**
+   - Flock Safety正面临着公众抗议，因为该公司使用的监视技术可能会被滥用。
+
+2. **是否可以训练AI模型使用受版权保护的书籍？这很复杂**
+   - 大多数出版作者都没有意识到或同意他们的作品成为了威胁他们自身工具开发的一部分。
+
+### 电子商务类
+
+1. **Walmart旗下Flipkart在两年后接近印度快速电商领导者**
+   - Flipkart的快速电商业务每天处理10万到12万订单，几乎是上个月数量的三倍。
+
+### 商业与教育类
+
+1. **哈佛699美元创业营推出AI版导师反馈工具**
+   - 在HBS Foundry项目中，AI导师为练习演讲和董事会会议提供反馈。
+
+2. **司法部对a16z的调查是否会吓到其他风险投资公司？**
+   - 在Equity最新一集节目中，我们探讨了为什么司法部正在调查创业板席位的问题。
+
+### 人工智能研究类
+
+1. **Inherent公司AI团队超越Anthropic和OpenAI在复制研究方面表现**
+   - Inherent由DeepMind校友创立的英国AI实验室发布了Faraday，一个能够复制科学论文的AI代理。
+
+------------------------------------------------------------
+
+📌 TechCrunch (10 条)
+----------------------------------------
+  • Who’s behind the new ‘stealth model’ Ox Alpha?
+    A mysterious new AI model called Ox Alpha has driven certain corners of the internet into a frenzy of speculation....
+    🔗 https://techcrunch.com/2026/08/23/whos-behind-the-new-stealth-model-ox-alpha/
+
+  • Uber faces fine of nearly $1B over automated driver suspensions
+    The Dutch Data Protection Authority is fining Uber €825 million in the second largest penalty issued under Europe’s GDPR...
+    🔗 https://techcrunch.com/2026/08/23/uber-faces-fine-of-nearly-1b-over-automated-driver-suspensions/
+
+  • Linkdaze’s smart calendar is built to run a household, not just track a schedule
+    Linkdaze's smart digital calendar stands out for not putting its features behind a paywall, including an AI meal planner...
+    🔗 https://techcrunch.com/2026/08/23/linkdazes-smart-calendar-is-built-to-run-a-household-not-just-track-a-schedule/
+
+  • TechCrunch Mobility: The custom chip driving Waymo’s robotaxi ambitions
+    Welcome back to TechCrunch Mobility — your central hub for news and insights on the future of transportation....
+    🔗 https://techcrunch.com/2026/08/23/techcrunch-mobility-the-custom-chip-driving-waymos-robotaxi-ambitions/
+
+  • Flock CEO calls for ‘compromise’ as surveillance company faces growing backlash
+    Flock Safety faces a growing public outcry over concerns that its surveillance technology could be misused....
+    🔗 https://techcrunch.com/2026/08/23/flock-ceo-calls-for-compromise-as-surveillance-company-faces-growing-backlash/
+
+  ... 还有 5 条
+
+============================================================
+   简报结束
+============================================================

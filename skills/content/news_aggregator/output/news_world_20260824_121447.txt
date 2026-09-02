@@ -1,0 +1,449 @@
+============================================================
+   📰 每日新闻简报
+============================================================
+   生成时间: 2026-08-24 12:12:44
+   分类: 国际
+   新闻数: 72 条
+============================================================
+
+【AI 智能摘要】
+----------------------------------------
+AI 摘要生成失败: HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=120)
+
+------------------------------------------------------------
+
+【1】Iran discovers major new gas reserves amid war-hit energy sector
+  时间: Sun, 23 Aug 2026 20:38:25 GMT
+  来源: France 24 - International breaking news, top stories and headlines
+  摘要: Iran on Sunday said it had discovered more than 200 billion cubic metres of natural gas in the southern Fars province, with more than 160 billion cubic metres potentially recoverable. The find comes as the country’s energy sector faces disruption after months of US-Israeli strikes on gas facilities, oil depots and transport routes.
+  链接: https://www.france24.com/en/middle-east/20260823-iran-discovers-major-new-gas-reserves-amid-war-hit-energy-sector
+
+【2】Crans-Montana bar owner detained over alleged domestic abuse
+  时间: Sun, 23 Aug 2026 19:57:30 GMT
+  来源: France 24 - International breaking news, top stories and headlines
+  摘要: The owner of a Swiss bar where a New Year’s fire killed 41 people has been placed in pre-trial detention over alleged violence against his wife, local media reported Sunday. Jacques Moretti and his wife, Jessica, are already under criminal investigation over the deadly blaze at Le Constellation in Crans-Montana.
+  链接: https://www.france24.com/en/europe/20260823-crans-montana-bar-owner-detained-over-alleged-domestic-abuse
+
+【3】French centre-left candidate launches presidential bid amid divided left
+  时间: Sun, 23 Aug 2026 19:38:57 GMT
+  来源: France 24 - International breaking news, top stories and headlines
+  摘要: Centre-left politician Raphaël Glucksmann on Sunday launched his bid for the French presidency, aiming to unite moderate left-wing voters and challenge Jean-Luc Mélenchon’s influence ahead of France’s 2027 election. With Marine Le Pen leading first-round polls, Glucksmann is seeking to position himself as a pro-European, pro-Ukraine alternative to both the far right and hard left.
+  链接: https://www.france24.com/en/france/20260823-glucksmann-launches-french-presidential-bid-as-left-seeks-to-challenge-far-right
+
+【4】Emergency declared in Nevada as wildfire forces evacuation of 14,000 people
+  时间: Sun, 23 Aug 2026 15:54:21 GMT
+  来源: France 24 - International breaking news, top stories and headlines
+  摘要: Firefighters in Nevada are struggling to contain a fast-growing wildfire which has already forced the evacuation of nearly 14,000 people. A state of emergency has been called, meaning federal responders are working alongside local firefighters to try and keep it from residential areas. Details by Camille Knight.
+  链接: https://www.france24.com/en/emergency-declared-in-nevada-as-wildfire-forces-evacutation-of-14-000-people
+
+【5】Thousands rally in Sweden to protest climate policies ahead of general election
+  时间: Sun, 23 Aug 2026 14:59:12 GMT
+  来源: France 24 - International breaking news, top stories and headlines
+  摘要: Some 10,000 people rallied in Stockholm on Sunday to demand stronger action on climate change, weeks before Sweden’s general election. Climate campaigner Greta Thunberg joined the rally, as organisers accused the government of weakening emissions policies and urged politicians to act faster to meet Sweden’s climate targets.
+  链接: https://www.france24.com/en/europe/20260823-thousands-rally-in-sweden-to-protest-climate-policies-ahead-of-general-election
+
+【6】Zelensky rejects wartime elections, saying vote would 'split' Ukraine
+  时间: Sun, 23 Aug 2026 14:49:42 GMT
+  来源: France 24 - International breaking news, top stories and headlines
+  摘要: Ukrainian President Volodymyr Zelensky has said that holding elections during wartime would pose a threat to the country, following a controversial call by his former defense minister to pave the way for an election. According to the latest opinion poll by the Kyiv Institute of Sociology carried out this summer, only 15 per cent of those surveyed want an election to be held at this time. Details by Eliza Herbert.
+  链接: https://www.france24.com/en/zelensky-rejects-wartime-elections-saying-vote-would-split-ukraine
+
+【7】Zelensky rejects rival's call for elections, says would be 'huge risk' for Ukraine
+  时间: Sun, 23 Aug 2026 14:48:39 GMT
+  来源: France 24 - International breaking news, top stories and headlines
+  摘要: Ukrainian president Volodymyr Zelensky has rejected the prospect of wartime elections, saying it would be highly dangerous. The remarks come in response to a call from the former defence minister Mykhailo Fedorov to organise a vote, after he was fired by Zelensky last month. Analysis by FRANCE 24 international affairs editor Matthew-Mary Caruchet.
+  链接: https://www.france24.com/en/zelensky-rejects-rival-s-call-for-elections-says-would-be-huge-risk-for-ukraine
+
+【8】China abruptly delays ambitious Chang’e-7 mission to find water ice on moon
+  时间: Sun, 23 Aug 2026 14:23:11 GMT
+  来源: France 24 - International breaking news, top stories and headlines
+  摘要: China has postponed its Chang’e-7 lunar mission, which was due to launch in the coming days and search for water ice near the Moon’s south pole, a government agency said Saturday. Officials said the mission did not meet launch conditions, without providing further details.
+  链接: https://www.france24.com/en/asia-pacific/20260823-china-abruptly-delays-ambitious-chang-e-7-mission-to-find-water-ice-on-moon
+
+【9】Greek Ithaca island hopes for big tourism boost thanks to Odyssey movie
+  时间: Sun, 23 Aug 2026 13:43:52 GMT
+  来源: France 24 - International breaking news, top stories and headlines
+  摘要: Greece's most famous islands have spent this year fighting to keep tourists out... with Santorini and Mykonos now capping cruise arrivals and charging steep entry fees just to manage the crowds. But on one small island, they're hoping for the opposite problem. Ithaca, the legendary home of Homer's Ulysses, is banking on a Hollywood boost, as Christopher Nolan's Odyssey draws new attention to a corner of Greece that's largely stayed off the tourist map. Story by Camille Knight.
+  链接: https://www.france24.com/en/greek-ithaca-island-hopes-for-big-tourism-boost-thanks-to-odyssey-movie
+
+【10】How will European politicians react to a summer of extreme heat?
+  时间: Sun, 23 Aug 2026 13:15:30 GMT
+  来源: France 24 - International breaking news, top stories and headlines
+  摘要: Europe this summer has had to face record breaking temperatures, which caused droughts, deaths, and caused devastating wildfires. While the latest heat dome has dissipated, the damage remains – the continent continues to be the fastest warming globally. Will this summer serve as a global climate reckoning? Answer with Stefan Eye-cot, professor of sociology at the University of Hamburg.
+  链接: https://www.france24.com/en/how-will-european-politicians-react-to-a-summer-of-extreme-heat
+
+【11】The week in pictures: a French woman in space, wildfires in Europe and the war in Ukraine
+  时间: Sun, 23 Aug 2026 13:09:15 GMT
+  来源: France 24 - International breaking news, top stories and headlines
+  摘要: Russian drones carry out deadly strikes in Ukraine, astronaut Sophie Adenot becomes the first French woman to spacewalk, fires rage in Belgium and across Europe, and torrential rain hits the Philippines: FRANCE 24 takes a look at the week's most striking images.
+  链接: https://www.france24.com/en/science/20260823-the-week-in-pictures-frenchwoman-space-nasa-wildfires-europe-war-ukraine
+
+【12】President Zelensky says having elections in Ukraine would 'destroy the country'
+  时间: Sun, 23 Aug 2026 13:07:13 GMT
+  来源: France 24 - International breaking news, top stories and headlines
+  摘要: In remarks on Sunday, Ukrainian President Volodymyr Zelensky spoke out against holding war time elections. He believes it would be too dangerous for the country, that would ‘split’ Ukraine. The remarks came after his former defense minister publicly called for a vote. Details and analysis by FRANCE 24 correspondent in Kyiv, Emmanuelle Chaze.
+  链接: https://www.france24.com/en/president-zelensky-says-having-elections-in-ukraine-would-destroy-the-country
+
+【13】Wartime elections would 'destroy' Ukraine, says Zelensky
+  时间: Sun, 23 Aug 2026 12:30:37 GMT
+  来源: France 24 - International breaking news, top stories and headlines
+  摘要: Ukraine's President Volodymyr Zelensky said in remarks made public Sunday that wartime elections would be a "tsunami" that would "destroy the country".  Kyiv has been engulfed in a political crisis over the summer, triggered when Zelensky fired popular defence minister Mykhailo Fedorov, who days later called to organise a vote.
+  链接: https://www.france24.com/en/europe/20260823-wartime-elections-would-destroy-ukraine-says-zelensky
+
+【14】DR Congo, AFC/M23 group agree on roadmap for peace negotiations after Swiss talks
+  时间: Sun, 23 Aug 2026 12:15:29 GMT
+  来源: France 24 - International breaking news, top stories and headlines
+  摘要: Mediators representing the Rwanda-backed AFC/M23 armed group and the Democratic Republic of Congo in a joint statement published Sunday said they have agreed on a roadmap for peace talks. The two sides said they had "agreed on the importance of a standardised method for reporting allegations of ceasefire violations".
+  链接: https://www.france24.com/en/africa/20260823-dr-congo-afc-m23-group-agree-on-roadmap-for-peace-negotiations-after-swiss-talks
+
+【15】Humanoid robot breaks Usain Bolt's 100m record in China
+  时间: Sun, 23 Aug 2026 11:45:17 GMT
+  来源: France 24 - International breaking news, top stories and headlines
+  摘要: Humanoid robots smashed sprinting records and competed in boxing, football and martial arts at Beijing’s World Robot Games, including running legend Usain Bolt's record for the 100-metre dash. The robo-athletes drew cheers from hundreds of spectators and showcased China’s growing dominance in humanoid robotics.
+  链接: https://www.france24.com/en/asia-pacific/20260823-humanoid-robots-break-records-at-competition-in-beijing
+
+【16】French holidaymakers head north to enjoy cooler destinations
+  时间: Sun, 23 Aug 2026 10:21:32 GMT
+  来源: France 24 - International breaking news, top stories and headlines
+  摘要: The summer holidays in France are continuing. However, as we head towards the end of August, a trend has emerged. Destinations in the north of the country are proving more popular, due to the series of heatwaves the country has experienced this year.
+  链接: https://www.france24.com/en/french-holidaymakers-head-north-to-enjoy-cooler-destinations
+
+【17】Saudi Arabia asserts its dominance over Esports as MBS arrives in Paris for 'World Cup'
+  时间: Sun, 23 Aug 2026 10:09:17 GMT
+  来源: France 24 - International breaking news, top stories and headlines
+  摘要: Saudi crown prince Mohammed bin Salman arrives in France for a two-day visit this Sunday. President Emmanuel Macron is hosting the crown prince for the closing ceremony of the so-called Esports World Cup in Paris… which is organised and financed by the Saudis. Analysis by Andy Miah, chair of Sciences Communication & Future Media at the University of Salford.
+  链接: https://www.france24.com/en/saudi-arabia-asserts-its-dominance-over-esports-as-mbs-arrives-in-paris-for-world-cup
+
+【18】Presidential campaign heats up in Brazil, as Lula and F. Bolsonaro hold rival rallies
+  时间: Sun, 23 Aug 2026 09:49:31 GMT
+  来源: France 24 - International breaking news, top stories and headlines
+  摘要: Brazilian president Lula de Silva and his political opponent Flavio Bolsonaro pressed on with their presidential campaigns over the weekend, as both candidates held rallies in Rio De Janeiro. Top of the agenda for both candidates was crime, though the two took distinctly different approaches to the issue. Details by Camille Corcoran.
+  链接: https://www.france24.com/en/presidential-campaign-heats-up-in-brazil-as-lula-and-f-bolsonaro-hold-rival-rallies
+
+【19】Hundreds of Gaza children join a mass swimming lesson to cope with trauma
+  时间: Sun, 23 Aug 2026 09:46:24 GMT
+  来源: France 24 - International breaking news, top stories and headlines
+  摘要: In Gaza, the war has upended the lives of an entire generation of children. In an effort to help them cope with the trauma of the conflict, an NGO has launched a project in Khan Younis: a huge swimming lesson that could even set a world record. Hundreds of children have gathered on the beach to learn how to swim. Story by Charlotte Hughes.
+  链接: https://www.france24.com/en/hundreds-of-gaza-children-join-a-mass-swimming-lesson-to-cope-with-trauma
+
+【20】Venezuela: Two months after the quake, 12,500 people still live in temporary camps
+  时间: Sun, 23 Aug 2026 09:45:24 GMT
+  来源: France 24 - International breaking news, top stories and headlines
+  摘要: Two months after two earthquakes struck Venezuela, more than 12,500 people are still living in temporary camps in La Guaira. Many survivors are still struggling to come to terms with the loss of loved ones and their homes. They have been forced to adapt to precarious living conditions, exposed to the elements, with little access to medical care and humanitarian aid. France 24 reporters Herminia Fernández and Julio Uribarris visited three camps housing earthquake survivors.
+  链接: https://www.france24.com/en/venezuela-two-months-after-the-quake-12-500-people-still-live-in-temporary-camps
+
+【21】Why is Saudi Arabia spending billions to become a global Esports power?
+  时间: Sun, 23 Aug 2026 09:44:11 GMT
+  来源: France 24 - International breaking news, top stories and headlines
+  摘要: Saudi Arabia is betting big on the global gaming industry. It's already gobbled up Electronic Arts in a $55 billion deal and the flagship Esports World Cup is now being held outside the country -- in Paris -- for the first time. This is part of efforts to diversify away from its oil and gas driven economy.
+  链接: https://www.france24.com/en/why-saudi-arabia-is-spending-billions-to-become-a-global-esports-power
+
+【22】Israeli strikes kill three, including child, in Gaza Strip
+  时间: Sun, 23 Aug 2026 09:23:01 GMT
+  来源: France 24 - International breaking news, top stories and headlines
+  摘要: Israeli strikes in the central Gaza Strip killed three people, including a child, on Sunday, according to rescuers. The strikes came two days after a Palestinian teenager was killed by Israeli settlers in the occupied West Bank following a rock-throwing incident.
+  链接: https://www.france24.com/en/middle-east/20260823-middle-east-live-iran-s-president-says-country-facing-many-problems-as-us-sanctions-loom
+
+【23】Ukraine: Zelensky asks for more Patriot interceptors as civilian deaths hit highest level since 2022
+  时间: Sun, 23 Aug 2026 09:05:59 GMT
+  来源: France 24 - International breaking news, top stories and headlines
+  摘要: Kryvyi Rih is still digging through the wreckage. The Russian strike on a shopping centre there, in President Zelensky's own hometown, has now claimed at least sixteen lives, with several people still unaccounted for. It has added urgency to the request Zelensky has been making for months: he needs Patriot interceptors as the threat of winter looms. Camille Knight has more.
+  链接: https://www.france24.com/en/ukraine-zelensky-asks-for-more-patriot-interceptors-as-civilian-deaths-hit-highest-level-since-2022
+
+【24】Zelensky should be asked what he knew about government corruption, sacked minister tells BBC
+  时间: Sun, 23 Aug 2026 12:56:43 GMT
+  来源: BBC News
+  摘要: Mykhailo Fedorov has also called for wartime elections to be held in Ukraine.
+  链接: https://www.bbc.co.uk/news/articles/cwy4ypzvd7po?at_medium=RSS&at_campaign=rss
+
+【25】Trump says Canada wants 'benefits' of being US state after trade talks collapse
+  时间: Sun, 23 Aug 2026 19:11:30 GMT
+  来源: BBC News
+  摘要: Canada's PM said he was "reluctantly" announcing retaliatory tariffs and accused the US of starting a trade war.
+  链接: https://www.bbc.co.uk/news/articles/cx272np7vgyo?at_medium=RSS&at_campaign=rss
+
+【26】Guinea rubbish landfill collapse kills 30
+  时间: Sun, 23 Aug 2026 18:17:37 GMT
+  来源: BBC News
+  摘要: A mound of rubbish at a major waste site buried several homes in the capital, the government says.
+  链接: https://www.bbc.co.uk/news/articles/c4g3g36z7p6o?at_medium=RSS&at_campaign=rss
+
+【27】DR Congo and M23 rebels agree roadmap for peace talks
+  时间: Sun, 23 Aug 2026 12:52:08 GMT
+  来源: BBC News
+  摘要: Representatives met in Switzerland to work out next steps to resolve the conflict.
+  链接: https://www.bbc.co.uk/news/articles/cre4e1q3wewo?at_medium=RSS&at_campaign=rss
+
+【28】France links sharp rise in drownings to heatwaves
+  时间: Sun, 23 Aug 2026 17:39:33 GMT
+  来源: BBC News
+  摘要: A government minister says people have been taking risks by going into the water, with 301 deaths since 19 June.
+  链接: https://www.bbc.co.uk/news/articles/cqlxlp4lx9yo?at_medium=RSS&at_campaign=rss
+
+【29】Dozens of co-ordinated arson attacks hit southern Thailand
+  时间: Sun, 23 Aug 2026 11:50:59 GMT
+  来源: BBC News
+  摘要: No group has claimed responsibility for the attacks, which the military said "aimed at creating unrest".
+  链接: https://www.bbc.co.uk/news/articles/c8enegx4xy3o?at_medium=RSS&at_campaign=rss
+
+【30】Australian shark attack victim grateful for 'second chance at life'
+  时间: Mon, 24 Aug 2026 00:34:59 GMT
+  来源: BBC News
+  摘要: Leah Stewart was mauled by a shark in June, suffering multiple bites to her arms and legs.
+  链接: https://www.bbc.co.uk/news/articles/c87n792dnlno?at_medium=RSS&at_campaign=rss
+
+【31】Frustration builds in Indiana town struggling without power for 12 days
+  时间: Sun, 23 Aug 2026 15:54:32 GMT
+  来源: BBC News
+  摘要: In the town of Gary, where a third of residents live in poverty, people say they have been living in "survival mode".
+  链接: https://www.bbc.co.uk/news/articles/clyly8vdpdwo?at_medium=RSS&at_campaign=rss
+
+【32】Kejelcha breaks men's half marathon world record by 29 seconds
+  时间: Sun, 23 Aug 2026 13:35:06 GMT
+  来源: BBC News
+  摘要: Ethiopia's Yomif Kejelcha breaks the men's half marathon world record in a time of  56 minutes 51 seconds in a World Athletics road race in Buenos Aires.
+  链接: https://www.bbc.co.uk/sport/athletics/articles/c9989lm0vkro?at_medium=RSS&at_campaign=rss
+
+【33】Golf brand apologises for advert that shows woman being pushed over
+  时间: Sun, 23 Aug 2026 12:25:40 GMT
+  来源: BBC News
+  摘要: Content creator Good Good apologises and removes an advert that shows a woman being pushed to the ground as she reached for a man's golf club.
+  链接: https://www.bbc.co.uk/sport/golf/articles/cx2j2g42xq9o?at_medium=RSS&at_campaign=rss
+
+【34】Trump waves green flag to start IndyCar race through Washington streets
+  时间: Sun, 23 Aug 2026 20:19:36 GMT
+  来源: BBC News
+  摘要: The president took a ceremonial lap of the track before the race, which is the culmination of a summer of events to mark the country's 250th birthday.
+  链接: https://www.bbc.co.uk/news/articles/c0qvq24vlj4o?at_medium=RSS&at_campaign=rss
+
+【35】'We're not going to run from it': Sydney Marathon laughs off medal error
+  时间: Sun, 23 Aug 2026 03:44:19 GMT
+  来源: BBC News
+  摘要: Runners will receive a medal at the 2026 Sydney Marathon with an engraving of a German stadium.
+  链接: https://www.bbc.co.uk/news/articles/cn4n4l1yyvro?at_medium=RSS&at_campaign=rss
+
+【36】'New season, new trim' - Haaland reveals buzzcut
+  时间: Sun, 23 Aug 2026 12:36:54 GMT
+  来源: BBC News
+  摘要: Manchester City striker Erling Haaland reveals his new buzz cut on social media.
+  链接: https://www.bbc.co.uk/sport/football/articles/cr4941zkgevo?at_medium=RSS&at_campaign=rss
+
+【37】Girl, 17, killed in Swedish sword attack, police say
+  时间: Sun, 23 Aug 2026 01:34:15 GMT
+  来源: BBC News
+  摘要: Two boys aged 12 and 17 were also injured, while an 18-year-old suspect has been detained.
+  链接: https://www.bbc.co.uk/news/articles/c8jnjp0lwlwo?at_medium=RSS&at_campaign=rss
+
+【38】Man completes 2,800 mile scoot across Australia
+  时间: Sun, 23 Aug 2026 06:01:16 GMT
+  来源: BBC News
+  摘要: Bob Brown from Saltash has ridden a non-electric scooter from Perth to Sydney.
+  链接: https://www.bbc.co.uk/news/articles/clylqlkq5e5o?at_medium=RSS&at_campaign=rss
+
+【39】Father leaves 7-year-old son alone on Mount Fuji to continue hike
+  时间: Sat, 22 Aug 2026 14:35:11 GMT
+  来源: BBC News
+  摘要: The man had taken his two boys on the trip but is said to have left one behind when he got tired.
+  链接: https://www.bbc.co.uk/news/articles/c93403wg288o?at_medium=RSS&at_campaign=rss
+
+【40】Syria says Israeli strike near Damascus violation of international law
+  时间: Sat, 22 Aug 2026 21:42:42 GMT
+  来源: BBC News
+  摘要: The latest incident comes days after reports emerged Israel had struck a military airbase close to the Turkish border.
+  链接: https://www.bbc.co.uk/news/articles/c2dkdegr2xeo?at_medium=RSS&at_campaign=rss
+
+【41】Rescuers dig through Ukraine mall wreckage as Zelensky condemns 'despicable' Russian strike
+  时间: Sat, 22 Aug 2026 13:13:16 GMT
+  来源: BBC News
+  摘要: Four people are still missing after Friday's attack which killed 16 and left 130 injured, including a number of children.
+  链接: https://www.bbc.co.uk/news/articles/c39egw7nmk2o?at_medium=RSS&at_campaign=rss
+
+【42】Fourteen killed in strike on Myanmar monastery
+  时间: Sat, 22 Aug 2026 13:48:06 GMT
+  来源: BBC News
+  摘要: A rescue worker said the site had been struck twice as civilians gathered for a meditation retreat.
+  链接: https://www.bbc.co.uk/news/articles/cqlxlvz01z1o?at_medium=RSS&at_campaign=rss
+
+【43】US military newspaper editor voices censorship fears after being fired
+  时间: Sat, 22 Aug 2026 16:57:19 GMT
+  来源: BBC News
+  摘要: Erik Slavin believes he was fired for saying in an interview that "in a hypothetical situation, censorship would be a red line".
+  链接: https://www.bbc.co.uk/news/articles/cm2g23ng8p4o?at_medium=RSS&at_campaign=rss
+
+【44】TikTok to pay $400m to US in one of largest child privacy settlements
+  时间: Fri, 21 Aug 2026 22:36:12 GMT
+  来源: BBC News
+  摘要: The deal stems from a 2024 lawsuit alleging TikTok and its parent company ByteDance collected "vast amounts of data" on millions of users under the age of 13.
+  链接: https://www.bbc.co.uk/news/articles/cwyr0l45xjro?at_medium=RSS&at_campaign=rss
+
+【45】Lindsay Clancy suffering 'command hallucination' when she killed children, court hears
+  时间: Sat, 22 Aug 2026 03:43:26 GMT
+  来源: BBC News
+  摘要: The defence brought their final witness - a forensic psychiatrist - to the stand to testify about the effects of postpartum psychosis.
+  链接: https://www.bbc.co.uk/news/articles/c62xpre63j2o?at_medium=RSS&at_campaign=rss
+
+【46】The hotel booking mix-up that could free mushroom murderer
+  时间: Sat, 22 Aug 2026 19:03:03 GMT
+  来源: BBC News
+  摘要: A table tennis tournament and a throat lozenge could help Erin Patterson's lawyers overturn her convictions.
+  链接: https://www.bbc.co.uk/news/articles/c9w09dj7qk5o?at_medium=RSS&at_campaign=rss
+
+【47】Robot boxing, football and sprinting at World Humanoid Games
+  时间: Sun, 23 Aug 2026 12:47:06 GMT
+  来源: BBC News
+  摘要: The second-edition of the five-day competition kicked off in Beijing, China, on Saturday.
+  链接: https://www.bbc.co.uk/news/videos/c7vgvj6e1emo?at_medium=RSS&at_campaign=rss
+
+【48】Did a goat herder's lucky $200 nugget spark a gold rush in western Kenya?
+  时间: Sat, 22 Aug 2026 23:22:02 GMT
+  来源: BBC News
+  摘要: Prospectors have come to West Pokot county in the hope a gram of the precious metal can change their lives.
+  链接: https://www.bbc.co.uk/news/articles/clyjmnvdr95o?at_medium=RSS&at_campaign=rss
+
+【49】Carney faces crucial test after walking away from Trump's deal
+  时间: Sat, 22 Aug 2026 20:02:46 GMT
+  来源: BBC News
+  摘要: The Canadian prime minister will have to sell his gamble that walking away from talks with the White House will be worth the consequences.
+  链接: https://www.bbc.co.uk/news/articles/c3040pn8lmmo?at_medium=RSS&at_campaign=rss
+
+【50】As they return to the UK, Harry and Meghan search for a brand that sticks
+  时间: Sat, 22 Aug 2026 00:03:10 GMT
+  来源: BBC News
+  摘要: They will not be working royals when they come back. So what could they be doing instead?
+  链接: https://www.bbc.co.uk/news/articles/c0l5d387j18o?at_medium=RSS&at_campaign=rss
+
+【51】Wicker Man director's sons complete their late father's film trilogy
+  时间: Sun, 23 Aug 2026 12:51:15 GMT
+  来源: BBC News
+  摘要: The final film in the folk horror trilogy brings closure to the saga as well as its creator's family after more than 50 years.
+  链接: https://www.bbc.co.uk/news/articles/cj36kv62g7yo?at_medium=RSS&at_campaign=rss
+
+【52】These bookshops let Chinese readers question their country - now the doors are closing
+  时间: Fri, 21 Aug 2026 22:26:25 GMT
+  来源: BBC News
+  摘要: For some mainlanders, Hong Kong's independent bookstores are a window into a different, freer world.
+  链接: https://www.bbc.co.uk/news/articles/cj0338l6yg4o?at_medium=RSS&at_campaign=rss
+
+【53】Drugs at their fingertips, intense pressure: Why child stars fall into addiction
+  时间: Fri, 21 Aug 2026 23:41:33 GMT
+  来源: BBC News
+  摘要: Experts told the BBC the pressures of childhood stardom can put actors at an unusually higher risk of substance abuse issues.
+  链接: https://www.bbc.co.uk/news/articles/cq56x3910jwo?at_medium=RSS&at_campaign=rss
+
+【54】How Israel is expanding settlements in drive to reshape West Bank
+  时间: Fri, 21 Aug 2026 19:31:47 GMT
+  来源: BBC News
+  摘要: There has been a significant expansion of building and road construction on Palestinian land occupied by Israel in recent years.
+  链接: https://www.bbc.co.uk/news/articles/c2lq5g4dedpo?at_medium=RSS&at_campaign=rss
+
+【55】Modi spent years building his strong image - why is he making Gen Z reels now?
+  时间: Fri, 21 Aug 2026 22:15:32 GMT
+  来源: BBC News
+  摘要: Narendra Modi's new, more casual online persona is drawing attention from young Indians - but also plenty of scepticism.
+  链接: https://www.bbc.co.uk/news/articles/cnvn0n1nld6o?at_medium=RSS&at_campaign=rss
+
+【56】Rosenberg: Shortage of petrol but not patriotism as Russians feel growing impact of war
+  时间: Fri, 21 Aug 2026 13:07:00 GMT
+  来源: BBC News
+  摘要: Drivers are waiting hours in fuel queues, as Moscow prepares to celebrate Russian Flag Day.
+  链接: https://www.bbc.co.uk/news/articles/c4gknzgje7go?at_medium=RSS&at_campaign=rss
+
+【57】Trump Mobile promoted a 'Made in the USA' phone - but the details kept changing
+  时间: Sat, 22 Aug 2026 23:45:01 GMT
+  来源: BBC News
+  摘要: BBC Verify tracks the changes in design, spec, manufacture and release date of the T1 phone from Trump Mobile.
+  链接: https://www.bbc.co.uk/news/videos/c20eq9ywplqo?at_medium=RSS&at_campaign=rss
+
+【58】Watch: Moment humanoid robot beats Usain Bolt's 100m record
+  时间: Sat, 22 Aug 2026 17:02:06 GMT
+  来源: BBC News
+  摘要: The robot ran the distance in 9.39 seconds at the World Humanoid Robot Games in Beijing.
+  链接: https://www.bbc.co.uk/news/videos/cgljl9zp47xo?at_medium=RSS&at_campaign=rss
+
+【59】'Quiet, quiet, quiet!' - What triggers Trump to shut down reporters?
+  时间: Sat, 22 Aug 2026 02:39:10 GMT
+  来源: BBC News
+  摘要: As the US president insults a journalist again, the BBC looks at the questions he does not like to answer.
+  链接: https://www.bbc.co.uk/news/videos/c235j22d85ro?at_medium=RSS&at_campaign=rss
+
+【60】Robot horse and rider steal the spotlight at Chinese conference
+  时间: Sat, 22 Aug 2026 10:01:18 GMT
+  来源: BBC News
+  摘要: More than 300 companies are showcasing the latest advances in robotics at the five-day event in Beijing, China, organisers say.
+  链接: https://www.bbc.co.uk/news/videos/c0qvqzzdd02o?at_medium=RSS&at_campaign=rss
+
+【61】Tornadoes touch down in New York and Delaware
+  时间: Fri, 21 Aug 2026 14:35:50 GMT
+  来源: BBC News
+  摘要: Tornadoes swept through New York and Delaware as severe storms brought torrential rain to the Mid-Atlantic.
+  链接: https://www.bbc.co.uk/news/videos/cy07x9ne871o?at_medium=RSS&at_campaign=rss
+
+【62】Watch: Taking a 180mph spin round America's birthday Grand Prix racetrack
+  时间: Fri, 21 Aug 2026 21:50:27 GMT
+  来源: BBC News
+  摘要: The Freedom 250 Grand Prix is part of the nation’s 250th anniversary celebrations and the first major auto race in the US capital in more than 24 years.
+  链接: https://www.bbc.co.uk/news/videos/cn0nd7y883zo?at_medium=RSS&at_campaign=rss
+
+【63】Learning to live in a post-American world
+  时间: Sun, 23 Aug 2026 17:21:23 -0400
+  来源: NPR Topics: News
+  摘要: In a recent article for Foregin Affairs, Mark Leonard makes that argument that America's leading role in the world order is fading. He discusses his argument with NPR's Danielle Kurtzleben.
+  链接: https://www.npr.org/2026/08/23/nx-s1-5939846/learning-to-live-in-a-post-american-world
+
+【64】Thousands in northwest Indiana still without power nearly two weeks after storm
+  时间: Sun, 23 Aug 2026 12:55:37 -0400
+  来源: NPR Topics: News
+  摘要: A round of storms impacted the region on Aug. 11
+  链接: https://www.npr.org/2026/08/23/nx-s1-5942292/thousands-in-northwest-indiana-still-without-power-nearly-two-weeks-after-storm
+
+【65】Nonprofits are helping musicians pay for insurance in Austin, Texas, and beyond
+  时间: Sun, 23 Aug 2026 12:15:30 -0400
+  来源: NPR Topics: News
+  摘要: A nonprofit and a local public health agency are subsidizing marketplace health insurance for Austin musicians , even as rising healthcare costs make the program more expensive.
+  链接: https://www.npr.org/2026/08/23/nx-s1-5901338/health-alliance-austin-musicians-texas-health-premiums-obamacare-marketplace-uninsured
+
+【66】Becerra, running for governor of California, faces a health insurance problem
+  时间: Sun, 23 Aug 2026 08:50:09 -0400
+  来源: NPR Topics: News
+  摘要: The nation's uninsured rate hit a historical low when Xavier Becerra was health secretary. Now he wants to be California's next governor as Trump's actions have driven people off health insurance.
+  链接: https://www.npr.org/2026/08/23/nx-s1-5941143/california-governor-xavier-becerra-health-insurance
+
+【67】Tropical Storm Moke to cause more flooding as Hawaii recovers from Lala
+  时间: Sun, 23 Aug 2026 08:48:05 -0400
+  来源: NPR Topics: News
+  摘要: More than a foot of rain could fall across Big Island of Hawaii, according to NOAA.
+  链接: https://www.npr.org/2026/08/23/nx-s1-5941769/tropical-storm-moke-hawaii
+
+【68】Body cam shows federal agent was 'unjustified' in Memphis shooting, attorney says
+  时间: Sun, 23 Aug 2026 05:00:00 -0400
+  来源: NPR Topics: News
+  摘要: The family of Jonah Neal and their attorney were recently shown video from the day that Neal was shot by a federal agent while he experienced a mental health crisis.
+  链接: https://www.npr.org/2026/08/23/nx-s1-5936573/memphis-task-force-shooting-video-jonah-neal
+
+【69】Trump administration's 75-country visa ban was illegal, judge rules
+  时间: Sat, 22 Aug 2026 16:53:19 -0400
+  来源: NPR Topics: News
+  摘要: The U.S. stopped issuing visas for citizens of 75 countries because it said they were likely to need public assistance. A judge ruled the policy illegally discriminated on the basis of nationality.
+  链接: https://www.npr.org/2026/08/22/nx-s1-5941765/trump-immigration-visa-ban-75-countries
+
+【70】Opinion: Mr. Rogers keeps finding a new neighborhood
+  时间: Sat, 22 Aug 2026 08:00:00 -0400
+  来源: NPR Topics: News
+  摘要: MLB catcher Jake Rogers probably didn't know if he was coming or going the last several weeks: he's been a Detroit Tiger, a Baltimore Oriole, a Boston Red Sox, and now he's a Chicago White Sox.
+  链接: https://www.npr.org/2026/08/22/nx-s1-5932426/opinion-mr-rogers-keeps-finding-a-new-neighborhood
+
+【71】As Flock battles public scrutiny, other police surveillance companies see an opening
+  时间: Sat, 22 Aug 2026 07:43:32 -0400
+  来源: NPR Topics: News
+  摘要: Dozens of cities have canceled their contracts with Flock. Some are switching to other companies, but privacy experts say they're no better than Flock.
+  链接: https://www.npr.org/2026/08/22/nx-s1-5931446/flock-fallout-competitors-see-opportunity
+
+【72】As Canada readies retaliatory tariffs, Mark Carney says his nation is 'at war' with U.S.
+  时间: Sat, 22 Aug 2026 00:36:27 -0400
+  来源: NPR Topics: News
+  摘要: The U.S. has now imposed 50% tariffs on $20 billion worth of Canadian products. Prime Minister Mark Carney says Canada will match those tariffs "dollar for dollar" starting Sept. 8.
+  链接: https://www.npr.org/2026/08/22/nx-s1-5941584/us-canada-tariffs
+
+============================================================
+   简报结束
+============================================================

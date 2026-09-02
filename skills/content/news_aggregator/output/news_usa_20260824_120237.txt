@@ -1,0 +1,127 @@
+============================================================
+   📰 每日新闻简报
+============================================================
+   生成时间: 2026-08-24 12:01:37
+   分类: 美国
+   新闻数: 50 条
+============================================================
+
+【AI 智能摘要】
+----------------------------------------
+### 科技类
+
+1. **Atlas of Surveillance** 维护着美国最大规模的警察监控技术数据库。
+   - 来源: News – CNET
+
+2. **ChatGPT** 新功能允许其AI聊天机器人阅读和撰写短信。
+   - 来源: News – CNET
+
+3. **OneSearch替代方案** 推出，用户可以轻松地离开Google搜索。
+   - 来源: News – CNET
+
+### 科学类
+
+1. **快速星体绕银河系黑洞运行** 速度为每秒15,500英里，是科学界观察到的最高速度行星或恒星。
+   - 来源: News – CNET
+
+2. **Grok聊天机器人产生纯随机垃圾信息**，这是一堂关于AI如何工作的课程。
+   - 来源: News – CNET
+
+### 娱乐类
+
+1. **Xbox Series X特别版定价确认2026年对游戏玩家来说是个糟糕的一年。**
+   - 来源: News – CNET
+
+2. **GTA 6泄露事件** 导致Take-Two寻求针对微软和Discord的数据 subpoena。
+   - 来源: News – CNET
+
+### 社交媒体类
+
+1. **Walmart和Sam's Club将提供Tap-to-Pay支付选项。**
+   - 来源: News – CNET
+
+### 科技类
+
+1. **Big Tech的水消耗用于冷却AI服务器是严重的，即使这个病毒广告并不严肃。**
+   - 来源: News – CNET
+
+2. **Dead Internet理论** 的发现表明，你在网上阅读的内容可能由AI机器人撰写。
+   - 来源: News – CNET
+
+------------------------------------------------------------
+
+📌 News – CNET (20 条)
+----------------------------------------
+  • How to Find Out If There Are Flock Cameras Near You
+    The Atlas of Surveillance maintains the largest known database tracking police surveillance technologies across the US....
+    🔗 https://www.cnet.com/news/privacy/this-searchable-tool-is-helping-track-flock-surveillance-cameras-in-your-city/
+
+  • This Star Whips Around the Milky Way’s Black Hole Faster and Closer Than Any Other Known Star
+    At 15,500 miles per second, it’s the fastest planet or star ever observed by science, but its true value is how close it is to our galaxy’s supermassi...
+    🔗 https://www.cnet.com/science/space/s301-star-speed-sagittarius-a-black-hole/
+
+  • Ditch Google Search for One of These 5 Other Free Search Engines
+    Breaking up with Google is easy with these free alternatives....
+    🔗 https://www.cnet.com/tech/services-and-software/if-you-want-to-ditch-google-search-try-these-5-other-search-engines-now/
+
+  • Grok Had a ‘Generation Glitch’ That Caused It to Send Users Pure Nonsense
+    Chatbot gibberish is annoying. But it’s also a lesson in how AI works....
+    🔗 https://www.cnet.com/tech/services-and-software/grok-had-a-generation-glitch-that-caused-it-to-send-users-pure-nonsense/
+
+  • Xbox Series X Special Edition Pricing Confirms 2026 Is a Bad Year for Gamers
+    The Microsoft Xbox Special Edition console price has leaked, revealing an unpleasantly high price....
+    🔗 https://www.cnet.com/tech/gaming/xbox-series-x-special-edition-price-2026-bad-year-for-gamers/
+
+  ... 还有 15 条
+
+📌 The Verge (10 条)
+----------------------------------------
+  • GTA VI: all the news on Rockstar’s next entry in the Grand Theft Auto series
+    It’s been over a decade and two console generations since GTA V came out, and its sequel is still a work in progress. GTA VI has faced multiple delays...
+    🔗 https://www.theverge.com/23987993/gta-6-news-trailers-rockstar-games
+
+  • We’re All Going to the World’s Fair is an intimate coming-of-age horror film
+    Jane Schoenbrun's latest film, Teenage Sex and Death at Camp Miasma, is making a splash in theaters right now. So it seems like the perfect time to re...
+    🔗 https://www.theverge.com/entertainment/983177/jane-schoenbrun-were-all-going-to-the-worlds-fair-horror-movie-review
+
+  • Grand Theft Auto VI exists in its own universe
+    This is The Stepback, a weekly newsletter breaking down one essential story from the tech world. For more on GTA VI and the state of the video game in...
+    🔗 https://www.theverge.com/column/983410/grand-theft-auto-vi-exists-in-its-own-universe
+
+  • Doodle generative compositions in your browser with Musical Spirograph
+    I remember having a Spirograph as a kid and being obsessed with it. Its geometric patterns are hypnotic and gorgeous. I also love generative music com...
+    🔗 https://www.theverge.com/entertainment/983322/musical-spirograph-generative-composition
+
+  • W. Kamau Bell has the most practical ‘most indispensable tool’
+    W. Kamau Bell is one of those people who has always just seemed to be there. From Totally Biased, to Politically Re-Active, United Shades of America, ...
+    🔗 https://www.theverge.com/report/980452/w-kamau-bell-whos-with-me-comedy-interview
+
+  ... 还有 5 条
+
+📌 WIRED (20 条)
+----------------------------------------
+  • Asus ROG Swift RGB Stripe OLED Review: Clarity King
+    The Asus PG27UCWM brings a new sub-pixel layout to the world of OLED gaming monitors, and in my testing, I appreciated the improvements it brings to t...
+    🔗 https://www.wired.com/review/asus-rog-swift-rgb-stripe-oled-pg27ucwm/
+
+  • What’s the Best Kindle of 2026? (So Far)
+    I’ve tested every single Kindle. Here’s how Amazon’s ebook readers stack up....
+    🔗 https://www.wired.com/gallery/best-kindle/
+
+  • Transistors Changed Everything. Here’s How They Work
+    How a tiny little electronic switch sparked the computer revolution....
+    🔗 https://www.wired.com/story/transistors-changed-everything-heres-how-they-work/
+
+  • The 6 Best Laptop Docking Stations to Unlock the Full Desktop Experience (2026)
+    Docking stations expand what your laptop can do, and I’ve been testing the best of the best to see which you should buy....
+    🔗 https://www.wired.com/gallery/best-laptop-docking-stations/
+
+  • 7 Basic iPhone Tricks I Built With iOS 27’s Revamped Shortcuts App
+    From halting my doomscrolls to automating air-quality checks, Apple’s streamlined Shortcuts app is my favorite iOS 27 feature....
+    🔗 https://www.wired.com/story/7-basic-iphone-tricks-i-built-with-ios-27s-revamped-shortcuts-app/
+
+  ... 还有 15 条
+
+============================================================
+   简报结束
+============================================================

@@ -1,0 +1,16 @@
+{
+  "timestamp": 1787540750.6372705,
+  "feeds": [
+    "https://www.wired.com/feed/rss",
+    "https://feeds.feedburner.com/TechCrunch",
+    "https://feeds.feedburner.com/venturebeat/SZYF",
+    "https://www.engadget.com/rss.xml",
+    "https://techcrunch.com/feed/",
+    "https://www.cnet.com/rss/news/",
+    "https://www.theguardian.com/uk/technology/rss",
+    "https://www.theverge.com/rss/index.xml",
+    "https://www.zdnet.com/news/rss.xml",
+    "https://hnrss.org/frontpage",
+    "https://arstechnica.com/feed/"
+  ]
+}

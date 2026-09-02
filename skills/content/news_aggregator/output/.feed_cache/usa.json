@@ -1,0 +1,11 @@
+{
+  "timestamp": 1787540494.2722425,
+  "feeds": [
+    "https://www.cnet.com/rss/news/",
+    "https://www.theverge.com/rss/index.xml",
+    "https://www.wired.com/feed/rss",
+    "https://www.zdnet.com/news/rss.xml",
+    "https://feeds.feedburner.com/TechCrunch",
+    "https://www.npr.org/rss/rss.php?id=1001"
+  ]
+}

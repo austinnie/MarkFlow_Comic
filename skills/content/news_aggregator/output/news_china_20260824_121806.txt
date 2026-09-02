@@ -1,0 +1,245 @@
+============================================================
+   📰 每日新闻简报
+============================================================
+   生成时间: 2026-08-24 12:16:04
+   分类: 中国
+   新闻数: 38 条
+============================================================
+
+【AI 智能摘要】
+----------------------------------------
+AI 摘要生成失败: HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=120)
+
+------------------------------------------------------------
+
+【1】美加貿易協議談崩 卡尼面臨關鍵考驗
+  时间: Sun, 23 Aug 2026 13:56:22 GMT
+  来源: BBC Chinese
+  摘要: BBC分析：加拿大總理卡尼將必須讓民眾相信，他放棄與白宮談判的這場豪賭，將值得承受隨之而來的後果。
+  链接: https://www.bbc.com/zhongwen/articles/c9w0wn0g5zwo/trad?at_medium=RSS&at_campaign=rss
+
+【2】快時尚品牌Shein估值270億美元赴港上市
+  时间: Mon, 24 Aug 2026 02:57:09 GMT
+  来源: BBC Chinese
+  摘要: 據Shein提交港交所文件，該公司股份擬於9月1日正式掛牌。
+  链接: https://www.bbc.com/zhongwen/articles/cgqd22pp13lo/trad?at_medium=RSS&at_campaign=rss
+
+【3】泰國南部一夜50多起縱火 軍方稱為有組織搗亂
+  时间: Sun, 23 Aug 2026 13:56:41 GMT
+  来源: BBC Chinese
+  摘要: 軍方表示，這些襲擊「意圖製造動盪」，目前沒有任何組織承認責任。
+  链接: https://www.bbc.com/zhongwen/articles/cm2g2pnlxkko/trad?at_medium=RSS&at_campaign=rss
+
+【4】老乾媽陶華碧教會我們的七件事
+  时间: Mon, 24 Aug 2026 00:02:12 GMT
+  来源: BBC Chinese
+  摘要: 陶華碧憑藉其老乾媽辣椒醬帝國脫貧，蛻變成「中國最火辣的女人」，並成為風靡全球的網絡熱話。
+  链接: https://www.bbc.com/zhongwen/articles/cwyey059q72o/trad?at_medium=RSS&at_campaign=rss
+
+【5】如何不用鬧鐘就能起床？
+  时间: Sun, 23 Aug 2026 05:58:45 GMT
+  来源: BBC Chinese
+  摘要: 只要稍微安排睡眠，自然起床其實很容易。
+  链接: https://www.bbc.com/zhongwen/articles/cy8e8584160o/trad?at_medium=RSS&at_campaign=rss
+
+【6】為什麼我們會對未必會傷害自己的事物恐懼萬分？
+  时间: Mon, 24 Aug 2026 00:01:33 GMT
+  来源: BBC Chinese
+  摘要: 我們很多人都會對一些不構成嚴重風險的事物感到恐懼。科學家認為恐懼並非與生俱來。那麼，這些恐懼究竟是從何而來？
+  链接: https://www.bbc.com/zhongwen/articles/cy5d5qp19gyo/trad?at_medium=RSS&at_campaign=rss
+
+【7】冒險心理學：你選擇穩袋5萬元，還是以一半機會博取100萬元？
+  时间: Sun, 23 Aug 2026 00:12:49 GMT
+  来源: BBC Chinese
+  摘要: 有評論認為，最近一項針對英國人的調查顯示，他們在金錢方面過於謹慎，但BBC經濟事務編輯指出，事情並沒有這麼簡單。
+  链接: https://www.bbc.com/zhongwen/articles/cvgv247z0yzo/trad?at_medium=RSS&at_campaign=rss
+
+【8】台灣「三大公投」：時隔一年再公投，這次投什麼？通過門檻為何？
+  时间: Fri, 21 Aug 2026 13:47:30 GMT
+  来源: BBC Chinese
+  摘要: 這是台灣相隔短短一年後再有公投，也是當地近8年來，第4度舉行公投。BBC中文整理了此次三大公投的背景和重點。
+  链接: https://www.bbc.com/zhongwen/articles/c0rdle4l1lvo/trad?at_medium=RSS&at_campaign=rss
+
+【9】「我就是個普通人」：中國出入境新規上路前，那些早已受困的民眾
+  时间: Thu, 20 Aug 2026 00:07:18 GMT
+  来源: BBC Chinese
+  摘要: 從9月15日開始，中國出入境新規將開始實施，不少民眾擔心出境自由受限。但早在新規出台前，從公務員、國企人員到普通民眾，已經有不少人因為各種原因被限制出境。
+  链接: https://www.bbc.com/zhongwen/articles/ce3q0yd25j9o/trad?at_medium=RSS&at_campaign=rss
+
+【10】特朗普想與金正恩做朋友，韓國恐要為此付出代價
+  时间: Fri, 21 Aug 2026 09:40:09 GMT
+  来源: BBC Chinese
+  摘要: 美韓聯合軍事演習提前結束，此時北韓正處於實力強勢的位置。
+  链接: https://www.bbc.com/zhongwen/articles/c74g2d2293zo/trad?at_medium=RSS&at_campaign=rss
+
+【11】香港支聯會「煽動顛覆」案 高等法院裁定有罪
+  时间: Fri, 21 Aug 2026 13:24:42 GMT
+  来源: BBC Chinese
+  摘要: 法庭認為，支聯會雖未使用或鼓吹暴力手段，但中國《香港國安法》頒布後，三人仍堅持「結束一黨專政」行動綱領，屬於「顛覆國家政權」罪中的「其他非法手段」。
+  链接: https://www.bbc.com/zhongwen/articles/cvgvrpy7pjro/trad?at_medium=RSS&at_campaign=rss
+
+【12】生於烏克蘭，為何替俄羅斯作戰？被俘士兵向BBC講述背後故事
+  时间: Fri, 21 Aug 2026 08:21:37 GMT
+  来源: BBC Chinese
+  摘要: 出生於烏克蘭，卻替俄羅斯作戰的男子會被控叛國罪，但在烏克蘭西部一座戰俘營裏，許多人認為自己是在保衛家園。
+  链接: https://www.bbc.com/zhongwen/articles/cr59gmzdj2zo/trad?at_medium=RSS&at_campaign=rss
+
+【13】哈里王子和梅根打算遷回英國，但這會長久嗎？
+  时间: Thu, 20 Aug 2026 03:13:46 GMT
+  来源: BBC Chinese
+  摘要: 遷居返回英國的這項突然決定，為薩塞克斯公爵伉儷以及英國王室留下許多疑問。
+  链接: https://www.bbc.com/zhongwen/articles/cgje9p6vn76o/trad?at_medium=RSS&at_campaign=rss
+
+【14】中國機器人打破人類百米短跑世界紀錄
+  时间: Sun, 23 Aug 2026 09:43:30 GMT
+  来源: BBC Chinese
+  摘要: 在北京舉行的世界人形機器人運動會上，一台「天工Ultra」以9.39秒跑畢100米路程。
+  链接: https://www.bbc.com/zhongwen/articles/c4gkg78wp1ko/trad?at_medium=RSS&at_campaign=rss
+
+【15】「結束一黨專政」：為何令支聯會煽動顛覆政權罪成？
+  时间: Fri, 21 Aug 2026 12:59:23 GMT
+  来源: BBC Chinese
+  摘要: 已解散的香港支聯會及其前正副主席，在8月21日被裁定國安法下的「煽動顛覆國家政權罪」罪名成立。三名前領袖李卓人、鄒幸彤與何俊仁，將面對最高十年監禁。曾經連續30年在香港主辨全球最大的六四燭光晚會，支聯會的「結束一黨專政」綱領成為本案核心及定罪關鍵。
+  链接: https://www.bbc.com/zhongwen/articles/c1w1r9d8gn2o/trad?at_medium=RSS&at_campaign=rss
+
+【16】「蟑螂人民黨」的崛起：印度Z世代到底在抗議什麼？
+  时间: Fri, 21 Aug 2026 11:05:58 GMT
+  来源: BBC Chinese
+  摘要: 一句侮辱，演變成一場反抗。從網路玩笑到全國抗議，這場由印度Z世代推動的運動，成為納倫德拉·莫迪執政以來最嚴峻的挑戰之一。
+  链接: https://www.bbc.com/zhongwen/articles/c1l136ry802o/trad?at_medium=RSS&at_campaign=rss
+
+【17】AI浪潮衝擊青年就業 畢業生如何應對？
+  时间: Fri, 14 Aug 2026 03:41:21 GMT
+  来源: BBC Chinese
+  摘要: 2026年度中國高校畢業生達1,270萬人，創歷史新高，加上往屆未就業與回流的海外留學生，求職人數突破1,500萬人。面對「降本增效」的職場新常態，年輕一代應如何調整定位？
+  链接: https://www.bbc.com/zhongwen/articles/cwye07v501ro/trad?at_medium=RSS&at_campaign=rss
+
+【18】中國國產C919首飛國際航線 挑戰波音、空中巴士再進一步？
+  时间: Fri, 14 Aug 2026 09:36:38 GMT
+  来源: BBC Chinese
+  摘要: C919完成首次國際商業航班飛行，由北京飛往蒙古烏蘭巴托，象徵中國國產客機邁向海外市場的里程碑。北京希望藉此挑戰波音及空中巴士的市場主導地位，但此款飛機仍面臨國際認證及供應鏈緊張等挑戰。
+  链接: https://www.bbc.com/zhongwen/articles/c1w1ypqx1qxo/trad?at_medium=RSS&at_campaign=rss
+
+【19】霍爾木茲海峽動盪，如何在巴拿馬運河引發中美角力？
+  时间: Fri, 21 Aug 2026 13:39:35 GMT
+  来源: BBC Chinese
+  摘要: 美國和中國再次就巴拿馬運河問題交鋒。這條戰略水道約佔全球海運貿易量5%，而美國近40%的集裝箱運輸都經過這裏。
+  链接: https://www.bbc.com/zhongwen/articles/cdj013krm3no/trad?at_medium=RSS&at_campaign=rss
+
+【20】美國稱數十國助中國避特朗普關稅
+  时间: Fri, 14 Aug 2026 05:11:59 GMT
+  来源: BBC Chinese
+  摘要: 美國一份新報告稱，中國透過關稅較低的國家轉運貨物，以規避較高關稅。
+  链接: https://www.bbc.com/zhongwen/articles/cq6d1y1212po/trad?at_medium=RSS&at_campaign=rss
+
+【21】特習會後美中再現摩擦　「建設性穩定」能否撐到九月？
+  时间: Tue, 04 Aug 2026 00:01:45 GMT
+  来源: BBC Chinese
+  摘要: 關稅、台灣、安全議題再起摩擦，特習會後的美中「建設性穩定」還能持續多久？
+  链接: https://www.bbc.com/zhongwen/articles/cqx7z51qvpgo/trad?at_medium=RSS&at_campaign=rss
+
+【22】中美俄的太空攻防戰：衛星如何成為現代戰爭的第一擊？
+  时间: Sat, 01 Aug 2026 09:56:01 GMT
+  来源: BBC Chinese
+  摘要: 在現代戰爭中，環繞地球運行的人造衛星幾乎未曾受到波及；但到了21世紀，太空或許已不再是安全的避風港。
+  链接: https://www.bbc.com/zhongwen/articles/cgljn380r59o/trad?at_medium=RSS&at_campaign=rss
+
+【23】特朗普政府禁止中國人形機械人進口 北京批「泛化國家安全」
+  时间: Wed, 29 Jul 2026 11:14:21 GMT
+  来源: BBC Chinese
+  摘要: 美國和中國正陷入一場爭奪全球機械人與人工智能領導地位的競賽。
+  链接: https://www.bbc.com/zhongwen/articles/c3ekn91y5j5o/trad?at_medium=RSS&at_campaign=rss
+
+【24】她辭掉了8萬英鎊年薪工作去做冰淇淋，然後造出了爆款
+  时间: Fri, 21 Aug 2026 00:04:00 GMT
+  来源: BBC Chinese
+  摘要: 英國冰淇淋品牌 Little Moons 華裔共同創辦人分享她給任何考慮自行創業人士的建議。
+  链接: https://www.bbc.com/zhongwen/articles/clyx0yxjx5zo/trad?at_medium=RSS&at_campaign=rss
+
+【25】恆大許家印被判處無期徒刑 集團罰款近160億元人民幣
+  时间: Thu, 20 Aug 2026 06:43:47 GMT
+  来源: BBC Chinese
+  摘要: 深圳法院裁定沒收許家印個人全部財產；已被頒令清盤的恆大集團與恆大地產合共被罰款158.2億元人民幣（23.52億美元；749.45億元新台幣）。
+  链接: https://www.bbc.com/zhongwen/articles/cvgjdjnynvlo/trad?at_medium=RSS&at_campaign=rss
+
+【26】朱鎔基火化：從民間到八寶山，中國領導人身後事的政治邏輯
+  时间: Tue, 18 Aug 2026 18:00:44 GMT
+  来源: BBC Chinese
+  摘要: 儘管中國官方將這位已故總理譽為「忠誠」的黨員，但當局同樣提防公眾對他所代表的改革年代的悼念，容易演變為對當下領導層的隱晦批評。
+  链接: https://www.bbc.com/zhongwen/articles/c70glkrgd1eo/trad?at_medium=RSS&at_campaign=rss
+
+【27】靖國神社：81年後，為何一次參拜仍能牽動東亞？
+  时间: Sun, 16 Aug 2026 10:44:03 GMT
+  来源: BBC Chinese
+  摘要: 高市早苗今年選擇不親自參拜靖國，卻以奉納玉串料及「遙拜」表達敬意，而靖國所供奉的甲級戰犯、戰爭記憶與日本日益強化的安全政策，仍讓這座神社成為中日韓外交爭議的焦點。
+  链接: https://www.bbc.com/zhongwen/articles/cn8nn1g2y26o/trad?at_medium=RSS&at_campaign=rss
+
+【28】Meta 若輸掉這訴訟，Instagram 和 Facebook 或會永遠改變
+  时间: Mon, 17 Aug 2026 12:16:16 GMT
+  来源: BBC Chinese
+  摘要: 美國30個州已對Meta提起訴訟，要求徹底改革年輕用戶的社交平台。
+  链接: https://www.bbc.com/zhongwen/articles/c4g33g9red9o/trad?at_medium=RSS&at_campaign=rss
+
+【29】台灣為何此刻提出「鞭刑入法」公投？
+  时间: Thu, 20 Aug 2026 08:57:23 GMT
+  来源: BBC Chinese
+  摘要: 關於鞭刑的討論已在台灣醞釀了近十年，尤其在重大刑案發生後，民眾不滿刑罰不足，主張仿效新加坡制度。最新民調顯示約八成台灣人贊同政府評估鞭刑，人權團體與法律界則批評此舉違反國際人權標準。
+  链接: https://www.bbc.com/zhongwen/articles/cn0n418jnj9o/trad?at_medium=RSS&at_campaign=rss
+
+【30】《牛來》爆紅：觀眾、導演與電影業者解讀「粗糙」動畫的意外狂歡
+  时间: Wed, 19 Aug 2026 10:33:54 GMT
+  来源: BBC Chinese
+  摘要: 一部因製作粗糙而被網友嘲笑的中國動畫《牛來》，意外在社交網絡走紅並掀起觀影熱潮，觀眾為何從「玩梗」轉而買票支持？
+  链接: https://www.bbc.com/zhongwen/articles/cq56nzxq39qo/trad?at_medium=RSS&at_campaign=rss
+
+【31】經濟放緩、「掃黑除惡」下中國民商事律師重新評估風險
+  时间: Tue, 18 Aug 2026 23:53:38 GMT
+  来源: BBC Chinese
+  摘要: 從「掃黑除惡」到經濟糾紛，為何越來越多中國民商事律師開始擔心：今天的正常代理，會不會在幾年後被重新定性為犯罪？
+  链接: https://www.bbc.com/zhongwen/articles/c36d2rezx7lo/trad?at_medium=RSS&at_campaign=rss
+
+【32】台灣再提「普發一萬」：背後的K型經濟與政治算盤
+  时间: Thu, 20 Aug 2026 08:36:06 GMT
+  来源: BBC Chinese
+  摘要: 台灣總統賴清德宣布明年普發每人1萬元現金，理由是經濟成長創39年新高。但K型經濟下的分配焦慮與年底選舉，成為此政策的激辯核心。
+  链接: https://www.bbc.com/zhongwen/articles/cvg96l8e5q9o/trad?at_medium=RSS&at_campaign=rss
+
+【33】中美「AI 軍備競賽」究竟在比什麼？專家預測三種結局
+  时间: Tue, 18 Aug 2026 00:01:37 GMT
+  来源: BBC Chinese
+  摘要: 兩國都在加碼人工智能，但美國追求下一個技術突破，中國更重視低成本普及。兩條不同路線，誰更可能建立長期優勢？
+  链接: https://www.bbc.com/zhongwen/articles/cn5n9kqd5vvo/trad?at_medium=RSS&at_campaign=rss
+
+【34】專門減肥藥能否提升運動員表現？
+  时间: Wed, 19 Aug 2026 00:07:17 GMT
+  来源: BBC Chinese
+  摘要: GLP-1減重藥物能夠減輕體重並改善健康，但它們是否也能提升運動表現？科學家表示目前證據尚不明確，但爭論正日益升溫。
+  链接: https://www.bbc.com/zhongwen/articles/cvgvy8xx27lo/trad?at_medium=RSS&at_campaign=rss
+
+【35】Z世代為何要用抗焦慮藥物取代酒精？從一位中國女孩講起
+  时间: Tue, 18 Aug 2026 10:51:28 GMT
+  来源: BBC Chinese
+  摘要: 隨著世界各地年輕人社交焦慮症的上升，許多人開始使用各種藥物進行自我治療以緩解症狀。
+  链接: https://www.bbc.com/zhongwen/articles/c98069d07x2o/trad?at_medium=RSS&at_campaign=rss
+
+【36】「我從20多歲開始賺了8000英鎊」：為何女性總是更懂投資？
+  时间: Mon, 17 Aug 2026 00:05:37 GMT
+  来源: BBC Chinese
+  摘要: 女性可以獲得更高的回報，但英國只有約四分之一的女性擁有投資，相比之下，男性的比例約為40%。
+  链接: https://www.bbc.com/zhongwen/articles/c2352dp3y4vo/trad?at_medium=RSS&at_campaign=rss
+
+【37】太陽前所未有的清晰：迄今最詳細的觀測影像曝光
+  时间: Wed, 12 Aug 2026 00:07:28 GMT
+  来源: BBC Chinese
+  摘要: 最新影像和影片顯示到了太陽活動形成的「漩渦」，呈現出過去無法觀測到的景象。
+  链接: https://www.bbc.com/zhongwen/articles/crmr102zj9go/trad?at_medium=RSS&at_campaign=rss
+
+【38】「大學指控我用AI寫論文，但明明都是我自己寫的」
+  时间: Thu, 13 Aug 2026 00:03:47 GMT
+  来源: BBC Chinese
+  摘要: 英國大學這位醫學生必須向學術小組答辯他的研究成果。
+  链接: https://www.bbc.com/zhongwen/articles/cg5lp79nd00o/trad?at_medium=RSS&at_campaign=rss
+
+============================================================
+   简报结束
+============================================================
