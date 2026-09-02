@@ -1,7 +1,7 @@
 # skills/sketch_to_real/skill.py
 """
-ç´ æè½¬çäºº Skill - å°E´ æEçº¿ç¨¿è½¬æ¢ä¸ºçäººç§çE
-ä½¿ç¨ Lineart ControlNet ä¿æçº¿æ¡ç»æ
+ç´ æè½¬çäºº Skill - å°E´ æEçº¿ç¨¿è½¬æ¢ä¸ºçäººç§çE
+ä½¿ç¨ Lineart ControlNet ä¿æçº¿æ¡ç»æ
 """
 
 import os
@@ -26,17 +26,17 @@ try:
     DIFFUSERS_AVAILABLE = True
 except ImportError:
     DIFFUSERS_AVAILABLE = False
-    logger.warning("torch æEPIL æªå®è£E)
+    logger.warning("torch æEPIL æªå®è£E)
 
-# ==================== å¼åEçæ­£çEºå±å¼æEæ¹æ¡EEE====================
+# ==================== å¼åEçæ­£çEºå±å¼æEæ¹æ¡EEE====================
 try:
     from skills.image.controlnet_img2img.skill import ControlNetImg2Img
     CONTROLNET_ENGINE_AVAILABLE = True
 except ImportError as e:
     CONTROLNET_ENGINE_AVAILABLE = False
-    logger.warning(f"éç¨ ControlNet å¼æä¸å¯ç¨: {e}")
+    logger.warning(f"éç¨ ControlNet å¼æä¸å¯ç¨: {e}")
 
-# ==================== é£æ ¼éç½® ====================
+# ==================== é£æ ¼éç½® ====================
 REALISM_STYLES = {
     "realistic": {
         "prompt": "photorealistic, real person, realistic skin texture, natural lighting, detailed, masterpiece, high quality, 8k",
@@ -56,37 +56,37 @@ REALISM_STYLES = {
     }
 }
 
-# ==================== å¯ç¨æ¨¡ååEè¡¨ ====================
+# ==================== å¯ç¨æ¨¡ååEè¡¨ ====================
 AVAILABLE_MODELS = {
     "anytimeRealistic_v10.safetensors": {
         "name": "Anytime Realistic",
         "size": "2.13 GB",
-        "type": "åå®E,
-        "description": "éç¨åå®é£æ ¼Eæ¨èE
+        "type": "åå®E,
+        "description": "éç¨åå®é£æ ¼Eæ¨èE
     },
     "asianrealisticSdlife_v40.safetensors": {
         "name": "Asian Realistic SDLife",
         "size": "3.29 GB",
-        "type": "äºæ´²åå®E,
-        "description": "äºæ´²äººååEå®E
+        "type": "äºæ´²åå®E,
+        "description": "äºæ´²äººååEå®E
     },
     "DreamShaper_8_pruned.safetensors": {
         "name": "DreamShaper 8",
         "size": "2.13 GB",
-        "type": "èºæ¯",
-        "description": "æ¢¦å¹»/èºæ¯é£æ ¼"
+        "type": "èºæ¯",
+        "description": "æ¢¦å¹»/èºæ¯é£æ ¼"
     },
     "nextphoto_v30.safetensors": {
         "name": "Next Photo v3.0",
         "size": "2.13 GB",
-        "type": "æE½±",
-        "description": "çå®æå½±é£æ ¼"
+        "type": "æE½±",
+        "description": "çå®æå½±é£æ ¼"
     }
 }
 
 
 class SketchToReal:
-    """ç´ æè½¬çäººæè½Eçº¯ ControlNetEæ é InpaintEE""
+    """ç´ æè½¬çäººæè½Eçº¯ ControlNetEæ é InpaintEE""
 
     def __init__(self, config: Dict[str, Any] = None):
         self.config = config or {}
@@ -96,38 +96,38 @@ class SketchToReal:
         self.skill_dir = Path(__file__).parent.absolute()
         self.project_root = self.skill_dir.parent.parent.parent
         
-        # ==================== å¼ºå¶æ¬æè½è¾åEç®å½E====================
+        # ==================== å¼ºå¶æ¬æè½è¾åEç®å½E====================
         self.output_dir = self.skill_dir / "output"
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
         self.models_dir = Path(self.config.get('models_dir', self.project_root / 'models'))
         self.device = self.config.get('device', 'cpu')
 
-        # é»è®¤åæ°
+        # é»è®¤åæ°
         self.default_model = self.config.get('default_model', 'anytimeRealistic_v10.safetensors')
         self.default_steps = self.config.get('default_steps', 35)
         self.default_strength = self.config.get('default_strength', 0.85)
         self.default_style = self.config.get('default_style', 'realistic')
         self.default_negative = self.config.get('default_negative', 'ugly, deformed, blurry, low quality, sketch, drawing, lineart, 2d')
 
-        # ç¼å­E
+        # ç¼å­E
         self.controlnet_engine = None
 
-        # ==================== åå§ååºå±å¼æ ====================
+        # ==================== åå§ååºå±å¼æ ====================
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlNetImg2Img(config={'device': self.device})
-                logger.info("  âEåºå±å¼æåå§åæå")
+                logger.info("  âEåºå±å¼æåå§åæå")
             except Exception as e:
-                logger.warning(f"  åºå±å¼æåå§åå¤±è´¥: {e}")
+                logger.warning(f"  åºå±å¼æåå§åå¤±è´¥: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"SketchToReal v{self.version} åå§åå®æE")
-        logger.info(f"  è®¾å¤E {self.device}")
-        logger.info(f"  é»è®¤æ¨¡åE {self.default_model}")
-        logger.info(f"  é£æ ¼: {list(REALISM_STYLES.keys())}")
+        logger.info(f"SketchToReal v{self.version} åå§åå®æE")
+        logger.info(f"  è®¾å¤E {self.device}")
+        logger.info(f"  é»è®¤æ¨¡åE {self.default_model}")
+        logger.info(f"  é£æ ¼: {list(REALISM_STYLES.keys())}")
 
     def _setup_logging(self):
         log_level = self.config.get('log_level', 'INFO')
@@ -148,7 +148,7 @@ class SketchToReal:
         Path(self.config.get('output_dir', str(self.output_dir))).mkdir(parents=True, exist_ok=True)
 
     def _find_model(self, model_name: str) -> Optional[Path]:
-        """æ¥æ¾æ¨¡åæä»¶"""
+        """æ¥æ¾æ¨¡åæä»¶"""
         if not model_name:
             model_name = self.default_model
 
@@ -168,14 +168,14 @@ class SketchToReal:
                 if file_path.exists():
                     return file_path
 
-        logger.error(f"æªæ¾å°æ¨¡åE {model_name}")
+        logger.error(f"æªæ¾å°æ¨¡åE {model_name}")
         return None
 
     def list_styles(self) -> Dict[str, Any]:
         return {"status": "success", "styles": list(REALISM_STYLES.keys())}
 
     def list_models(self) -> Dict[str, Any]:
-        """ååEææå¯ç¨æ¨¡åE""
+        """ååEææå¯ç¨æ¨¡åE""
         models = {}
         for key, info in AVAILABLE_MODELS.items():
             models[key] = {
@@ -194,53 +194,53 @@ class SketchToReal:
 
     def execute(self, **kwargs) -> Dict[str, Any]:
         start_time = time.time()
-        logger.info(f"æ§è¡æè½: {self.name} v{self.version}")
+        logger.info(f"æ§è¡æè½: {self.name} v{self.version}")
 
         try:
-            # ==================== 1. ä¸¥æ ¼è·¯å¾E ¡éªE====================
+            # ==================== 1. ä¸¥æ ¼è·¯å¾E ¡éªE====================
             image_path = kwargs.get('image_path') or kwargs.get('input')
             if not image_path:
-                return {"status": "error", "error": "image_path æ¯å¿E¡«åæ°"}
+                return {"status": "error", "error": "image_path æ¯å¿E¡«åæ°"}
             
             abs_image_path = Path(image_path).absolute()
             if not os.path.exists(abs_image_path):
-                return {"status": "error", "error": f"è¾åEå¾çE¸å­å¨: {abs_image_path}ãè¯·æ£æ¥è·¯å¾E¯å¦æ­£ç¡®EE}
+                return {"status": "error", "error": f"è¾åEå¾çE¸å­å¨: {abs_image_path}ãè¯·æ£æ¥è·¯å¾E¯å¦æ­£ç¡®EE}
 
             output_path = kwargs.get('output_path') or kwargs.get('output')
 
-            # æç¤ºè¯ä¸é£æ ¼éç½®
+            # æç¤ºè¯ä¸é£æ ¼éç½®
             style = kwargs.get('style', self.default_style)
             if style not in REALISM_STYLES:
-                return {"status": "error", "error": f"æªç¥é£æ ¼: {style}Eå¯ç¨: {list(REALISM_STYLES.keys())}"}
+                return {"status": "error", "error": f"æªç¥é£æ ¼: {style}Eå¯ç¨: {list(REALISM_STYLES.keys())}"}
 
             s_config = REALISM_STYLES[style]
             prompt = kwargs.get('prompt') or s_config['prompt']
             negative_prompt = kwargs.get('negative_prompt') or s_config.get('negative', self.default_negative)
 
-            # ==================== 2. ç´æ¥è°E¨åºå±EControlNet å¼æ ====================
+            # ==================== 2. ç´æ¥è°E¨åºå±EControlNet å¼æ ====================
             if self.controlnet_engine is None:
-                return {"status": "error", "error": "åºå±EControlNet å¼æä¸å¯ç¨"}
+                return {"status": "error", "error": "åºå±EControlNet å¼æä¸å¯ç¨"}
 
-            logger.info(f"é£æ ¼: {style}")
-            logger.info(f"æç¤ºè¯E {prompt[:80]}...")
+            logger.info(f"é£æ ¼: {style}")
+            logger.info(f"æç¤ºè¯E {prompt[:80]}...")
 
-            # å¦ææ²¡ä¼  output_pathEé»è®¤å­å°æ¬æè½çEoutput ç®å½E
+            # å¦ææ²¡ä¼  output_pathEé»è®¤å­å°æ¬æè½çEoutput ç®å½E
             if output_path is None:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 output_path = str(self.output_dir / f"{Path(abs_image_path).stem}_sketch2real_{style}_{timestamp}.png")
 
-            # æ ¸å¿E»è¾ï¼ä¼ å¥ HED (æåçº¿ç¨¿) + Lineart åºå±æ¨¡åE
+            # æ ¸å¿E»è¾ï¼ä¼ å¥ HED (æåçº¿ç¨¿) + Lineart åºå±æ¨¡åE
             result = self.controlnet_engine.execute(
-                input_image_path=str(abs_image_path),  # ç»å¯¹è·¯å¾E
+                input_image_path=str(abs_image_path),  # ç»å¯¹è·¯å¾E
                 prompt=prompt,
                 negative_prompt=negative_prompt,
-                preprocessor_type="HED",               # æåçº¿ç¨¿
-                controlnet_model="lineart",            # å¼ºå¶ä½¿ç¨æ¬å° lineart æ¨¡åï¼ä½ æ¬å°çEmodels--lllyasviel--control_v11p_sd15_lineartEE
-                strength=0.85,                         # é«å¼ºåº¦éç»ï¼è®©çº¿ç¨¿åçäºº
-                output_path=output_path                # å¼ºå¶æE®è¾åE
+                preprocessor_type="HED",               # æåçº¿ç¨¿
+                controlnet_model="lineart",            # å¼ºå¶ä½¿ç¨æ¬å° lineart æ¨¡åï¼ä½ æ¬å°çEmodels--lllyasviel--control_v11p_sd15_lineartEE
+                strength=0.85,                         # é«å¼ºåº¦éç»ï¼è®©çº¿ç¨¿åçäºº
+                output_path=output_path                # å¼ºå¶æE®è¾åE
             )
 
-            # æ£æ¥å¼æè¿åç»æ
+            # æ£æ¥å¼æè¿åç»æ
             if result['status'] == 'success':
                 return {
                     "status": "success",
@@ -257,11 +257,11 @@ class SketchToReal:
                     "timestamp": datetime.now().isoformat()
                 }
             else:
-                # å¼ææ¥éï¼ç´æ¥æå¼æçEè¯¯åæ ·æåE
-                return {"status": "error", "error": result.get('error', 'åºå±å¼æè°E¨å¤±è´¥')}
+                # å¼ææ¥éï¼ç´æ¥æå¼æçEè¯¯åæ ·æåE
+                return {"status": "error", "error": result.get('error', 'åºå±å¼æè°E¨å¤±è´¥')}
 
         except Exception as e:
-            logger.error(f"æ§è¡å¤±è´¥: {e}")
+            logger.error(f"æ§è¡å¤±è´¥: {e}")
             import traceback
             traceback.print_exc()
             return {"status": "error", "error": str(e)}
@@ -270,59 +270,59 @@ class SketchToReal:
         return f"<SketchToReal(name={self.name}, version={self.version})>"
 
 
-# ==================== å½ä»¤è¡åEå£ ====================
+# ==================== å½ä»¤è¡åEå£ ====================
 if __name__ == "__main__":
     import argparse
 
     MODEL_CHOICES = list(AVAILABLE_MODELS.keys())
 
-    parser = argparse.ArgumentParser(description="ç´ æè½¬çäººå·¥å· v2.0")
-    parser.add_argument("--input", "-i", required=True, help="è¾åEç´ æEçº¿ç¨¿å¾çE·¯å¾E)
-    parser.add_argument("--output", "-o", help="è¾åEè·¯å¾E)
+    parser = argparse.ArgumentParser(description="ç´ æè½¬çäººå·¥å· v2.0")
+    parser.add_argument("--input", "-i", required=True, help="è¾åEç´ æEçº¿ç¨¿å¾çE·¯å¾E)
+    parser.add_argument("--output", "-o", help="è¾åEè·¯å¾E)
     parser.add_argument("--model", "-m", default="anytimeRealistic_v10.safetensors",
-                        choices=MODEL_CHOICES, help="SD æ¨¡ååç§°")
+                        choices=MODEL_CHOICES, help="SD æ¨¡ååç§°")
     parser.add_argument("--style", "-s", default="realistic",
-                        choices=list(REALISM_STYLES.keys()), help="çäººé£æ ¼")
-    parser.add_argument("--prompt", "-p", help="èªå®ä¹æç¤ºè¯ï¼è¦Eé£æ ¼é»è®¤EE)
-    parser.add_argument("--negative", "-n", help="èªå®ä¹è´é¢æç¤ºè¯ï¼è¦Eé£æ ¼é»è®¤EE)
-    parser.add_argument("--steps", type=int, default=35, help="è¿­ä»£æ­¥æ°")
-    parser.add_argument("--seed", type=int, default=-1, help="éæºç§å­E)
-    parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu", help="è®¾å¤E)
-    parser.add_argument("--list-models", action="store_true", help="ååEææå¯ç¨æ¨¡åE)
-    parser.add_argument("--list-styles", action="store_true", help="ååEææå¯ç¨é£æ ¼")
+                        choices=list(REALISM_STYLES.keys()), help="çäººé£æ ¼")
+    parser.add_argument("--prompt", "-p", help="èªå®ä¹æç¤ºè¯ï¼è¦Eé£æ ¼é»è®¤EE)
+    parser.add_argument("--negative", "-n", help="èªå®ä¹è´é¢æç¤ºè¯ï¼è¦Eé£æ ¼é»è®¤EE)
+    parser.add_argument("--steps", type=int, default=35, help="è¿­ä»£æ­¥æ°")
+    parser.add_argument("--seed", type=int, default=-1, help="éæºç§å­E)
+    parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu", help="è®¾å¤E)
+    parser.add_argument("--list-models", action="store_true", help="ååEææå¯ç¨æ¨¡åE)
+    parser.add_argument("--list-styles", action="store_true", help="ååEææå¯ç¨é£æ ¼")
 
     args = parser.parse_args()
 
-    # å¦æåªæ¯ååEæ¨¡åE
+    # å¦æåªæ¯ååEæ¨¡åE
     if args.list_models:
         skill = SketchToReal()
         result = skill.list_models()
         print("\n" + "=" * 60)
-        print("  å¯ç¨æ¨¡ååEè¡¨")
+        print("  å¯ç¨æ¨¡ååEè¡¨")
         print("=" * 60)
         for key, info in result['models'].items():
-            default_mark = " â­E(é»è®¤)" if key == result['default'] else ""
+            default_mark = " â­E(é»è®¤)" if key == result['default'] else ""
             print(f"  {key}")
-            print(f"    åç§°: {info['name']}{default_mark}")
-            print(f"    å¤§å°E {info['size']}")
-            print(f"    ç±»åE {info['type']}")
-            print(f"    è¯´æE {info['description']}")
+            print(f"    åç§°: {info['name']}{default_mark}")
+            print(f"    å¤§å°E {info['size']}")
+            print(f"    ç±»åE {info['type']}")
+            print(f"    è¯´æE {info['description']}")
             print()
-        print(f"  å± {result['count']} ä¸ªæ¨¡åE)
+        print(f"  å± {result['count']} ä¸ªæ¨¡åE)
         print("=" * 60)
         sys.exit(0)
 
-    # å¦æåªæ¯ååEé£æ ¼
+    # å¦æåªæ¯ååEé£æ ¼
     if args.list_styles:
         print("\n" + "=" * 60)
-        print("  å¯ç¨é£æ ¼åè¡¨")
+        print("  å¯ç¨é£æ ¼åè¡¨")
         print("=" * 60)
         for key, info in REALISM_STYLES.items():
             print(f"  {key}")
-            print(f"    æç¤ºè¯E {info['prompt'][:60]}...")
-            print(f"    è´é¢: {info['negative'][:60]}...")
+            print(f"    æç¤ºè¯E {info['prompt'][:60]}...")
+            print(f"    è´é¢: {info['negative'][:60]}...")
             print()
-        print(f"  å± {len(REALISM_STYLES)} ç§é£æ ¼")
+        print(f"  å± {len(REALISM_STYLES)} ç§é£æ ¼")
         print("=" * 60)
         sys.exit(0)
 
@@ -345,12 +345,12 @@ if __name__ == "__main__":
     )
 
     if result['status'] == 'success':
-        print(f"\nâEæå!")
-        print(f"  ð è¾åE: {result['output_path']}")
-        print(f"  ð¨ é£æ ¼: {result['style']}")
-        print(f"  â±EE èæ¶: {result['generation_time']}")
-        print(f"  ð åæ°:")
+        print(f"\nâEæå!")
+        print(f"  ð è¾åE: {result['output_path']}")
+        print(f"  ð¨ é£æ ¼: {result['style']}")
+        print(f"  â±EE èæ¶: {result['generation_time']}")
+        print(f"  ð åæ°:")
         for key, value in result['parameters'].items():
             print(f"    {key}: {value}")
     else:
-        print(f"\nâEå¤±è´¥: {result.get('error', 'æªç¥éè¯¯')}")
+        print(f"\nâEå¤±è´¥: {result.get('error', 'æªç¥éè¯¯')}")

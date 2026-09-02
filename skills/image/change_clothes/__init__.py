@@ -1,1 +1,1 @@
-from .skill import ChangePose
+from .skill import ChangeClothes

@@ -1,7 +1,7 @@
 # skills/change_skin_tone/skill.py
 """
-æ¹åè¤è² Skill - æ¹åäººç©è¤è²Eç½çEå¤éEæ·±è²ç­ï¼E
-ä¼åEä½¿ç¨ YOLO å®ä½ç®è¤åºåï¼å¤ç¨éç¨ ControlNet å¼æè¿è¡å±é¨/å¨å±éç»E
+æ¹åè¤è² Skill - æ¹åäººç©è¤è²Eç½çEå¤éEæ·±è²ç­ï¼E
+ä¼åEä½¿ç¨ YOLO å®ä½ç®è¤åºåï¼å¤ç¨éç¨ ControlNet å¼æè¿è¡å±é¨/å¨å±éç»E
 """
 
 import time
@@ -28,22 +28,22 @@ try:
     DIFFUSERS_AVAILABLE = True
 except ImportError:
     DIFFUSERS_AVAILABLE = False
-    logger.warning("torch æEOpenCV æªå®è£E)
+    logger.warning("torch æEOpenCV æªå®è£E)
 
-# ==================== å¼åEéç¨å¼æEæ¹æ¡EEE====================
+# ==================== å¼åEéç¨å¼æEæ¹æ¡EEE====================
 try:
     from skills.image.controlnet_img2img.skill import ControlNetImg2Img
     CONTROLNET_ENGINE_AVAILABLE = True
 except ImportError as e:
     CONTROLNET_ENGINE_AVAILABLE = False
-    logger.warning(f"éç¨ ControlNet å¼æä¸å¯ç¨: {e}")
+    logger.warning(f"éç¨ ControlNet å¼æä¸å¯ç¨: {e}")
 
 try:
     from ultralytics import YOLO
     YOLO_AVAILABLE = True
 except ImportError:
     YOLO_AVAILABLE = False
-    logger.warning("YOLO æªå®è£E)
+    logger.warning("YOLO æªå®è£E)
 
 SKIN_TONES = {
     "fair": {
@@ -70,7 +70,7 @@ SKIN_TONES = {
 
 
 class ChangeSkinTone:
-    """æ¹åè¤è²æè½ v2.0"""
+    """æ¹åè¤è²æè½ v2.0"""
 
     def __init__(self, config: Dict[str, Any] = None):
         self.config = config or {}
@@ -79,7 +79,7 @@ class ChangeSkinTone:
 
         self.skill_dir = Path(__file__).parent.absolute()
         self.project_root = self.skill_dir.parent.parent.parent
-        # ==================== å¼ºå¶æ¬æè½è¾åEç®å½E====================
+        # ==================== å¼ºå¶æ¬æè½è¾åEç®å½E====================
         self.output_dir = self.skill_dir / "output"
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -90,21 +90,21 @@ class ChangeSkinTone:
         self.current_model = None
         self._yolo_model = None
 
-        # ==================== åå§ååºå±å¼æ ====================
+        # ==================== åå§ååºå±å¼æ ====================
         self.controlnet_engine = None
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlNetImg2Img(config={'device': self.device})
-                logger.info("  âEåºå±EControlNet å¼æåå§åæå")
+                logger.info("  âEåºå±EControlNet å¼æåå§åæå")
             except Exception as e:
-                logger.warning(f"  åºå±å¼æåå§åå¤±è´¥: {e}")
+                logger.warning(f"  åºå±å¼æåå§åå¤±è´¥: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"ChangeSkinTone v{self.version} åå§åå®æE")
-        logger.info(f"  è®¾å¤E {self.device}")
-        logger.info(f"  è¤è²ç±»åE {list(SKIN_TONES.keys())}")
+        logger.info(f"ChangeSkinTone v{self.version} åå§åå®æE")
+        logger.info(f"  è®¾å¤E {self.device}")
+        logger.info(f"  è¤è²ç±»åE {list(SKIN_TONES.keys())}")
 
     def _setup_logging(self):
         log_level = self.config.get('log_level', 'INFO')
@@ -114,7 +114,7 @@ class ChangeSkinTone:
     def _setup_config(self):
         defaults = {
             'default_steps': 30,
-            'default_strength': 0.45,  # æ¹åè¤è²ä¸èEå¤ªå¤§å¼ºåº¦Eä»¥åæ¹åäºå®E
+            'default_strength': 0.45,  # æ¹åè¤è²ä¸èEå¤ªå¤§å¼ºåº¦Eä»¥åæ¹åäºå®E
             'default_tone': 'fair',
             'default_negative': 'ugly, deformed, bad anatomy, extra limbs, blurry, low quality',
         }
@@ -129,12 +129,12 @@ class ChangeSkinTone:
             try:
                 self._yolo_model = YOLO("yolov8n-seg.pt")
             except Exception as e:
-                logger.warning(f"  YOLO å è½½å¤±è´¥: {e}")
+                logger.warning(f"  YOLO å è½½å¤±è´¥: {e}")
                 self._yolo_model = False
         return self._yolo_model
 
     def _generate_skin_mask(self, image: Image.Image) -> Optional[Image.Image]:
-        """çæEç®è¤é®ç½©EEOLO å¨èº«EE""
+        """çæEç®è¤é®ç½©EEOLO å¨èº«EE""
         h, w = image.size[1], image.size[0]
         yolo = self._get_yolo_model()
         if not yolo:
@@ -166,7 +166,7 @@ class ChangeSkinTone:
             return Image.fromarray(skin_mask, mode="L")
 
         except Exception as e:
-            logger.warning(f"  ç®è¤é®ç½©çæEå¤±è´¥: {e}")
+            logger.warning(f"  ç®è¤é®ç½©çæEå¤±è´¥: {e}")
             return None
 
     def list_tones(self) -> Dict[str, Any]:
@@ -174,21 +174,21 @@ class ChangeSkinTone:
 
     def execute(self, **kwargs) -> Dict[str, Any]:
         start_time = time.time()
-        logger.info(f"æ§è¡æè½: {self.name}")
+        logger.info(f"æ§è¡æè½: {self.name}")
 
         try:
-            # ==================== ä¸¥æ ¼è·¯å¾E ¡éªE====================
+            # ==================== ä¸¥æ ¼è·¯å¾E ¡éªE====================
             image_path = kwargs.get('image_path')
             if not image_path:
-                return {"status": "error", "error": "image_path æ¯å¿E¡«åæ°"}
+                return {"status": "error", "error": "image_path æ¯å¿E¡«åæ°"}
             
             abs_image_path = Path(image_path).absolute()
             if not os.path.exists(abs_image_path):
-                return {"status": "error", "error": f"è¾åEå¾çE¸å­å¨: {abs_image_path}ãè¯·æ£æ¥è·¯å¾E¯å¦æ­£ç¡®EE}
+                return {"status": "error", "error": f"è¾åEå¾çE¸å­å¨: {abs_image_path}ãè¯·æ£æ¥è·¯å¾E¯å¦æ­£ç¡®EE}
 
             tone = kwargs.get('tone', self.config.get('default_tone', 'fair'))
             if tone not in SKIN_TONES:
-                return {"status": "error", "error": f"æªç¥è¤è²: {tone}Eå¯ç¨: {list(SKIN_TONES.keys())}"}
+                return {"status": "error", "error": f"æªç¥è¤è²: {tone}Eå¯ç¨: {list(SKIN_TONES.keys())}"}
 
             tone_config = SKIN_TONES[tone]
             prompt = kwargs.get('prompt') or tone_config['prompt']
@@ -198,26 +198,26 @@ class ChangeSkinTone:
             steps = kwargs.get('steps', self.config.get('default_steps', 30))
             seed = kwargs.get('seed', -1)
 
-            # é»è®¤è¾åEå°æ¬æè½ç®å½E
+            # é»è®¤è¾åEå°æ¬æè½ç®å½E
             output_path = kwargs.get('output_path')
             if output_path is None:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 output_path = str(self.output_dir / f"{Path(abs_image_path).stem}_skintone_{tone}_{timestamp}.png")
 
-            # ==================== ç´æ¥è°E¨åºå±å¼æEåEå±EE====================
+            # ==================== ç´æ¥è°E¨åºå±å¼æEåEå±EE====================
             if self.controlnet_engine is None:
-                return {"status": "error", "error": "åºå±EControlNet å¼æä¸å¯ç¨"}
+                return {"status": "error", "error": "åºå±EControlNet å¼æä¸å¯ç¨"}
 
-            logger.info(f"è¤è²: {tone}")
-            logger.info(f"æç¤ºè¯E {prompt[:80]}...")
+            logger.info(f"è¤è²: {tone}")
+            logger.info(f"æç¤ºè¯E {prompt[:80]}...")
 
             result = self.controlnet_engine.execute(
                 input_image_path=str(abs_image_path),
                 prompt=prompt,
                 negative_prompt=negative_prompt,
-                preprocessor_type="HED",      # ä¿çäºå®åèº«ä½è½®å»E
-                controlnet_model="canny",     # å¯¹åºæ¬å°æ¨¡åE
-                strength=strength,            # ä½å¼ºåº¦Eé¿åäºå®åå½¢
+                preprocessor_type="HED",      # ä¿çäºå®åèº«ä½è½®å»E
+                controlnet_model="canny",     # å¯¹åºæ¬å°æ¨¡åE
+                strength=strength,            # ä½å¼ºåº¦Eé¿åäºå®åå½¢
                 steps=steps,
                 output_path=output_path
             )
@@ -239,7 +239,7 @@ class ChangeSkinTone:
             }
 
         except Exception as e:
-            logger.error(f"æ§è¡å¤±è´¥: {e}")
+            logger.error(f"æ§è¡å¤±è´¥: {e}")
             import traceback
             traceback.print_exc()
             return {"status": "error", "error": str(e)}
@@ -250,14 +250,14 @@ class ChangeSkinTone:
 
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser(description="æ¹åè¤è²å·¥å· v2.0")
-    parser.add_argument("--input", "-i", required=True, help="è¾åEå¾çE·¯å¾E)
-    parser.add_argument("--output", "-o", help="è¾åEè·¯å¾E)
+    parser = argparse.ArgumentParser(description="æ¹åè¤è²å·¥å· v2.0")
+    parser.add_argument("--input", "-i", required=True, help="è¾åEå¾çE·¯å¾E)
+    parser.add_argument("--output", "-o", help="è¾åEè·¯å¾E)
     parser.add_argument("--tone", "-t", default="fair",
-                        choices=list(SKIN_TONES.keys()), help="è¤è²ç±»åE)
-    parser.add_argument("--strength", type=float, default=0.45, help="éç»å¼ºåº¦")
-    parser.add_argument("--steps", type=int, default=30, help="è¿­ä»£æ­¥æ°")
-    parser.add_argument("--seed", type=int, default=-1, help="éæºç§å­E)
+                        choices=list(SKIN_TONES.keys()), help="è¤è²ç±»åE)
+    parser.add_argument("--strength", type=float, default=0.45, help="éç»å¼ºåº¦")
+    parser.add_argument("--steps", type=int, default=30, help="è¿­ä»£æ­¥æ°")
+    parser.add_argument("--seed", type=int, default=-1, help="éæºç§å­E)
     parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu")
 
     args = parser.parse_args()
@@ -268,3 +268,4 @@ if __name__ == "__main__":
         strength=args.strength, steps=args.steps, seed=args.seed
     )
     print(json.dumps(result, ensure_ascii=False, indent=2))
+"""

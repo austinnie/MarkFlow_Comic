@@ -1,7 +1,7 @@
 # skills/weather_transfer/skill.py
 """
-å¤©æ°è½¬æ¢ Skill - å°E¾çE½¬æ¢ä¸ºä¸åå¤©æ°E(æ´/é¨/éª/é¾)
-å¤ç¨éç¨ ControlNet å¼æEELSD + Depth éç©ºé´ç»æEè½¬æ¢å¤©æ°æ°å´EE
+å¤©æ°è½¬æ¢ Skill - å°E¾çE½¬æ¢ä¸ºä¸åå¤©æ°E(æ´/é¨/éª/é¾)
+å¤ç¨éç¨ ControlNet å¼æEELSD + Depth éç©ºé´ç»æEè½¬æ¢å¤©æ°æ°å´EE
 """
 
 import time
@@ -26,15 +26,15 @@ try:
     DIFFUSERS_AVAILABLE = True
 except ImportError:
     DIFFUSERS_AVAILABLE = False
-    logger.warning("torch æEPIL æªå®è£E)
+    logger.warning("torch æEPIL æªå®è£E)
 
-# ==================== å¼åEéç¨å¼æEæ¹æ¡EEE====================
+# ==================== å¼åEéç¨å¼æEæ¹æ¡EEE====================
 try:
     from skills.image.controlnet_img2img.skill import ControlNetImg2Img
     CONTROLNET_ENGINE_AVAILABLE = True
 except ImportError as e:
     CONTROLNET_ENGINE_AVAILABLE = False
-    logger.warning(f"éç¨ ControlNet å¼æä¸å¯ç¨: {e}")
+    logger.warning(f"éç¨ ControlNet å¼æä¸å¯ç¨: {e}")
 
 WEATHERS = {
     "sunny": {
@@ -65,7 +65,7 @@ WEATHERS = {
 
 
 class WeatherTransfer:
-    """å¤©æ°è½¬æ¢æè½ v2.0"""
+    """å¤©æ°è½¬æ¢æè½ v2.0"""
 
     def __init__(self, config: Dict[str, Any] = None):
         self.config = config or {}
@@ -74,28 +74,28 @@ class WeatherTransfer:
 
         self.skill_dir = Path(__file__).parent.absolute()
         self.project_root = self.skill_dir.parent.parent.parent
-        # ==================== å¼ºå¶æ¬æè½è¾åEç®å½E====================
+        # ==================== å¼ºå¶æ¬æè½è¾åEç®å½E====================
         self.output_dir = self.skill_dir / "output"
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
         self.models_dir = Path(self.config.get('models_dir', self.project_root / 'models'))
         self.device = self.config.get('device', 'cuda' if torch.cuda.is_available() else 'cpu')
 
-        # ==================== åå§ååºå±å¼æ ====================
+        # ==================== åå§ååºå±å¼æ ====================
         self.controlnet_engine = None
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlNetImg2Img(config={'device': self.device})
-                logger.info("  âEåºå±EControlNet å¼æåå§åæå")
+                logger.info("  âEåºå±EControlNet å¼æåå§åæå")
             except Exception as e:
-                logger.warning(f"  åºå±å¼æåå§åå¤±è´¥: {e}")
+                logger.warning(f"  åºå±å¼æåå§åå¤±è´¥: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"WeatherTransfer v{self.version} åå§åå®æE")
-        logger.info(f"  è®¾å¤E {self.device}")
-        logger.info(f"  å¤©æ°E {list(WEATHERS.keys())}")
+        logger.info(f"WeatherTransfer v{self.version} åå§åå®æE")
+        logger.info(f"  è®¾å¤E {self.device}")
+        logger.info(f"  å¤©æ°E {list(WEATHERS.keys())}")
 
     def _setup_logging(self):
         log_level = self.config.get('log_level', 'INFO')
@@ -117,21 +117,21 @@ class WeatherTransfer:
 
     def execute(self, **kwargs) -> Dict[str, Any]:
         start_time = time.time()
-        logger.info(f"æ§è¡æè½: {self.name}")
+        logger.info(f"æ§è¡æè½: {self.name}")
 
         try:
-            # ==================== ä¸¥æ ¼è·¯å¾E ¡éªE====================
+            # ==================== ä¸¥æ ¼è·¯å¾E ¡éªE====================
             image_path = kwargs.get('image_path')
             if not image_path:
-                return {"status": "error", "error": "image_path æ¯å¿E¡«åæ°"}
+                return {"status": "error", "error": "image_path æ¯å¿E¡«åæ°"}
             
             abs_image_path = Path(image_path).absolute()
             if not os.path.exists(abs_image_path):
-                return {"status": "error", "error": f"è¾åEå¾çE¸å­å¨: {abs_image_path}ãè¯·æ£æ¥è·¯å¾E¯å¦æ­£ç¡®EE}
+                return {"status": "error", "error": f"è¾åEå¾çE¸å­å¨: {abs_image_path}ãè¯·æ£æ¥è·¯å¾E¯å¦æ­£ç¡®EE}
 
             weather = kwargs.get('weather', self.config.get('default_weather', 'sunny'))
             if weather not in WEATHERS:
-                return {"status": "error", "error": f"æªç¥å¤©æ°E {weather}Eå¯ç¨: {list(WEATHERS.keys())}"}
+                return {"status": "error", "error": f"æªç¥å¤©æ°E {weather}Eå¯ç¨: {list(WEATHERS.keys())}"}
 
             weather_config = WEATHERS[weather]
             prompt = kwargs.get('prompt') or weather_config['prompt']
@@ -141,20 +141,20 @@ class WeatherTransfer:
             steps = kwargs.get('steps', self.config.get('default_steps', 30))
             seed = kwargs.get('seed', -1)
 
-            # ==================== ç´æ¥è°E¨åºå±å¼æ ====================
+            # ==================== ç´æ¥è°E¨åºå±å¼æ ====================
             if self.controlnet_engine is None:
-                return {"status": "error", "error": "åºå±EControlNet å¼æä¸å¯ç¨"}
+                return {"status": "error", "error": "åºå±EControlNet å¼æä¸å¯ç¨"}
 
-            # é»è®¤è¾åEå°æ¬æè½ç®å½E
+            # é»è®¤è¾åEå°æ¬æè½ç®å½E
             output_path = kwargs.get('output_path')
             if output_path is None:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 output_path = str(self.output_dir / f"{Path(abs_image_path).stem}_{weather}_{timestamp}.png")
 
-            logger.info(f"å¤©æ°E {weather}")
-            logger.info(f"æç¤ºè¯E {prompt[:80]}...")
+            logger.info(f"å¤©æ°E {weather}")
+            logger.info(f"æç¤ºè¯E {prompt[:80]}...")
 
-            # ä½¿ç¨ MLSDEæååºæ¯ç´çº¿EE DepthEéç©ºé´æ·±åº¦Eï¼è½¬æ¢å¤©æ°E
+            # ä½¿ç¨ MLSDEæååºæ¯ç´çº¿EE DepthEéç©ºé´æ·±åº¦Eï¼è½¬æ¢å¤©æ°E
             result = self.controlnet_engine.execute(
                 input_image_path=str(abs_image_path),
                 prompt=prompt,
@@ -183,7 +183,7 @@ class WeatherTransfer:
             }
 
         except Exception as e:
-            logger.error(f"æ§è¡å¤±è´¥: {e}")
+            logger.error(f"æ§è¡å¤±è´¥: {e}")
             import traceback
             traceback.print_exc()
             return {"status": "error", "error": str(e)}
@@ -194,14 +194,14 @@ class WeatherTransfer:
 
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser(description="å¤©æ°è½¬æ¢å·¥å· v2.0")
-    parser.add_argument("--input", "-i", required=True, help="è¾åEå¾çE·¯å¾E)
-    parser.add_argument("--output", "-o", help="è¾åEè·¯å¾E)
+    parser = argparse.ArgumentParser(description="å¤©æ°è½¬æ¢å·¥å· v2.0")
+    parser.add_argument("--input", "-i", required=True, help="è¾åEå¾çE·¯å¾E)
+    parser.add_argument("--output", "-o", help="è¾åEè·¯å¾E)
     parser.add_argument("--weather", "-w", default="sunny",
-                        choices=list(WEATHERS.keys()), help="å¤©æ°E)
-    parser.add_argument("--strength", type=float, default=0.7, help="éç»å¼ºåº¦")
-    parser.add_argument("--steps", type=int, default=30, help="è¿­ä»£æ­¥æ°")
-    parser.add_argument("--seed", type=int, default=-1, help="éæºç§å­E)
+                        choices=list(WEATHERS.keys()), help="å¤©æ°E)
+    parser.add_argument("--strength", type=float, default=0.7, help="éç»å¼ºåº¦")
+    parser.add_argument("--steps", type=int, default=30, help="è¿­ä»£æ­¥æ°")
+    parser.add_argument("--seed", type=int, default=-1, help="éæºç§å­E)
     parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu")
 
     args = parser.parse_args()

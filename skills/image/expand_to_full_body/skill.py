@@ -1,7 +1,7 @@
 # skills/expand_to_full_body/skill.py
 """
-Expand to Full Body - å°Eººç©åèº«/å¤´åå¾æ©å±ä¸ºå¨èº«å¾
-å¤ç¨éç¨ ControlNet å¼æEä½¿ç¨ MediaPipe æEè½»éæ£æµå®ä½å¤´é¨
+Expand to Full Body - å°Eººç©åèº«/å¤´åå¾æ©å±ä¸ºå¨èº«å¾
+å¤ç¨éç¨ ControlNet å¼æEä½¿ç¨ MediaPipe æEè½»éæ£æµå®ä½å¤´é¨
 """
 
 import os
@@ -27,24 +27,24 @@ try:
     DIFFUSERS_AVAILABLE = True
 except ImportError:
     DIFFUSERS_AVAILABLE = False
-    logger.warning("torch æEPIL æªå®è£E)
+    logger.warning("torch æEPIL æªå®è£E)
 
-# ==================== å¼åEéç¨å¼æEæ¹æ¡EEE====================
+# ==================== å¼åEéç¨å¼æEæ¹æ¡EEE====================
 try:
     from skills.image.controlnet_img2img.skill import ControlNetImg2Img
     CONTROLNET_ENGINE_AVAILABLE = True
 except ImportError as e:
     CONTROLNET_ENGINE_AVAILABLE = False
-    logger.warning(f"éç¨ ControlNet å¼æä¸å¯ç¨: {e}")
+    logger.warning(f"éç¨ ControlNet å¼æä¸å¯ç¨: {e}")
 
 
 class ExpandToFullBody:
-    """åèº«å¾è½¬å¨èº«å¾æè½ v2.0 (MediaPipe + OpenPose éå§¿æE"""
+    """åèº«å¾è½¬å¨èº«å¾æè½ v2.0 (MediaPipe + OpenPose éå§¿æE"""
 
-    # å¯ç¨æ¨¡ååEè¡¨Eç¨äºå±ç¤ºEE
+    # å¯ç¨æ¨¡ååEè¡¨Eç¨äºå±ç¤ºEE
     AVAILABLE_MODELS = {
-        "anytimeRealistic_v10.safetensors": {"name": "Anytime Realistic", "size": "2.13 GB", "type": "åå®E},
-        "aiiiii01_v10.safetensors": {"name": "AIiiii v1.0", "size": "2.13 GB", "type": "åå®E},
+        "anytimeRealistic_v10.safetensors": {"name": "Anytime Realistic", "size": "2.13 GB", "type": "åå®E},
+        "aiiiii01_v10.safetensors": {"name": "AIiiii v1.0", "size": "2.13 GB", "type": "åå®E},
     }
 
     def __init__(self, config: Dict[str, Any] = None):
@@ -54,7 +54,7 @@ class ExpandToFullBody:
 
         self.skill_dir = Path(__file__).parent.absolute()
         self.project_root = self.skill_dir.parent.parent.parent
-        # ==================== å¼ºå¶æ¬æè½è¾åEç®å½E====================
+        # ==================== å¼ºå¶æ¬æè½è¾åEç®å½E====================
         self.output_dir = self.skill_dir / "output"
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -66,53 +66,53 @@ class ExpandToFullBody:
         self.target_height = self.config.get('target_height', 1024)
         self.target_width = self.config.get('target_width', 768)
 
-        # ç¼å­E
+        # ç¼å­E
         self.controlnet_engine = None
 
-        # ==================== åå§ååºå±å¼æ ====================
+        # ==================== åå§ååºå±å¼æ ====================
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlNetImg2Img(config={'device': self.device})
-                logger.info("  âEåºå±EControlNet å¼æåå§åæå")
+                logger.info("  âEåºå±EControlNet å¼æåå§åæå")
             except Exception as e:
-                logger.warning(f"  åºå±å¼æåå§åå¤±è´¥: {e}")
+                logger.warning(f"  åºå±å¼æåå§åå¤±è´¥: {e}")
 
-        # ==================== åå§å MediaPipeEæ°çEAPIEE====================
+        # ==================== åå§å MediaPipeEæ°çEAPIEE====================
         self._mediapipe_pose = None
         self._init_mediapipe()
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"ExpandToFullBody v{self.version} åå§åå®æE")
-        logger.info(f"  è®¾å¤E {self.device}")
-        logger.info(f"  ç®æ E°ºå¯¸: {self.target_width}x{self.target_height}")
-        logger.info(f"  ControlNet: {'âE if self.controlnet_engine else 'âE}")
+        logger.info(f"ExpandToFullBody v{self.version} åå§åå®æE")
+        logger.info(f"  è®¾å¤E {self.device}")
+        logger.info(f"  ç®æ E°ºå¯¸: {self.target_width}x{self.target_height}")
+        logger.info(f"  ControlNet: {'âE if self.controlnet_engine else 'âE}")
 
     def _init_mediapipe(self):
-        """åå§å MediaPipeEæ°çEAPIEE""
+        """åå§å MediaPipeEæ°çEAPIEE""
         self._mediapipe_pose = None
         try:
             import mediapipe as mp
             from mediapipe.tasks import python
             from mediapipe.tasks.python import vision
 
-            # æ¨¡åæä»¶è·¯å¾E
+            # æ¨¡åæä»¶è·¯å¾E
             model_path = self.skill_dir / "pose_landmarker_heavy.task"
 
-            # å¦ææ¨¡åä¸å­å¨Eå°è¯ä¸è½½
+            # å¦ææ¨¡åä¸å­å¨Eå°è¯ä¸è½½
             if not model_path.exists():
-                logger.info("  ð¥ ä¸è½½ MediaPipe å§¿ææ¨¡åE..")
+                logger.info("  ð¥ ä¸è½½ MediaPipe å§¿ææ¨¡åE..")
                 try:
                     import urllib.request
                     url = "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_heavy/float16/1/pose_landmarker_heavy.task"
                     urllib.request.urlretrieve(url, str(model_path))
-                    logger.info(f"  âEæ¨¡åå·²ä¸è½½: {model_path}")
+                    logger.info(f"  âEæ¨¡åå·²ä¸è½½: {model_path}")
                 except Exception as e:
-                    logger.warning(f"  â EEæ¨¡åä¸è½½å¤±è´¥: {e}")
+                    logger.warning(f"  â EEæ¨¡åä¸è½½å¤±è´¥: {e}")
                     return
 
-            # åå§åå§¿ææ£æµå¨
+            # åå§åå§¿ææ£æµå¨
             pose_options = vision.PoseLandmarkerOptions(
                 base_options=python.BaseOptions(model_asset_path=str(model_path)),
                 running_mode=vision.RunningMode.IMAGE,
@@ -122,14 +122,14 @@ class ExpandToFullBody:
                 min_tracking_confidence=0.5
             )
             self._mediapipe_pose = vision.PoseLandmarker.create_from_options(pose_options)
-            logger.info("  âEMediaPipe (æ°çEAPI) åå§åæå")
+            logger.info("  âEMediaPipe (æ°çEAPI) åå§åæå")
 
         except ImportError as e:
-            logger.warning(f"  â EEMediaPipe æªå®è£E {e}")
-            logger.warning("  å°E½¿ç¨é»è®¤æ©å±é»è¾E)
+            logger.warning(f"  â EEMediaPipe æªå®è£E {e}")
+            logger.warning("  å°E½¿ç¨é»è®¤æ©å±é»è¾E)
         except Exception as e:
-            logger.warning(f"  â EEMediaPipe åå§åå¤±è´¥: {e}")
-            logger.warning("  å°E½¿ç¨é»è®¤æ©å±é»è¾E)
+            logger.warning(f"  â EEMediaPipe åå§åå¤±è´¥: {e}")
+            logger.warning("  å°E½¿ç¨é»è®¤æ©å±é»è¾E)
 
     def _setup_logging(self):
         log_level = self.config.get('log_level', 'INFO')
@@ -149,7 +149,7 @@ class ExpandToFullBody:
                 self.config[key] = value
 
     def _detect_head_position(self, image: Image.Image) -> tuple:
-        """ä½¿ç¨ MediaPipe æ£æµå¤´é¨å¨å¾åä¸­çEY åæ E¯ä¾ï¼æ°çEAPIEE""
+        """ä½¿ç¨ MediaPipe æ£æµå¤´é¨å¨å¾åä¸­çEY åæ E¯ä¾ï¼æ°çEAPIEE""
         try:
             if self._mediapipe_pose is None:
                 return image.size[1] * 0.15, image.size[0] // 2
@@ -158,48 +158,48 @@ class ExpandToFullBody:
             from mediapipe.tasks import python
             from mediapipe.tasks.python import vision
 
-            # å°EPIL Image è½¬æ¢ä¸º MediaPipe Image
+            # å°EPIL Image è½¬æ¢ä¸º MediaPipe Image
             img_rgb = image.convert('RGB')
             mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=np.array(img_rgb))
 
-            # æ£æµå§¿æE
+            # æ£æµå§¿æE
             detection_result = self._mediapipe_pose.detect(mp_image)
 
             if detection_result and detection_result.pose_landmarks:
                 landmarks = detection_result.pose_landmarks[0]
                 h, w = img_rgb.size[1], img_rgb.size[0]
-                # 0 æ¯é¼»å­E
+                # 0 æ¯é¼»å­E
                 nose = landmarks[0]
                 head_y = int(nose.y * h)
                 head_x = int(nose.x * w)
                 return head_y, head_x
         except Exception as e:
-            logger.warning(f"å¤´é¨æ£æµå¤±è´¥: {e}")
+            logger.warning(f"å¤´é¨æ£æµå¤±è´¥: {e}")
 
         return image.size[1] * 0.15, image.size[0] // 2
 
     def _expand_image_area(self, image: Image.Image, target_width: int, target_height: int,
                            head_y: float, head_x: float) -> Image.Image:
-        """æ©å±ç»å¸E¼å°Eå¾æ¾ç½®å¨å¤´é¨ä½äºE15% é«åº¦çE½ç½®"""
+        """æ©å±ç»å¸E¼å°Eå¾æ¾ç½®å¨å¤´é¨ä½äºE15% é«åº¦çE½ç½®"""
         src_w, src_h = image.size
 
-        # è®¡ç®ç¼©æ¾æ¯ä¾ï¼è®©å¤´é¨å¤§çº¦å¨ 15% ä½ç½®
+        # è®¡ç®ç¼©æ¾æ¯ä¾ï¼è®©å¤´é¨å¤§çº¦å¨ 15% ä½ç½®
         head_ratio = 0.15
         scale = (target_height * head_ratio) / max(src_h * 0.15, head_y)
 
-        # éå¶ç¼©æ¾èE´
+        # éå¶ç¼©æ¾èE´
         scale = max(0.5, min(2.0, scale))
 
-        # ç¼©æ¾å¾çE
+        # ç¼©æ¾å¾çE
         new_w = int(src_w * scale)
         new_h = int(src_h * scale)
         resized = image.resize((new_w, new_h), Image.Resampling.LANCZOS)
 
-        # è®¡ç®ç²è´´ä½ç½®
+        # è®¡ç®ç²è´´ä½ç½®
         offset_y = int(target_height * 0.15 - head_y * scale)
         offset_x = int((target_width - new_w) // 2)
 
-        # åå»ºæ©å±å¾çE
+        # åå»ºæ©å±å¾çE
         expanded = Image.new("RGB", (target_width, target_height), (128, 128, 128))
         expanded.paste(resized, (offset_x, offset_y))
 
@@ -207,17 +207,17 @@ class ExpandToFullBody:
 
     def execute(self, **kwargs) -> Dict[str, Any]:
         start_time = time.time()
-        logger.info(f"æ§è¡æè½: {self.name} (v{self.version})")
+        logger.info(f"æ§è¡æè½: {self.name} (v{self.version})")
 
         try:
-            # ==================== ä¸¥æ ¼è·¯å¾E ¡éªE====================
+            # ==================== ä¸¥æ ¼è·¯å¾E ¡éªE====================
             image_path = kwargs.get('image_path')
             if not image_path:
-                return {"status": "error", "error": "image_path æ¯å¿E¡«åæ°"}
+                return {"status": "error", "error": "image_path æ¯å¿E¡«åæ°"}
 
             abs_image_path = Path(image_path).absolute()
             if not os.path.exists(abs_image_path):
-                return {"status": "error", "error": f"è¾åEå¾çE¸å­å¨: {abs_image_path}ãè¯·æ£æ¥è·¯å¾E¯å¦æ­£ç¡®EE}
+                return {"status": "error", "error": f"è¾åEå¾çE¸å­å¨: {abs_image_path}ãè¯·æ£æ¥è·¯å¾E¯å¦æ­£ç¡®EE}
 
             image = Image.open(abs_image_path).convert("RGB")
 
@@ -228,31 +228,31 @@ class ExpandToFullBody:
             steps = kwargs.get('steps', self.default_steps)
             seed = kwargs.get('seed', -1)
 
-            # æ´æ°ç®æ E°ºå¯¸
+            # æ´æ°ç®æ E°ºå¯¸
             target_w = kwargs.get('target_width', self.config.get('target_width', 768))
             target_h = kwargs.get('target_height', self.config.get('target_height', 1024))
 
-            # ==================== 1. æ©å±ç»å¸E====================
+            # ==================== 1. æ©å±ç»å¸E====================
             head_y, head_x = self._detect_head_position(image)
             expanded = self._expand_image_area(image, target_w, target_h, head_y, head_x)
-            logger.info(f"ç»å¸E©å±å®æE: {target_w}x{target_h}")
+            logger.info(f"ç»å¸E©å±å®æE: {target_w}x{target_h}")
 
-            # ==================== 2. ä¿å­æ©å±å¾ä½ä¸ºä¸´æ¶è¾åE ====================
+            # ==================== 2. ä¿å­æ©å±å¾ä½ä¸ºä¸´æ¶è¾åE ====================
             temp_input = self.output_dir / "_temp_expanded.png"
             expanded.save(temp_input)
 
-            # ==================== 3. ç´æ¥è°E¨åºå±å¼æ ====================
+            # ==================== 3. ç´æ¥è°E¨åºå±å¼æ ====================
             if self.controlnet_engine is None:
-                return {"status": "error", "error": "åºå±EControlNet å¼æä¸å¯ç¨"}
+                return {"status": "error", "error": "åºå±EControlNet å¼æä¸å¯ç¨"}
 
-            # é»è®¤è¾åEå°æ¬æè½ç®å½E
+            # é»è®¤è¾åEå°æ¬æè½ç®å½E
             if output_path is None:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 output_path = str(self.output_dir / f"full_body_{timestamp}.png")
 
             prompt = f"{prompt}, full body, whole body, standing, detailed, masterpiece, best quality, photorealistic"
 
-            # ä½¿ç¨ OpenPose éæ­»äººç©åå§ç»æ
+            # ä½¿ç¨ OpenPose éæ­»äººç©åå§ç»æ
             result = self.controlnet_engine.execute(
                 input_image_path=str(temp_input),
                 prompt=prompt,
@@ -264,7 +264,7 @@ class ExpandToFullBody:
                 output_path=output_path
             )
 
-            # æ¸Eä¸´æ¶æE»¶
+            # æ¸Eä¸´æ¶æE»¶
             if temp_input.exists():
                 temp_input.unlink()
 
@@ -290,7 +290,7 @@ class ExpandToFullBody:
             }
 
         except Exception as e:
-            logger.error(f"æ§è¡å¤±è´¥: {e}")
+            logger.error(f"æ§è¡å¤±è´¥: {e}")
             import traceback
             traceback.print_exc()
             return {"status": "error", "error": str(e)}
@@ -305,22 +305,22 @@ class ExpandToFullBody:
         return f"<ExpandToFullBody(name={self.name}, version={self.version})>"
 
 
-# ==================== å½ä»¤è¡åEå£ ====================
+# ==================== å½ä»¤è¡åEå£ ====================
 if __name__ == "__main__":
     import argparse
 
     MODEL_CHOICES = list(ExpandToFullBody.AVAILABLE_MODELS.keys())
 
-    parser = argparse.ArgumentParser(description="åèº«å¾è½¬å¨èº«å¾ v2.0")
-    parser.add_argument("--input", "-i", required=False, help="è¾åEå¾çE·¯å¾E)
-    parser.add_argument("--output", "-o", help="è¾åEå¾çE·¯å¾E)
-    parser.add_argument("--prompt", "-p", default="a person, beautiful, detailed, full body", help="äººç©æè¿°æç¤ºè¯E)
-    parser.add_argument("--model", "-m", default="anytimeRealistic_v10.safetensors", choices=MODEL_CHOICES, help="æ¨¡ååç§°")
-    parser.add_argument("--steps", "-s", type=int, default=30, help="æ¨çE­¥æ°")
-    parser.add_argument("--width", type=int, default=768, help="ç®æ E®½åº¦")
-    parser.add_argument("--height", type=int, default=1024, help="ç®æ E«åº¦")
-    parser.add_argument("--device", default="cpu", choices=["cpu", "cuda"], help="è®¾å¤E)
-    parser.add_argument("--list-models", action="store_true", help="ååEææå¯ç¨æ¨¡åE)
+    parser = argparse.ArgumentParser(description="åèº«å¾è½¬å¨èº«å¾ v2.0")
+    parser.add_argument("--input", "-i", required=False, help="è¾åEå¾çE·¯å¾E)
+    parser.add_argument("--output", "-o", help="è¾åEå¾çE·¯å¾E)
+    parser.add_argument("--prompt", "-p", default="a person, beautiful, detailed, full body", help="äººç©æè¿°æç¤ºè¯E)
+    parser.add_argument("--model", "-m", default="anytimeRealistic_v10.safetensors", choices=MODEL_CHOICES, help="æ¨¡ååç§°")
+    parser.add_argument("--steps", "-s", type=int, default=30, help="æ¨çE­¥æ°")
+    parser.add_argument("--width", type=int, default=768, help="ç®æ E®½åº¦")
+    parser.add_argument("--height", type=int, default=1024, help="ç®æ E«åº¦")
+    parser.add_argument("--device", default="cpu", choices=["cpu", "cuda"], help="è®¾å¤E)
+    parser.add_argument("--list-models", action="store_true", help="ååEææå¯ç¨æ¨¡åE)
 
     args = parser.parse_args()
 
@@ -331,7 +331,7 @@ if __name__ == "__main__":
         sys.exit(0)
 
     if not args.input:
-        parser.error("--input æ¯å¿E¡«åæ°")
+        parser.error("--input æ¯å¿E¡«åæ°")
 
     skill = ExpandToFullBody(config={'device': args.device, 'target_width': args.width, 'target_height': args.height})
 

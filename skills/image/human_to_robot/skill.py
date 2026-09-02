@@ -1,18 +1,18 @@
 # skills/human_to_robot/skill.py
 """
-HumanToRobot - å°Eººç©ç§çE½¬æ¢ä¸ºæºå¨äºº/æºæ¢°é£æ ¼
+HumanToRobot - å°Eººç©ç§çE½¬æ¢ä¸ºæºå¨äºº/æºæ¢°é£æ ¼
 
-è¾åEåæ°:
-  - image_path (string): è¾åEå¾çE·¯å¾E(å¿E¡«)
-  - output_path (string): è¾åEå¾çE·¯å¾E(å¿E¡»ä¸º .png)
-  - ai_convert (boolean): æ¯å¦å¼å¯ AI å¾çå¾è½¬æ¢ (é»è®¤: FalseEä½¿ç¨ OpenCV æºæ¢°æ»¤éE
-  - style (string): æºå¨äººé£æ ¼ (cyberpunk_robot / mechanical / android)
-  - save_result (boolean): æ¯å¦ä¿å­å¤Eæ¥å¿E
+è¾åEåæ°:
+  - image_path (string): è¾åEå¾çE·¯å¾E(å¿E¡«)
+  - output_path (string): è¾åEå¾çE·¯å¾E(å¿E¡»ä¸º .png)
+  - ai_convert (boolean): æ¯å¦å¼å¯ AI å¾çå¾è½¬æ¢ (é»è®¤: FalseEä½¿ç¨ OpenCV æºæ¢°æ»¤éE
+  - style (string): æºå¨äººé£æ ¼ (cyberpunk_robot / mechanical / android)
+  - save_result (boolean): æ¯å¦ä¿å­å¤Eæ¥å¿E
 
-è¾åE:
-  - status: æ§è¡ç¶æE¼success / error
-  - result: åE«è¾åEè·¯å¾Eè½¬æ¢è¯¦æEå­åE
-  - metadata: æè½æ§è¡åEæ°æ®
+è¾åE:
+  - status: æ§è¡ç¶æE¼success / error
+  - result: åE«è¾åEè·¯å¾Eè½¬æ¢è¯¦æEå­åE
+  - metadata: æè½æ§è¡åEæ°æ®
 """
 
 import os
@@ -23,12 +23,12 @@ import logging
 from pathlib import Path
 from typing import Dict, Any
 
-# æ·»å é¡¹ç®è·¯å¾E
+# æ·»å é¡¹ç®è·¯å¾E
 project_root = Path(__file__).parent.parent.parent
 if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
-# ä¾èµæ£æ¥
+# ä¾èµæ£æ¥
 try:
     import cv2
     import numpy as np
@@ -37,7 +37,7 @@ try:
 except ImportError:
     CV2_AVAILABLE = False
 
-# å°è¯å¼åE ControlNet å¼æ
+# å°è¯å¼åE ControlNet å¼æ
 try:
     from skills.image.controlnet_img2img.skill import ControlNetImg2Img
     CONTROLNET_ENGINE_AVAILABLE = True
@@ -48,25 +48,25 @@ logger = logging.getLogger(__name__)
 
 
 class HumanToRobot:
-    """äººç©è½¬æºå¨äººæè½"""
+    """äººç©è½¬æºå¨äººæè½"""
 
     def __init__(self, config: Dict[str, Any] = None):
         self.config = config or {}
         self.name = "HumanToRobot"
         self.version = "1.0.0"
 
-        # è®¾å®è¾åEç®å½E
+        # è®¾å®è¾åEç®å½E
         self.skill_dir = Path(__file__).parent.absolute()
         self.output_dir = self.skill_dir / "output"
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
-        # åå§å ControlNet
+        # åå§å ControlNet
         self.controlnet_engine = None
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlNetImg2Img(config={'device': self.config.get('device', 'cpu')})
             except Exception as e:
-                logger.warning(f"ControlNet åå§åå¤±è´¥: {e}")
+                logger.warning(f"ControlNet åå§åå¤±è´¥: {e}")
 
         self._setup_logging()
         self._setup_config()
@@ -89,73 +89,73 @@ class HumanToRobot:
                 self.config[key] = value
 
     def _apply_cyberpunk_filters(self, image: Image.Image, style: str = "cyberpunk_robot") -> Image.Image:
-        """ä½¿ç¨ OpenCV èµåæåEæ»¤éE""
+        """ä½¿ç¨ OpenCV èµåæåEæ»¤éE""
         if not CV2_AVAILABLE:
             return image
 
         img_cv = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
         h, w = img_cv.shape[:2]
 
-        # 1. æåè¾¹ç¼E
+        # 1. æåè¾¹ç¼E
         gray = cv2.cvtColor(img_cv, cv2.COLOR_BGR2GRAY)
         edges = cv2.Canny(gray, 50, 150)
         edges = cv2.dilate(edges, np.ones((2, 2), np.uint8), iterations=1)
 
-        # 2. èµåæåEé¢è²åç§» (éè²/æ´çº¢)
+        # 2. èµåæåEé¢è²åç§» (éè²/æ´çº¢)
         b, g, r = cv2.split(img_cv)
         b = cv2.add(b, 60)
         r = cv2.add(r, 30)
         cyber_img = cv2.merge((b, g, r))
 
-        # 3. æ·»å æºæ¢°ç½æ ¼çº¹çE
+        # 3. æ·»å æºæ¢°ç½æ ¼çº¹çE
         noise = np.random.randint(0, 30, (h, w), dtype=np.uint8)
         grid = np.zeros((h, w), dtype=np.uint8)
         grid[::4, :] = 255
         grid[:, ::4] = 255
         grid = cv2.bitwise_and(grid, noise)
 
-        # 4. åå¹¶å¾å±E
+        # 4. åå¹¶å¾å±E
         cyber_img[edges > 0] = [255, 255, 255]
         cyber_img[grid > 0] = [0, 255, 255]
 
         return Image.fromarray(cv2.cvtColor(cyber_img, cv2.COLOR_BGR2RGB))
 
     def execute(self, **kwargs) -> Dict[str, Any]:
-        """æ§è¡æè½Eæ¯æåå¼ åæ¹éç®å½ï¼E""
-        logger.info(f"æ§è¡æè½: {self.name} (v{self.version})")
+        """æ§è¡æè½Eæ¯æåå¼ åæ¹éç®å½ï¼E""
+        logger.info(f"æ§è¡æè½: {self.name} (v{self.version})")
         
         try:
-            # 1. éªè¯è¾åE
+            # 1. éªè¯è¾åE
             image_path = kwargs.get('image_path')
             if not image_path:
-                return {"status": "error", "error": "ç¼ºå°å¿E¡«åæ°: image_path"}
+                return {"status": "error", "error": "ç¼ºå°å¿E¡«åæ°: image_path"}
             
             abs_image_path = Path(image_path).absolute()
             if not abs_image_path.exists():
-                return {"status": "error", "error": f"è¾åEå¾çE¸å­å¨: {abs_image_path}"}
+                return {"status": "error", "error": f"è¾åEå¾çE¸å­å¨: {abs_image_path}"}
 
-            # è¯»ååæ°
+            # è¯»ååæ°
             ai_convert = kwargs.get('ai_convert', self.config.get('default_ai_convert', False))
             style = kwargs.get('style', self.config.get('default_style', 'cyberpunk_robot'))
 
-            # ================= æ¯ææ¹éæ¨¡å¼E=================
-            # å¦æä¼ å¥çE¯ç®å½ï¼åEæ¹éå¤E
+            # ================= æ¯ææ¹éæ¨¡å¼E=================
+            # å¦æä¼ å¥çE¯ç®å½ï¼åEæ¹éå¤E
             if abs_image_path.is_dir():
                 valid_exts = ['.jpg', '.jpeg', '.png', '.bmp', '.webp']
                 images = [p for p in abs_image_path.iterdir() if p.suffix.lower() in valid_exts]
                 
                 if not images:
-                    return {"status": "error", "error": f"ç®å½ä¸­æ²¡ææ¾å°å¾çE {abs_image_path}"}
+                    return {"status": "error", "error": f"ç®å½ä¸­æ²¡ææ¾å°å¾çE {abs_image_path}"}
                 
-                logger.info(f"ð åç° {len(images)} å¼ å¾çE¼å¼å§æ¹éå¤E...")
+                logger.info(f"ð åç° {len(images)} å¼ å¾çE¼å¼å§æ¹éå¤E...")
                 results = []
                 
                 for idx, img_path in enumerate(images):
-                    # èªå¨çæEè¾åEè·¯å¾E
+                    # èªå¨çæEè¾åEè·¯å¾E
                     output_filename = f"{img_path.stem}_robot_{idx}.png"
                     output_path = str(self.output_dir / output_filename)
                     
-                    # è°E¨åE¨å¤Eæ¹æ³E
+                    # è°E¨åE¨å¤Eæ¹æ³E
                     result = self._process_single_image(str(img_path), output_path, ai_convert, style)
                     results.append(result)
                 
@@ -173,7 +173,7 @@ class HumanToRobot:
                     }
                 }
             
-            # ================= åå¼ æ¨¡å¼E=================
+            # ================= åå¼ æ¨¡å¼E=================
             output_path = kwargs.get('output_path')
             if not output_path:
                 timestamp = Path(abs_image_path).stem
@@ -192,7 +192,7 @@ class HumanToRobot:
             }
 
         except Exception as e:
-            logger.error(f"æ§è¡å¤±è´¥: {e}")
+            logger.error(f"æ§è¡å¤±è´¥: {e}")
             return {
                 "status": "error",
                 "error": str(e),
@@ -201,7 +201,7 @@ class HumanToRobot:
             }
 
     def _process_single_image(self, input_path: str, output_path: str, ai_convert: bool, style: str) -> Dict:
-        """å¤Eåå¼ å¾çEç§ææ¹æ³E""
+        """å¤Eåå¼ å¾çEç§ææ¹æ³E""
         try:
             if ai_convert and self.controlnet_engine:
                 style_prompts = {
@@ -244,3 +244,4 @@ class HumanToRobot:
             
     def __repr__(self):
         return f"<HumanToRobot(name={self.name}, version={self.version})>"
+"""

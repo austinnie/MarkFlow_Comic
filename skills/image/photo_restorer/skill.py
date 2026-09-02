@@ -1,18 +1,18 @@
 # skills/photo_restorer/skill.py
 """
-photo_restorer - èçEçE¿®å¤å·¥å·
+photo_restorer - èçEçE¿®å¤å·¥å·
 
-ä½¿ç¨AIææ¯ä¿®å¤ãä¸è²ãå¢å¼ºèçEçE
-åèE:
-  - ç§çE¿®å¤ï¼å»åªãå»åçEE
-  - è¶EEè¾¨çE¼æ¾å¤§EE
-  - æºè½ä¸è²
-  - äººè¸ä¿®å¤E
-  - å¤æ¨¡åæ¯æE
+ä½¿ç¨AIææ¯ä¿®å¤ãä¸è²ãå¢å¼ºèçEçE
+åèE:
+  - ç§çE¿®å¤ï¼å»åªãå»åçEE
+  - è¶EEè¾¨çE¼æ¾å¤§EE
+  - æºè½ä¸è²
+  - äººè¸ä¿®å¤E
+  - å¤æ¨¡åæ¯æE
 
-æ³¨æï¼ä¸»æçç¡¬æ ¸ä¿®å¤æ¨¡åï¼EodeFormer/GFPGAN/RealESRGANEè·¯å¾E·²å½æ¡£äºE
+æ³¨æï¼ä¸»æçç¡¬æ ¸ä¿®å¤æ¨¡åï¼EodeFormer/GFPGAN/RealESRGANEè·¯å¾E·²å½æ¡£äºE
 E:/SD_OpenVINO/models/upscalers_and_restorers/
-çº¯CPUç¯å¢E¸ï¼ControlNet å¼æä½ä¸ºç¨³å®å¤E¨æ¹æ¡ãE
+çº¯CPUç¯å¢E¸ï¼ControlNet å¼æä½ä¸ºç¨³å®å¤E¨æ¹æ¡ãE
 """
 
 import os
@@ -26,7 +26,7 @@ import time
 
 logger = logging.getLogger(__name__)
 
-# æ·»å é¡¹ç®è·¯å¾E
+# æ·»å é¡¹ç®è·¯å¾E
 project_root = Path(__file__).parent.parent.parent
 if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
@@ -37,32 +37,32 @@ try:
     DIFFUSERS_AVAILABLE = True
 except ImportError:
     DIFFUSERS_AVAILABLE = False
-    logger.warning("torch æEPIL æªå®è£E)
+    logger.warning("torch æEPIL æªå®è£E)
 
-# ==================== å¼åEéç¨å¼æEæ¹æ¡EEE====================
+# ==================== å¼åEéç¨å¼æEæ¹æ¡EEE====================
 try:
     from skills.image.controlnet_img2img.skill import ControlNetImg2Img
     CONTROLNET_ENGINE_AVAILABLE = True
 except ImportError as e:
     CONTROLNET_ENGINE_AVAILABLE = False
-    logger.warning(f"éç¨ ControlNet å¼æä¸å¯ç¨: {e}")
+    logger.warning(f"éç¨ ControlNet å¼æä¸å¯ç¨: {e}")
 
-# ==================== æ¨¡åè·¯å¾E å°E(åºäºä½ ååEæ´çEç®å½E ====================
+# ==================== æ¨¡åè·¯å¾E å°E(åºäºä½ ååEæ´çEç®å½E ====================
 MODELS_DIR = Path(r"E:\SD_OpenVINO\models\upscalers_and_restorers")
 
 
 class PhotoRestorer:
-    """èçEçE¿®å¤å¨ v4.0 (åºç¡çE"""
+    """èçEçE¿®å¤å¨ v4.0 (åºç¡çE"""
     SUPPORTED_MODELS = {
         "controlnet": {
             "name": "ControlNet Restore",
-            "description": "ä½¿ç¨æ¬å° ControlNet å¼æè¿è¡ç¨³å®ä¿®å¤E,
+            "description": "ä½¿ç¨æ¬å° ControlNet å¼æè¿è¡ç¨³å®ä¿®å¤E,
             "type": "diffusion",
             "default": True,
         },
         "codeformer": {
             "name": "CodeFormer",
-            "description": "äººè¸ä¿®å¤E(é Python 3.10+ ä¸å®è£E®æ»¡ä¾èµE",
+            "description": "äººè¸ä¿®å¤E(é Python 3.10+ ä¸å®è£E®æ»¡ä¾èµE",
             "type": "gan",
             "default": False,
             "weights": MODELS_DIR / "codeformer" / "codeformer.pth",
@@ -83,14 +83,14 @@ class PhotoRestorer:
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlNetImg2Img(config={'device': self.config.get('device', 'cpu')})
-                logger.info("  âEåºå±EControlNet å¼æåå§åæå")
+                logger.info("  âEåºå±EControlNet å¼æåå§åæå")
             except Exception as e:
-                logger.warning(f"  åºå±å¼æåå§åå¤±è´¥: {e}")
+                logger.warning(f"  åºå±å¼æåå§åå¤±è´¥: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"ç§çE¿®å¤å¨ v{self.version} åå§åå®æE")
+        logger.info(f"ç§çE¿®å¤å¨ v{self.version} åå§åå®æE")
 
     def _setup_logging(self):
         log_level = self.config.get("log_level", "INFO")
@@ -111,9 +111,9 @@ class PhotoRestorer:
         return self.SUPPORTED_MODELS
 
     def _restore_with_controlnet(self, image_path: str, output_path: str, **kwargs) -> bool:
-        """ä½¿ç¨ ControlNet è¿è¡åºç¡éç»ä¿®å¤E(ç¨³å®æ¹æ¡E"""
+        """ä½¿ç¨ ControlNet è¿è¡åºç¡éç»ä¿®å¤E(ç¨³å®æ¹æ¡E"""
         if self.controlnet_engine is None:
-            logger.error("åºå±EControlNet å¼æä¸å¯ç¨")
+            logger.error("åºå±EControlNet å¼æä¸å¯ç¨")
             return False
 
         try:
@@ -127,44 +127,44 @@ class PhotoRestorer:
                 output_path=output_path
             )
             if result['status'] != 'success':
-                logger.error(f"ControlNet å¼æè°E¨å¤±è´¥: {result.get('error')}")
+                logger.error(f"ControlNet å¼æè°E¨å¤±è´¥: {result.get('error')}")
                 return False
-            logger.info(f"ControlNet ä¿®å¤å®æE: {output_path}")
+            logger.info(f"ControlNet ä¿®å¤å®æE: {output_path}")
             return True
         except Exception as e:
-            logger.error(f"ControlNet ä¿®å¤å¤±è´¥: {e}")
+            logger.error(f"ControlNet ä¿®å¤å¤±è´¥: {e}")
             return False
 
     def _restore_with_codeformer(self, image_path: str, output_path: str) -> bool:
-        """ä½¿ç¨ CodeFormer ç¡¬æ ¸ä¿®å¤E(éè¦å®æ´ä¾èµE"""
+        """ä½¿ç¨ CodeFormer ç¡¬æ ¸ä¿®å¤E(éè¦å®æ´ä¾èµE"""
         try:
-            # é²åE£æ¥Eå¦ææ²¡æå®æ´çEºï¼ç´æ¥å¤±è´¥è¿å
+            # é²åE£æ¥Eå¦ææ²¡æå®æ´çEºï¼ç´æ¥å¤±è´¥è¿å
             try:
                 import facexlib
                 import gfpgan
             except ImportError:
-                logger.error("ç¼ºå°ç¡¬æ ¸ä¾èµåºï¼å½åç¯å¢E æ³è¿è¡ECodeFormerãE)
+                logger.error("ç¼ºå°ç¡¬æ ¸ä¾èµåºï¼å½åç¯å¢E æ³è¿è¡ECodeFormerãE)
                 return False
 
             import cv2
             from basicsr.utils import imwrite, img2tensor, tensor2img
-            # ... (æ­¤å¤E®éä»£ç è¾E¤æEç±äºå½å Python ç¯å¢E æ³è¿è¡EbasicsrEè¿éä½ä¸ºé¢Eæ¥å£)
-            # å®éè¿è¡ä¼èµ°ä¸é¢çEControlNet
+            # ... (æ­¤å¤E®éä»£ç è¾E¤æEç±äºå½å Python ç¯å¢E æ³è¿è¡EbasicsrEè¿éä½ä¸ºé¢Eæ¥å£)
+            # å®éè¿è¡ä¼èµ°ä¸é¢çEControlNet
             return False
 
         except Exception as e:
-            logger.error(f"CodeFormer å è½½å¤±è´¥: {e}")
+            logger.error(f"CodeFormer å è½½å¤±è´¥: {e}")
             return False
 
     def restore_image(self, image_path: str, model: str = None,
                       output_path: str = None, **kwargs) -> Dict[str, Any]:
-        """ä¿®å¤åå¼ å¾çE""
+        """ä¿®å¤åå¼ å¾çE""
         start_time = time.time()
         if not image_path:
-            return {"status": "error", "error": "image_path æ¯å¿E¡«åæ°"}
+            return {"status": "error", "error": "image_path æ¯å¿E¡«åæ°"}
         abs_image_path = Path(image_path).absolute()
         if not os.path.exists(abs_image_path):
-            return {"status": "error", "error": f"è¾åEå¾çE¸å­å¨: {abs_image_path}ãè¯·æ£æ¥è·¯å¾E¯å¦æ­£ç¡®EE}
+            return {"status": "error", "error": f"è¾åEå¾çE¸å­å¨: {abs_image_path}ãè¯·æ£æ¥è·¯å¾E¯å¦æ­£ç¡®EE}
 
         model = model or self.config.get("default_model", "controlnet")
 
@@ -174,8 +174,8 @@ class PhotoRestorer:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             output_path = str(self.output_dir / f"{input_name}_restored_{timestamp}{ext}")
 
-        logger.info(f"å¼å§ä¿®å¤E {abs_image_path}")
-        logger.info(f"ä½¿ç¨æ¨¡åE {model}")
+        logger.info(f"å¼å§ä¿®å¤E {abs_image_path}")
+        logger.info(f"ä½¿ç¨æ¨¡åE {model}")
 
         success = False
         error_msg = None
@@ -186,7 +186,7 @@ class PhotoRestorer:
             elif model == "codeformer":
                 success = self._restore_with_codeformer(str(abs_image_path), output_path)
             else:
-                error_msg = f"æ¨¡åE{model} ææ å®ç°"
+                error_msg = f"æ¨¡åE{model} ææ å®ç°"
                 success = False
         except Exception as e:
             error_msg = str(e)
@@ -207,7 +207,7 @@ class PhotoRestorer:
         return result
 
     def execute(self, **kwargs) -> Dict[str, Any]:
-        logger.info(f"æ§è¡æè½: {self.name} (v{self.version})")
+        logger.info(f"æ§è¡æè½: {self.name} (v{self.version})")
         try:
             action = kwargs.get("action", "restore")
             if action == "list_models":
@@ -219,12 +219,12 @@ class PhotoRestorer:
             if action == "restore":
                 image_path = kwargs.get("image_path")
                 if not image_path:
-                    return {"status": "error", "error": "è¯·æä¾Eimage_path åæ°"}
+                    return {"status": "error", "error": "è¯·æä¾Eimage_path åæ°"}
                 return self.restore_image(image_path, kwargs.get("model"), kwargs.get("output_path"), **kwargs)
 
-            return {"status": "error", "error": f"æªç¥æä½E {action}"}
+            return {"status": "error", "error": f"æªç¥æä½E {action}"}
         except Exception as e:
-            logger.error(f"æ§è¡å¤±è´¥: {e}")
+            logger.error(f"æ§è¡å¤±è´¥: {e}")
             return {"status": "error", "error": str(e)}
 
     def __repr__(self):
@@ -233,6 +233,7 @@ class PhotoRestorer:
 
 if __name__ == "__main__":
     restorer = PhotoRestorer()
-    print("å½åå¯ç¨çE¿®å¤æ¨¡åE")
+    print("å½åå¯ç¨çE¿®å¤æ¨¡åE")
     for name, info in restorer.get_models().items():
         print(f"  {name}: {info['description']}")
+"""

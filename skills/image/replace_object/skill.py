@@ -1,7 +1,7 @@
 # skills/replace_object/skill.py
 """
-æ¿æ¢ç©ä½ESkill - å°E¾çE¸­çE©ä½æ¿æ¢ä¸ºå¦ä¸ä¸ªç©ä½E
-é»è®¤ä½¿ç¨æå¨é®ç½©Eå¤ç¨éç¨ ControlNet å¼æè¿è¡åEå±ç»æä¿æ
+æ¿æ¢ç©ä½ESkill - å°E¾çE¸­çE©ä½æ¿æ¢ä¸ºå¦ä¸ä¸ªç©ä½E
+é»è®¤ä½¿ç¨æå¨é®ç½©Eå¤ç¨éç¨ ControlNet å¼æè¿è¡åEå±ç»æä¿æ
 """
 
 import time
@@ -29,19 +29,19 @@ try:
     DIFFUSERS_AVAILABLE = True
 except ImportError:
     DIFFUSERS_AVAILABLE = False
-    logger.warning("diffusers æªå®è£E)
+    logger.warning("diffusers æªå®è£E)
 
-# ==================== å¼åEéç¨å¼æEæ¹æ¡EEE====================
+# ==================== å¼åEéç¨å¼æEæ¹æ¡EEE====================
 try:
     from skills.image.controlnet_img2img.skill import ControlNetImg2Img
     CONTROLNET_ENGINE_AVAILABLE = True
 except ImportError as e:
     CONTROLNET_ENGINE_AVAILABLE = False
-    logger.warning(f"éç¨ ControlNet å¼æä¸å¯ç¨: {e}")
+    logger.warning(f"éç¨ ControlNet å¼æä¸å¯ç¨: {e}")
 
 
 class ReplaceObject:
-    """æ¿æ¢ç©ä½æè½ v2.0"""
+    """æ¿æ¢ç©ä½æè½ v2.0"""
 
     def __init__(self, config: Dict[str, Any] = None):
         self.config = config or {}
@@ -50,7 +50,7 @@ class ReplaceObject:
 
         self.skill_dir = Path(__file__).parent.absolute()
         self.project_root = self.skill_dir.parent.parent.parent
-        # ==================== å¼ºå¶æ¬æè½è¾åEç®å½E====================
+        # ==================== å¼ºå¶æ¬æè½è¾åEç®å½E====================
         self.output_dir = self.skill_dir / "output"
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -60,20 +60,20 @@ class ReplaceObject:
         self.pipeline = None
         self.current_model = None
 
-        # ==================== åå§ååºå±å¼æ ====================
+        # ==================== åå§ååºå±å¼æ ====================
         self.controlnet_engine = None
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlNetImg2Img(config={'device': self.device})
-                logger.info("  âEåºå±EControlNet å¼æåå§åæå")
+                logger.info("  âEåºå±EControlNet å¼æåå§åæå")
             except Exception as e:
-                logger.warning(f"  åºå±å¼æåå§åå¤±è´¥: {e}")
+                logger.warning(f"  åºå±å¼æåå§åå¤±è´¥: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"ReplaceObject v{self.version} åå§åå®æE")
-        logger.info(f"  è®¾å¤E {self.device}")
+        logger.info(f"ReplaceObject v{self.version} åå§åå®æE")
+        logger.info(f"  è®¾å¤E {self.device}")
 
     def _setup_logging(self):
         log_level = self.config.get('log_level', 'INFO')
@@ -95,7 +95,7 @@ class ReplaceObject:
         return Path(self.models_dir / "sd-v1-5" / model_name) if model_name else None
 
     def _load_pipeline(self, model_path: Path) -> bool:
-        """å è½½çº¯ Inpaint ç®¡çº¿Eä½ä¸ºååºï¼E""
+        """å è½½çº¯ Inpaint ç®¡çº¿Eä½ä¸ºååºï¼E""
         try:
             self.pipeline = StableDiffusionInpaintPipeline.from_single_file(
                 str(model_path),
@@ -108,18 +108,18 @@ class ReplaceObject:
             self.current_model = model_path.name
             return True
         except Exception as e:
-            logger.error(f"  æ¨¡åå è½½å¤±è´¥: {e}")
+            logger.error(f"  æ¨¡åå è½½å¤±è´¥: {e}")
             return False
 
     def _load_model(self, model_name: str) -> bool:
         model_path = self._find_model(model_name)
         if not model_path or not model_path.exists():
-            logger.error(f"æ¨¡åä¸å­å¨: {model_name}")
+            logger.error(f"æ¨¡åä¸å­å¨: {model_name}")
             return False
         return self._load_pipeline(model_path)
 
     def _generate_manual_mask(self, image: Image.Image) -> Image.Image:
-        """æå¨ç»å¶è¦æ¿æ¢çE©ä½éEç½©"""
+        """æå¨ç»å¶è¦æ¿æ¢çE©ä½éEç½©"""
         img_cv = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
         h, w = img_cv.shape[:2]
 
@@ -129,12 +129,12 @@ class ReplaceObject:
         brush_size = 30
 
         print("\n" + "=" * 50)
-        print("æå¨ç»å¶è¦æ¿æ¢çE©ä½E)
+        print("æå¨ç»å¶è¦æ¿æ¢çE©ä½E)
         print("=" * 50)
-        print("  æä½é¼ æ E·¦é®ç»å¶è¦æ¿æ¢çEºåï¼ç½è²EE)
-        print("  æ»è½®è°Eç»ç¬å¤§å°E)
-        print("  æER é®éç½®")
-        print("  æEQ æEç©ºæ ¼é® å®æE")
+        print("  æä½é¼ æ E·¦é®ç»å¶è¦æ¿æ¢çEºåï¼ç½è²EE)
+        print("  æ»è½®è°Eç»ç¬å¤§å°E)
+        print("  æER é®éç½®")
+        print("  æEQ æEç©ºæ ¼é® å®æE")
         print("=" * 50 + "\n")
 
         def draw_callback(event, x, y, flags, param):
@@ -152,7 +152,7 @@ class ReplaceObject:
             elif event == cv2.EVENT_MOUSEWHEEL:
                 delta = flags
                 brush_size = min(100, max(5, brush_size + (5 if delta > 0 else -5)))
-                print(f"   ç»ç¬å¤§å°E {brush_size}")
+                print(f"   ç»ç¬å¤§å°E {brush_size}")
 
         cv2.namedWindow('Draw Object to Replace')
         cv2.setMouseCallback('Draw Object to Replace', draw_callback)
@@ -171,18 +171,18 @@ class ReplaceObject:
             elif key == ord('r'):
                 mask = np.zeros((h, w), dtype=np.uint8)
                 overlay = np.zeros((h, w, 3), dtype=np.uint8)
-                print("  å·²éç½®")
+                print("  å·²éç½®")
 
         cv2.destroyAllWindows()
 
         if np.sum(mask > 0) < 100:
-            print("  æªç»å¶ä»»ä½åºåï¼ä½¿ç¨é»è®¤æ¤­åEEç½©")
+            print("  æªç»å¶ä»»ä½åºåï¼ä½¿ç¨é»è®¤æ¤­åEEç½©")
             mask = np.zeros((h, w), dtype=np.uint8)
             cx, cy = w // 2, h // 2
             cv2.ellipse(mask, (cx, cy), (w // 4, h // 4), 0, 0, 360, 255, -1)
 
         mask = cv2.GaussianBlur(mask, (15, 15), 0)
-        print(f"  é®ç½©è¦E {np.sum(mask > 0)} åç´ ")
+        print(f"  é®ç½©è¦E {np.sum(mask > 0)} åç´ ")
         return Image.fromarray(mask, mode="L")
 
     def _resize_image(self, image: Image.Image) -> tuple:
@@ -196,17 +196,17 @@ class ReplaceObject:
 
     def execute(self, **kwargs) -> Dict[str, Any]:
         start_time = time.time()
-        logger.info(f"æ§è¡æè½: {self.name}")
+        logger.info(f"æ§è¡æè½: {self.name}")
 
         try:
-            # ==================== ä¸¥æ ¼è·¯å¾E ¡éªE====================
+            # ==================== ä¸¥æ ¼è·¯å¾E ¡éªE====================
             image_path = kwargs.get('image_path')
             if not image_path:
-                return {"status": "error", "error": "image_path æ¯å¿E¡«åæ°"}
+                return {"status": "error", "error": "image_path æ¯å¿E¡«åæ°"}
             
             abs_image_path = Path(image_path).absolute()
             if not os.path.exists(abs_image_path):
-                return {"status": "error", "error": f"è¾åEå¾çE¸å­å¨: {abs_image_path}ãè¯·æ£æ¥è·¯å¾E¯å¦æ­£ç¡®EE}
+                return {"status": "error", "error": f"è¾åEå¾çE¸å­å¨: {abs_image_path}ãè¯·æ£æ¥è·¯å¾E¯å¦æ­£ç¡®EE}
 
             object_prompt = kwargs.get('object_prompt') or "new object"
             prompt = kwargs.get('prompt') or f"{object_prompt}, high quality, detailed, masterpiece, beautiful"
@@ -217,35 +217,35 @@ class ReplaceObject:
             seed = kwargs.get('seed', -1)
             model_name = kwargs.get('model_name', self.config.get('default_model'))
 
-            # å è½½åå¾
+            # å è½½åå¾
             image = Image.open(abs_image_path).convert("RGB")
             image, original_size = self._resize_image(image)
 
-            logger.info(f"æ¿æ¢ä¸º: {object_prompt}")
-            logger.info(f"æç¤ºè¯E {prompt[:80]}...")
+            logger.info(f"æ¿æ¢ä¸º: {object_prompt}")
+            logger.info(f"æç¤ºè¯E {prompt[:80]}...")
 
-            # ==================== ç¬¬ä¸æ­¥EçæéEç½© ====================
+            # ==================== ç¬¬ä¸æ­¥EçæéEç½© ====================
             if not kwargs.get('skip_manual', False):
                 object_mask = self._generate_manual_mask(image)
             else:
                 object_mask = Image.new("L", image.size, 0)
 
-            # é»è®¤è¾åEå°æ¬æè½ç®å½E
+            # é»è®¤è¾åEå°æ¬æè½ç®å½E
             output_path = kwargs.get('output_path')
             if output_path is None:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 output_path = str(self.output_dir / f"{Path(abs_image_path).stem}_replaced_{timestamp}.png")
 
-            # ==================== ç¬¬äºæ­¥Eæ§è¡ï¼å¼æä¼åEEInpaintååºï¼E====================
-            # å¦æåºå±å¼æå¯ç¨Eè°E¨å¼æçæE
+            # ==================== ç¬¬äºæ­¥Eæ§è¡ï¼å¼æä¼åEEInpaintååºï¼E====================
+            # å¦æåºå±å¼æå¯ç¨Eè°E¨å¼æçæE
             if self.controlnet_engine is not None:
-                logger.info("  ð¥ ä½¿ç¨éç¨ ControlNet å¼æè¿è¡æ¿æ¢Eä¿æåæç»æEE..")
+                logger.info("  ð¥ ä½¿ç¨éç¨ ControlNet å¼æè¿è¡æ¿æ¢Eä¿æåæç»æEE..")
                 result = self.controlnet_engine.execute(
                     input_image_path=str(abs_image_path),
                     prompt=prompt,
                     negative_prompt=negative_prompt,
-                    preprocessor_type="HED",      # æåè½¯è¾¹ç¼ï¼å®ç¾ä¿çåå¾èæ¯ç»æ
-                    controlnet_model="canny",     # å¯¹åºæ¬å°æ¨¡åE
+                    preprocessor_type="HED",      # æåè½¯è¾¹ç¼ï¼å®ç¾ä¿çåå¾èæ¯ç»æ
+                    controlnet_model="canny",     # å¯¹åºæ¬å°æ¨¡åE
                     strength=strength,
                     output_path=output_path
                 )
@@ -258,11 +258,11 @@ class ReplaceObject:
                         "parameters": {"strength": strength, "steps": steps, "seed": seed, "engine": "controlnet"}
                     }
                 else:
-                    logger.warning(f"  å¼æè°E¨å¤±è´¥: {result.get('error')}Eåéå° Inpaint")
+                    logger.warning(f"  å¼æè°E¨å¤±è´¥: {result.get('error')}Eåéå° Inpaint")
 
-            # ååºï¼å è½½çº¯ Inpaint æ¨¡åå¹¶çæE
+            # ååºï¼å è½½çº¯ Inpaint æ¨¡åå¹¶çæE
             if not self._load_model(model_name):
-                return {"status": "error", "error": f"æ æ³å è½½æ¨¡åE {model_name}"}
+                return {"status": "error", "error": f"æ æ³å è½½æ¨¡åE {model_name}"}
 
             if seed == -1:
                 seed = random.randint(0, 2 ** 32 - 1)
@@ -294,20 +294,20 @@ class ReplaceObject:
             }
 
         except Exception as e:
-            logger.error(f"æ§è¡å¤±è´¥: {e}")
+            logger.error(f"æ§è¡å¤±è´¥: {e}")
             return {"status": "error", "error": str(e)}
 
 
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser(description="æ¿æ¢ç©ä½å·¥å· v2.0")
-    parser.add_argument("--input", "-i", required=True, help="è¾åEå¾çE·¯å¾E)
-    parser.add_argument("--output", "-o", help="è¾åEè·¯å¾E)
-    parser.add_argument("--object", "-obj", required=True, help="æ¿æ¢ä¸ºçE©ä½æè¿°")
-    parser.add_argument("--skip-manual", action="store_true", help="è·³è¿Eå¨ç»å¶é®ç½©")
-    parser.add_argument("--strength", type=float, default=0.7, help="éç»å¼ºåº¦")
-    parser.add_argument("--steps", type=int, default=30, help="è¿­ä»£æ­¥æ°")
-    parser.add_argument("--seed", type=int, default=-1, help="éæºç§å­E)
+    parser = argparse.ArgumentParser(description="æ¿æ¢ç©ä½å·¥å· v2.0")
+    parser.add_argument("--input", "-i", required=True, help="è¾åEå¾çE·¯å¾E)
+    parser.add_argument("--output", "-o", help="è¾åEè·¯å¾E)
+    parser.add_argument("--object", "-obj", required=True, help="æ¿æ¢ä¸ºçE©ä½æè¿°")
+    parser.add_argument("--skip-manual", action="store_true", help="è·³è¿Eå¨ç»å¶é®ç½©")
+    parser.add_argument("--strength", type=float, default=0.7, help="éç»å¼ºåº¦")
+    parser.add_argument("--steps", type=int, default=30, help="è¿­ä»£æ­¥æ°")
+    parser.add_argument("--seed", type=int, default=-1, help="éæºç§å­E)
     parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu")
 
     args = parser.parse_args()
@@ -319,3 +319,4 @@ if __name__ == "__main__":
         strength=args.strength, steps=args.steps, seed=args.seed
     )
     print(json.dumps(result, ensure_ascii=False, indent=2))
+"""
