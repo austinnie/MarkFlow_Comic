@@ -1,7 +1,7 @@
 # skills/fantasy_character/skill.py
 """
-å¥E¹»è§è² Skill - å°Eººç©åæEå¥E¹»è§è²Eç²¾çµ/å¤©ä½¿/æ¶é­Eé­æ³å¸ç­ï¼E
-å¤ç¨éç¨ ControlNet å¼æEEpenPoseéå§¿æE¼é«å¹Eº¦éç»è½¬å¥E¹»é£ï¼E
+å¥E¹èè² Skill - å°Eººç©åæEå¥E¹èè²Eç²¾çµ/å¤©ä½¿/æ¶é­Eé­æ³å¸ç­ï¼E
+å¤ç¨éç¨ ControlNet å¼æEEpenPoseéå¿æE¼é«å¹Eº¦éçè½¬å¥E¹é£ï¼E
 """
 
 import os
@@ -36,7 +36,7 @@ except ImportError as e:
     CONTROLNET_ENGINE_AVAILABLE = False
     logger.warning(f"éç¨ ControlNet å¼æä¸å¯ç¨: {e}")
 
-# å¥E¹»è§è²æç¤ºè¯éEç½®
+# å¥E¹èè²æç¤ºè¯éEç½®
 FANTASY_PROMPTS = {
     "elf": {
         "prompt": "beautiful elf, long pointed ears, fantasy elf, elegant, magical, nature, fantasy character, masterpiece, high quality, detailed",
@@ -82,7 +82,7 @@ FANTASY_PROMPTS = {
 
 
 class FantasyCharacter:
-    """å¥E¹»è§è²æè½ v2.0"""
+    """å¥E¹èè²æè½ v2.0"""
 
     def __init__(self, config: Dict[str, Any] = None):
         self.config = config or {}
@@ -98,21 +98,21 @@ class FantasyCharacter:
         self.models_dir = Path(self.config.get('models_dir', self.project_root / 'models'))
         self.device = self.config.get('device', 'cuda' if torch.cuda.is_available() else 'cpu')
 
-        # ==================== åå§ååºå±å¼æ ====================
+        # ==================== ååååºå±å¼æ ====================
         self.controlnet_engine = None
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlNetImg2Img(config={'device': self.device})
-                logger.info("  âEåºå±EControlNet å¼æåå§åæå")
+                logger.info("  âEåºå±EControlNet å¼æåååæå")
             except Exception as e:
-                logger.warning(f"  åºå±å¼æåå§åå¤±è´¥: {e}")
+                logger.warning(f"  åºå±å¼æåååå¤±è´¥: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"FantasyCharacter v{self.version} åå§åå®æE")
+        logger.info(f"FantasyCharacter v{self.version} åååå®æE")
         logger.info(f"  è®¾å¤E {self.device}")
-        logger.info(f"  å¥E¹»ç±»åE {list(FANTASY_PROMPTS.keys())}")
+        logger.info(f"  å¥E¹ç±åE {list(FANTASY_PROMPTS.keys())}")
 
     def _setup_logging(self):
         log_level = self.config.get('log_level', 'INFO')
@@ -139,9 +139,9 @@ class FantasyCharacter:
         return FANTASY_PROMPTS.get(fantasy_type)
 
     def execute(self, **kwargs) -> Dict[str, Any]:
-        """æ§è¡å¥E¹»è§è²è½¬æ¢"""
+        """æè¡å¥E¹èè²è½¬æ¢"""
         start_time = time.time()
-        logger.info(f"æ§è¡æè½: {self.name} v{self.version}")
+        logger.info(f"æè¡æè½: {self.name} v{self.version}")
 
         try:
             # ==================== ä¸¥æ ¼è·¯å¾E ¡éªE====================
@@ -158,7 +158,7 @@ class FantasyCharacter:
             if fantasy_type not in FANTASY_PROMPTS:
                 return {
                     "status": "error",
-                    "error": f"æªç¥å¥E¹»ç±»åE {fantasy_type}Eå¯ç¨: {list(FANTASY_PROMPTS.keys())}"
+                    "error": f"æªç¥å¥E¹ç±åE {fantasy_type}Eå¯ç¨: {list(FANTASY_PROMPTS.keys())}"
                 }
 
             f_config = FANTASY_PROMPTS[fantasy_type]
@@ -173,11 +173,11 @@ class FantasyCharacter:
             if self.controlnet_engine is None:
                 return {"status": "error", "error": "åºå±EControlNet å¼æä¸å¯ç¨"}
 
-            # é»è®¤è¾åEå°æ¬æè½ç®å½E
+            # éè®¤è¾åEå°æ¬æè½ç®å½E
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             output_path = kwargs.get('output_path') or str(self.output_dir / f"{fantasy_type}_{timestamp}.png")
 
-            logger.info(f"å¥E¹»ç±»åE {fantasy_type}")
+            logger.info(f"å¥E¹ç±åE {fantasy_type}")
             logger.info(f"æç¤ºè¯E {prompt[:80]}...")
 
             result = self.controlnet_engine.execute(
@@ -185,7 +185,7 @@ class FantasyCharacter:
                 prompt=prompt,
                 negative_prompt=negative_prompt,
                 preprocessor_type="OPENPOSE",   # æåäººä½éª¨æ¶
-                controlnet_model="openpose",    # éæ­»äººä½å§¿æE¼é²æ­¢å¥E¹»åå¯¼è´å´©åE
+                controlnet_model="openpose",    # éæ­äººä½å¿æE¼é²æ­¢å¥E¹åå¯¼è´å´©åE
                 strength=strength,
                 steps=steps,
                 output_path=output_path
@@ -224,7 +224,7 @@ class FantasyCharacter:
             }
 
         except Exception as e:
-            logger.error(f"æ§è¡å¤±è´¥: {e}", exc_info=True)
+            logger.error(f"æè¡å¤±è´¥: {e}", exc_info=True)
             return {
                 "status": "error",
                 "error": str(e),
@@ -255,25 +255,25 @@ if __name__ == "__main__":
     import argparse
     
     parser = argparse.ArgumentParser(
-        description='å¥E¹»è§è²çæEå¨ v2.0 - å°Eººç©ç§çE½¬æ¢ä¸ºå¥E¹»è§è²',
+        description='å¥E¹èè²çæEå¨ v2.0 - å°Eººç©ççE½¬æ¢ä¸ºå¥E¹èè²',
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog=f'''å¯ç¨çE¥E¹»ç±»åE {', '.join(FANTASY_PROMPTS.keys())}'''
+        epilog=f'''å¯ç¨çE¥E¹ç±åE {', '.join(FANTASY_PROMPTS.keys())}'''
     )
     
     parser.add_argument('image', help='è¾åEå¾çE·¯å¾E)
-    parser.add_argument('-t', '--type', default='elf', choices=list(FANTASY_PROMPTS.keys()), help='å¥E¹»ç±»åE(é»è®¤: elf)')
+    parser.add_argument('-t', '--type', default='elf', choices=list(FANTASY_PROMPTS.keys()), help='å¥E¹ç±åE(éè®¤: elf)')
     parser.add_argument('-o', '--output', help='è¾åEç®å½E)
     parser.add_argument('-s', '--steps', type=int, default=35, help='æ¨çE­¥æ°')
     parser.add_argument('-r', '--strength', type=float, default=0.8, help='åæ¢å¼ºåº¦ 0.0-1.0')
-    parser.add_argument('--seed', type=int, default=-1, help='éæºç§å­E)
+    parser.add_argument('--seed', type=int, default=-1, help='éæºçå­E)
     parser.add_argument('--prompt', help='èªå®ä¹æç¤ºè¯E)
     parser.add_argument('--negative', help='èªå®ä¹è´é¢æç¤ºè¯E)
-    parser.add_argument('--list-types', action='store_true', help='ååEææå¥E¹»ç±»åE)
+    parser.add_argument('--list-types', action='store_true', help='ååEææå¥E¹ç±åE)
     
     args = parser.parse_args()
     
     if args.list_types:
-        print("å¯ç¨çE¥E¹»ç±»åE")
+        print("å¯ç¨çE¥E¹ç±åE")
         for t in FANTASY_PROMPTS.keys():
             print(f"  - {t}")
         sys.exit(0)
@@ -293,8 +293,8 @@ if __name__ == "__main__":
     if result['status'] == 'success':
         print(f"\nâEçæEæå!")
         print(f"  è¾åE: {result['output_path']}")
-        print(f"  ç±»åE {result['fantasy_type']}")
-        print(f"  ç§å­E {result['seed']}")
+        print(f"  ç±åE {result['fantasy_type']}")
+        print(f"  çå­E {result['seed']}")
         print(f"  èæ¶: {result['elapsed_time']:.2f}s")
     else:
         print(f"\nâEå¤±è´¥: {result.get('error', 'æªç¥éè¯¯')}")

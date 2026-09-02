@@ -1,7 +1,7 @@
 # skills/colorize_sketch/skill.py
 """
-çº¿ç¨¿ä¸è² Skill - ç»é»ç½çº¿ç¨¿/ç´ æä¸è²
-å¤ç¨éç¨ ControlNet å¼æEEED + Lineart å¼ºå¶éçº¿Eé«å¹Eº¦éç»ä¸è²EE
+çº¿ç¨¿ä¸è² Skill - çéç½çº¿ç¨¿/ç´ æä¸è²
+å¤ç¨éç¨ ControlNet å¼æEEED + Lineart å¼ºå¶éçº¿Eé«å¹Eº¦éçä¸è²EE
 """
 
 import time
@@ -82,21 +82,21 @@ class ColorizeSketch:
         self.models_dir = Path(self.config.get('models_dir', self.project_root / 'models'))
         self.device = self.config.get('device', 'cuda' if torch.cuda.is_available() else 'cpu')
 
-        # ==================== åå§ååºå±å¼æ ====================
+        # ==================== ååååºå±å¼æ ====================
         self.controlnet_engine = None
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlNetImg2Img(config={'device': self.device})
-                logger.info("  âEåºå±EControlNet å¼æåå§åæå")
+                logger.info("  âEåºå±EControlNet å¼æåååæå")
             except Exception as e:
-                logger.warning(f"  åºå±å¼æåå§åå¤±è´¥: {e}")
+                logger.warning(f"  åºå±å¼æåååå¤±è´¥: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"ColorizeSketch v{self.version} åå§åå®æE")
+        logger.info(f"ColorizeSketch v{self.version} åååå®æE")
         logger.info(f"  è®¾å¤E {self.device}")
-        logger.info(f"  ä¸è²é£æ ¼: {len(COLOR_STYLES)} ç§E)
+        logger.info(f"  ä¸è²é£æ ¼: {len(COLOR_STYLES)} çE)
 
     def _setup_logging(self):
         log_level = self.config.get('log_level', 'INFO')
@@ -106,7 +106,7 @@ class ColorizeSketch:
     def _setup_config(self):
         defaults = {
             'default_steps': 30,
-            'default_strength': 0.85,  # ä¸è²å¿E¡»é«å¼ºåº¦éç»E
+            'default_strength': 0.85,  # ä¸è²å¿E¡é«å¼ºåº¦éçE
             'default_style': 'anime',
         }
         for key, value in defaults.items():
@@ -117,9 +117,9 @@ class ColorizeSketch:
         return {"status": "success", "styles": list(COLOR_STYLES.keys())}
 
     def execute(self, **kwargs) -> Dict[str, Any]:
-        """æ§è¡çº¿ç¨¿ä¸è²"""
+        """æè¡çº¿ç¨¿ä¸è²"""
         start_time = time.time()
-        logger.info(f"æ§è¡æè½: {self.name}")
+        logger.info(f"æè¡æè½: {self.name}")
 
         try:
             # ==================== ä¸¥æ ¼è·¯å¾E ¡éªE====================
@@ -147,7 +147,7 @@ class ColorizeSketch:
             if self.controlnet_engine is None:
                 return {"status": "error", "error": "åºå±EControlNet å¼æä¸å¯ç¨"}
 
-            # é»è®¤è¾åEå°æ¬æè½ç®å½E
+            # éè®¤è¾åEå°æ¬æè½ç®å½E
             output_path = kwargs.get('output_path')
             if output_path is None:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -162,7 +162,7 @@ class ColorizeSketch:
                 negative_prompt=negative_prompt,
                 preprocessor_type="HED",      # å¼ºå¶æåå¹²åçº¿ç¨¿
                 controlnet_model="lineart",   # ä½¿ç¨æ¬å° Lineart æ¨¡åï¼å®ç¾éçº¿
-                strength=strength,            # é«å¼ºåº¦éç»ï¼éæ¾è²å½©
+                strength=strength,            # é«å¼ºåº¦éçï¼éæ¾è²å½©
                 steps=steps,
                 output_path=output_path
             )
@@ -184,7 +184,7 @@ class ColorizeSketch:
             }
 
         except Exception as e:
-            logger.error(f"æ§è¡å¤±è´¥: {e}")
+            logger.error(f"æè¡å¤±è´¥: {e}")
             import traceback
             traceback.print_exc()
             return {"status": "error", "error": str(e)}
@@ -200,9 +200,9 @@ if __name__ == "__main__":
     parser.add_argument("--output", "-o", help="è¾åEè·¯å¾E)
     parser.add_argument("--style", "-s", default="anime",
                         choices=list(COLOR_STYLES.keys()), help="ä¸è²é£æ ¼")
-    parser.add_argument("--strength", type=float, default=0.85, help="éç»å¼ºåº¦")
-    parser.add_argument("--steps", type=int, default=30, help="è¿­ä»£æ­¥æ°")
-    parser.add_argument("--seed", type=int, default=-1, help="éæºç§å­E)
+    parser.add_argument("--strength", type=float, default=0.85, help="éçå¼ºåº¦")
+    parser.add_argument("--steps", type=int, default=30, help="è¿­ä£æ­¥æ°")
+    parser.add_argument("--seed", type=int, default=-1, help="éæºçå­E)
     parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu")
 
     args = parser.parse_args()

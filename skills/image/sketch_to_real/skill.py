@@ -1,7 +1,7 @@
 # skills/sketch_to_real/skill.py
 """
-ç´ æè½¬çäºº Skill - å°E´ æEçº¿ç¨¿è½¬æ¢ä¸ºçäººç§çE
-ä½¿ç¨ Lineart ControlNet ä¿æçº¿æ¡ç»æ
+ç´ æè½¬çäºº Skill - å°E´ æEçº¿ç¨¿è½¬æ¢ä¸ºçäººççE
+ä½¿ç¨ Lineart ControlNet ä¿æçº¿æ¡çæ
 """
 
 import os
@@ -74,7 +74,7 @@ AVAILABLE_MODELS = {
         "name": "DreamShaper 8",
         "size": "2.13 GB",
         "type": "èºæ¯",
-        "description": "æ¢¦å¹»/èºæ¯é£æ ¼"
+        "description": "æ¢¦å¹/èºæ¯é£æ ¼"
     },
     "nextphoto_v30.safetensors": {
         "name": "Next Photo v3.0",
@@ -103,7 +103,7 @@ class SketchToReal:
         self.models_dir = Path(self.config.get('models_dir', self.project_root / 'models'))
         self.device = self.config.get('device', 'cpu')
 
-        # é»è®¤åæ°
+        # éè®¤åæ°
         self.default_model = self.config.get('default_model', 'anytimeRealistic_v10.safetensors')
         self.default_steps = self.config.get('default_steps', 35)
         self.default_strength = self.config.get('default_strength', 0.85)
@@ -113,20 +113,20 @@ class SketchToReal:
         # ç¼å­E
         self.controlnet_engine = None
 
-        # ==================== åå§ååºå±å¼æ ====================
+        # ==================== ååååºå±å¼æ ====================
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlNetImg2Img(config={'device': self.device})
-                logger.info("  âEåºå±å¼æåå§åæå")
+                logger.info("  âEåºå±å¼æåååæå")
             except Exception as e:
-                logger.warning(f"  åºå±å¼æåå§åå¤±è´¥: {e}")
+                logger.warning(f"  åºå±å¼æåååå¤±è´¥: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"SketchToReal v{self.version} åå§åå®æE")
+        logger.info(f"SketchToReal v{self.version} åååå®æE")
         logger.info(f"  è®¾å¤E {self.device}")
-        logger.info(f"  é»è®¤æ¨¡åE {self.default_model}")
+        logger.info(f"  éè®¤æ¨¡åE {self.default_model}")
         logger.info(f"  é£æ ¼: {list(REALISM_STYLES.keys())}")
 
     def _setup_logging(self):
@@ -148,7 +148,7 @@ class SketchToReal:
         Path(self.config.get('output_dir', str(self.output_dir))).mkdir(parents=True, exist_ok=True)
 
     def _find_model(self, model_name: str) -> Optional[Path]:
-        """æ¥æ¾æ¨¡åæä»¶"""
+        """æ¥æ¾æ¨¡åæä¶"""
         if not model_name:
             model_name = self.default_model
 
@@ -194,7 +194,7 @@ class SketchToReal:
 
     def execute(self, **kwargs) -> Dict[str, Any]:
         start_time = time.time()
-        logger.info(f"æ§è¡æè½: {self.name} v{self.version}")
+        logger.info(f"æè¡æè½: {self.name} v{self.version}")
 
         try:
             # ==================== 1. ä¸¥æ ¼è·¯å¾E ¡éªE====================
@@ -224,23 +224,23 @@ class SketchToReal:
             logger.info(f"é£æ ¼: {style}")
             logger.info(f"æç¤ºè¯E {prompt[:80]}...")
 
-            # å¦ææ²¡ä¼  output_pathEé»è®¤å­å°æ¬æè½çEoutput ç®å½E
+            # å¦ææ²¡ä¼  output_pathEéè®¤å­å°æ¬æè½çEoutput ç®å½E
             if output_path is None:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 output_path = str(self.output_dir / f"{Path(abs_image_path).stem}_sketch2real_{style}_{timestamp}.png")
 
-            # æ ¸å¿E»è¾ï¼ä¼ å¥ HED (æåçº¿ç¨¿) + Lineart åºå±æ¨¡åE
+            # æ ¸å¿Eè¾ï¼ä¼ å¥ HED (æåçº¿ç¨¿) + Lineart åºå±æ¨¡åE
             result = self.controlnet_engine.execute(
-                input_image_path=str(abs_image_path),  # ç»å¯¹è·¯å¾E
+                input_image_path=str(abs_image_path),  # çå¯¹è·¯å¾E
                 prompt=prompt,
                 negative_prompt=negative_prompt,
                 preprocessor_type="HED",               # æåçº¿ç¨¿
                 controlnet_model="lineart",            # å¼ºå¶ä½¿ç¨æ¬å° lineart æ¨¡åï¼ä½ æ¬å°çEmodels--lllyasviel--control_v11p_sd15_lineartEE
-                strength=0.85,                         # é«å¼ºåº¦éç»ï¼è®©çº¿ç¨¿åçäºº
+                strength=0.85,                         # é«å¼ºåº¦éçï¼è®©çº¿ç¨¿åçäºº
                 output_path=output_path                # å¼ºå¶æE®è¾åE
             )
 
-            # æ£æ¥å¼æè¿åç»æ
+            # æ£æ¥å¼æè¿åçæ
             if result['status'] == 'success':
                 return {
                     "status": "success",
@@ -261,7 +261,7 @@ class SketchToReal:
                 return {"status": "error", "error": result.get('error', 'åºå±å¼æè°E¨å¤±è´¥')}
 
         except Exception as e:
-            logger.error(f"æ§è¡å¤±è´¥: {e}")
+            logger.error(f"æè¡å¤±è´¥: {e}")
             import traceback
             traceback.print_exc()
             return {"status": "error", "error": str(e)}
@@ -270,7 +270,7 @@ class SketchToReal:
         return f"<SketchToReal(name={self.name}, version={self.version})>"
 
 
-# ==================== å½ä»¤è¡åEå£ ====================
+# ==================== å½ä¤è¡åEå£ ====================
 if __name__ == "__main__":
     import argparse
 
@@ -280,13 +280,13 @@ if __name__ == "__main__":
     parser.add_argument("--input", "-i", required=True, help="è¾åEç´ æEçº¿ç¨¿å¾çE·¯å¾E)
     parser.add_argument("--output", "-o", help="è¾åEè·¯å¾E)
     parser.add_argument("--model", "-m", default="anytimeRealistic_v10.safetensors",
-                        choices=MODEL_CHOICES, help="SD æ¨¡ååç§°")
+                        choices=MODEL_CHOICES, help="SD æ¨¡ååç°")
     parser.add_argument("--style", "-s", default="realistic",
                         choices=list(REALISM_STYLES.keys()), help="çäººé£æ ¼")
-    parser.add_argument("--prompt", "-p", help="èªå®ä¹æç¤ºè¯ï¼è¦Eé£æ ¼é»è®¤EE)
-    parser.add_argument("--negative", "-n", help="èªå®ä¹è´é¢æç¤ºè¯ï¼è¦Eé£æ ¼é»è®¤EE)
-    parser.add_argument("--steps", type=int, default=35, help="è¿­ä»£æ­¥æ°")
-    parser.add_argument("--seed", type=int, default=-1, help="éæºç§å­E)
+    parser.add_argument("--prompt", "-p", help="èªå®ä¹æç¤ºè¯ï¼è¦Eé£æ ¼éè®¤EE)
+    parser.add_argument("--negative", "-n", help="èªå®ä¹è´é¢æç¤ºè¯ï¼è¦Eé£æ ¼éè®¤EE)
+    parser.add_argument("--steps", type=int, default=35, help="è¿­ä£æ­¥æ°")
+    parser.add_argument("--seed", type=int, default=-1, help="éæºçå­E)
     parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu", help="è®¾å¤E)
     parser.add_argument("--list-models", action="store_true", help="ååEææå¯ç¨æ¨¡åE)
     parser.add_argument("--list-styles", action="store_true", help="ååEææå¯ç¨é£æ ¼")
@@ -301,11 +301,11 @@ if __name__ == "__main__":
         print("  å¯ç¨æ¨¡ååEè¡¨")
         print("=" * 60)
         for key, info in result['models'].items():
-            default_mark = " â­E(é»è®¤)" if key == result['default'] else ""
+            default_mark = " â­E(éè®¤)" if key == result['default'] else ""
             print(f"  {key}")
-            print(f"    åç§°: {info['name']}{default_mark}")
-            print(f"    å¤§å°E {info['size']}")
-            print(f"    ç±»åE {info['type']}")
+            print(f"    åç°: {info['name']}{default_mark}")
+            print(f"    å¤å°E {info['size']}")
+            print(f"    ç±åE {info['type']}")
             print(f"    è¯´æE {info['description']}")
             print()
         print(f"  å± {result['count']} ä¸ªæ¨¡åE)
@@ -322,7 +322,7 @@ if __name__ == "__main__":
             print(f"    æç¤ºè¯E {info['prompt'][:60]}...")
             print(f"    è´é¢: {info['negative'][:60]}...")
             print()
-        print(f"  å± {len(REALISM_STYLES)} ç§é£æ ¼")
+        print(f"  å± {len(REALISM_STYLES)} çé£æ ¼")
         print("=" * 60)
         sys.exit(0)
 

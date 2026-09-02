@@ -1,7 +1,7 @@
 # skills/expand_to_full_body/skill.py
 """
 Expand to Full Body - å°Eººç©åèº«/å¤´åå¾æ©å±ä¸ºå¨èº«å¾
-å¤ç¨éç¨ ControlNet å¼æEä½¿ç¨ MediaPipe æEè½»éæ£æµå®ä½å¤´é¨
+å¤ç¨éç¨ ControlNet å¼æEä½¿ç¨ MediaPipe æEè½éæ£æµå®ä½å¤´é¨
 """
 
 import os
@@ -39,7 +39,7 @@ except ImportError as e:
 
 
 class ExpandToFullBody:
-    """åèº«å¾è½¬å¨èº«å¾æè½ v2.0 (MediaPipe + OpenPose éå§¿æE"""
+    """åèº«å¾è½¬å¨èº«å¾æè½ v2.0 (MediaPipe + OpenPose éå¿æE"""
 
     # å¯ç¨æ¨¡ååEè¡¨Eç¨äºå±ç¤ºEE
     AVAILABLE_MODELS = {
@@ -69,40 +69,40 @@ class ExpandToFullBody:
         # ç¼å­E
         self.controlnet_engine = None
 
-        # ==================== åå§ååºå±å¼æ ====================
+        # ==================== ååååºå±å¼æ ====================
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlNetImg2Img(config={'device': self.device})
-                logger.info("  âEåºå±EControlNet å¼æåå§åæå")
+                logger.info("  âEåºå±EControlNet å¼æåååæå")
             except Exception as e:
-                logger.warning(f"  åºå±å¼æåå§åå¤±è´¥: {e}")
+                logger.warning(f"  åºå±å¼æåååå¤±è´¥: {e}")
 
-        # ==================== åå§å MediaPipeEæ°çEAPIEE====================
+        # ==================== ååå MediaPipeEæ°çEAPIEE====================
         self._mediapipe_pose = None
         self._init_mediapipe()
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"ExpandToFullBody v{self.version} åå§åå®æE")
+        logger.info(f"ExpandToFullBody v{self.version} åååå®æE")
         logger.info(f"  è®¾å¤E {self.device}")
         logger.info(f"  ç®æ E°ºå¯¸: {self.target_width}x{self.target_height}")
         logger.info(f"  ControlNet: {'âE if self.controlnet_engine else 'âE}")
 
     def _init_mediapipe(self):
-        """åå§å MediaPipeEæ°çEAPIEE""
+        """ååå MediaPipeEæ°çEAPIEE""
         self._mediapipe_pose = None
         try:
             import mediapipe as mp
             from mediapipe.tasks import python
             from mediapipe.tasks.python import vision
 
-            # æ¨¡åæä»¶è·¯å¾E
+            # æ¨¡åæä¶è·¯å¾E
             model_path = self.skill_dir / "pose_landmarker_heavy.task"
 
             # å¦ææ¨¡åä¸å­å¨Eå°è¯ä¸è½½
             if not model_path.exists():
-                logger.info("  ð¥ ä¸è½½ MediaPipe å§¿ææ¨¡åE..")
+                logger.info("  ð¥ ä¸è½½ MediaPipe å¿ææ¨¡åE..")
                 try:
                     import urllib.request
                     url = "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_heavy/float16/1/pose_landmarker_heavy.task"
@@ -112,7 +112,7 @@ class ExpandToFullBody:
                     logger.warning(f"  â EEæ¨¡åä¸è½½å¤±è´¥: {e}")
                     return
 
-            # åå§åå§¿ææ£æµå¨
+            # åååå¿ææ£æµå¨
             pose_options = vision.PoseLandmarkerOptions(
                 base_options=python.BaseOptions(model_asset_path=str(model_path)),
                 running_mode=vision.RunningMode.IMAGE,
@@ -122,14 +122,14 @@ class ExpandToFullBody:
                 min_tracking_confidence=0.5
             )
             self._mediapipe_pose = vision.PoseLandmarker.create_from_options(pose_options)
-            logger.info("  âEMediaPipe (æ°çEAPI) åå§åæå")
+            logger.info("  âEMediaPipe (æ°çEAPI) åååæå")
 
         except ImportError as e:
             logger.warning(f"  â EEMediaPipe æªå®è£E {e}")
-            logger.warning("  å°E½¿ç¨é»è®¤æ©å±é»è¾E)
+            logger.warning("  å°E½¿ç¨éè®¤æ©å±éè¾E)
         except Exception as e:
-            logger.warning(f"  â EEMediaPipe åå§åå¤±è´¥: {e}")
-            logger.warning("  å°E½¿ç¨é»è®¤æ©å±é»è¾E)
+            logger.warning(f"  â EEMediaPipe åååå¤±è´¥: {e}")
+            logger.warning("  å°E½¿ç¨éè®¤æ©å±éè¾E)
 
     def _setup_logging(self):
         log_level = self.config.get('log_level', 'INFO')
@@ -162,13 +162,13 @@ class ExpandToFullBody:
             img_rgb = image.convert('RGB')
             mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=np.array(img_rgb))
 
-            # æ£æµå§¿æE
+            # æ£æµå¿æE
             detection_result = self._mediapipe_pose.detect(mp_image)
 
             if detection_result and detection_result.pose_landmarks:
                 landmarks = detection_result.pose_landmarks[0]
                 h, w = img_rgb.size[1], img_rgb.size[0]
-                # 0 æ¯é¼»å­E
+                # 0 æ¯é¼å­E
                 nose = landmarks[0]
                 head_y = int(nose.y * h)
                 head_x = int(nose.x * w)
@@ -180,10 +180,10 @@ class ExpandToFullBody:
 
     def _expand_image_area(self, image: Image.Image, target_width: int, target_height: int,
                            head_y: float, head_x: float) -> Image.Image:
-        """æ©å±ç»å¸E¼å°Eå¾æ¾ç½®å¨å¤´é¨ä½äºE15% é«åº¦çE½ç½®"""
+        """æ©å±çå¸E¼å°Eå¾æ¾ç½®å¨å¤´é¨ä½äºE15% é«åº¦çE½ç½®"""
         src_w, src_h = image.size
 
-        # è®¡ç®ç¼©æ¾æ¯ä¾ï¼è®©å¤´é¨å¤§çº¦å¨ 15% ä½ç½®
+        # è®¡ç®ç¼©æ¾æ¯ä¾ï¼è®©å¤´é¨å¤çº¦å¨ 15% ä½ç½®
         head_ratio = 0.15
         scale = (target_height * head_ratio) / max(src_h * 0.15, head_y)
 
@@ -199,7 +199,7 @@ class ExpandToFullBody:
         offset_y = int(target_height * 0.15 - head_y * scale)
         offset_x = int((target_width - new_w) // 2)
 
-        # åå»ºæ©å±å¾çE
+        # ååºæ©å±å¾çE
         expanded = Image.new("RGB", (target_width, target_height), (128, 128, 128))
         expanded.paste(resized, (offset_x, offset_y))
 
@@ -207,7 +207,7 @@ class ExpandToFullBody:
 
     def execute(self, **kwargs) -> Dict[str, Any]:
         start_time = time.time()
-        logger.info(f"æ§è¡æè½: {self.name} (v{self.version})")
+        logger.info(f"æè¡æè½: {self.name} (v{self.version})")
 
         try:
             # ==================== ä¸¥æ ¼è·¯å¾E ¡éªE====================
@@ -232,10 +232,10 @@ class ExpandToFullBody:
             target_w = kwargs.get('target_width', self.config.get('target_width', 768))
             target_h = kwargs.get('target_height', self.config.get('target_height', 1024))
 
-            # ==================== 1. æ©å±ç»å¸E====================
+            # ==================== 1. æ©å±çå¸E====================
             head_y, head_x = self._detect_head_position(image)
             expanded = self._expand_image_area(image, target_w, target_h, head_y, head_x)
-            logger.info(f"ç»å¸E©å±å®æE: {target_w}x{target_h}")
+            logger.info(f"çå¸E©å±å®æE: {target_w}x{target_h}")
 
             # ==================== 2. ä¿å­æ©å±å¾ä½ä¸ºä¸´æ¶è¾åE ====================
             temp_input = self.output_dir / "_temp_expanded.png"
@@ -245,14 +245,14 @@ class ExpandToFullBody:
             if self.controlnet_engine is None:
                 return {"status": "error", "error": "åºå±EControlNet å¼æä¸å¯ç¨"}
 
-            # é»è®¤è¾åEå°æ¬æè½ç®å½E
+            # éè®¤è¾åEå°æ¬æè½ç®å½E
             if output_path is None:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 output_path = str(self.output_dir / f"full_body_{timestamp}.png")
 
             prompt = f"{prompt}, full body, whole body, standing, detailed, masterpiece, best quality, photorealistic"
 
-            # ä½¿ç¨ OpenPose éæ­»äººç©åå§ç»æ
+            # ä½¿ç¨ OpenPose éæ­äººç©ååçæ
             result = self.controlnet_engine.execute(
                 input_image_path=str(temp_input),
                 prompt=prompt,
@@ -264,7 +264,7 @@ class ExpandToFullBody:
                 output_path=output_path
             )
 
-            # æ¸Eä¸´æ¶æE»¶
+            # æ¸Eä¸´æ¶æE¶
             if temp_input.exists():
                 temp_input.unlink()
 
@@ -290,7 +290,7 @@ class ExpandToFullBody:
             }
 
         except Exception as e:
-            logger.error(f"æ§è¡å¤±è´¥: {e}")
+            logger.error(f"æè¡å¤±è´¥: {e}")
             import traceback
             traceback.print_exc()
             return {"status": "error", "error": str(e)}
@@ -305,7 +305,7 @@ class ExpandToFullBody:
         return f"<ExpandToFullBody(name={self.name}, version={self.version})>"
 
 
-# ==================== å½ä»¤è¡åEå£ ====================
+# ==================== å½ä¤è¡åEå£ ====================
 if __name__ == "__main__":
     import argparse
 
@@ -315,7 +315,7 @@ if __name__ == "__main__":
     parser.add_argument("--input", "-i", required=False, help="è¾åEå¾çE·¯å¾E)
     parser.add_argument("--output", "-o", help="è¾åEå¾çE·¯å¾E)
     parser.add_argument("--prompt", "-p", default="a person, beautiful, detailed, full body", help="äººç©æè¿°æç¤ºè¯E)
-    parser.add_argument("--model", "-m", default="anytimeRealistic_v10.safetensors", choices=MODEL_CHOICES, help="æ¨¡ååç§°")
+    parser.add_argument("--model", "-m", default="anytimeRealistic_v10.safetensors", choices=MODEL_CHOICES, help="æ¨¡ååç°")
     parser.add_argument("--steps", "-s", type=int, default=30, help="æ¨çE­¥æ°")
     parser.add_argument("--width", type=int, default=768, help="ç®æ E®½åº¦")
     parser.add_argument("--height", type=int, default=1024, help="ç®æ E«åº¦")

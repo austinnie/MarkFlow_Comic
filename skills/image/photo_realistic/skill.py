@@ -1,7 +1,7 @@
 # skills/photo_realistic/skill.py
 """
-ç§çEå®å Skill - ç»å ControlNet å¾çå¾ä¸EOpenCV åæå¤E
-é»è®¤åªåçº¯åæå¤EEå¼å¯ ai_realistic åå¯è¿è¡çå®åéç»E
+ççEå®å Skill - çå ControlNet å¾çå¾ä¸EOpenCV åæå¤E
+éè®¤åªåçº¯åæå¤EEå¼å¯ ai_realistic åå¯è¿è¡çå®åéçE
 """
 
 import os
@@ -17,7 +17,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# æ·»å é¡¹ç®è·¯å¾E
+# æ·å é¡¹ç®è·¯å¾E
 project_root = Path(__file__).parent.parent.parent
 if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
@@ -88,7 +88,7 @@ PHOTO_STYLES = {
 
 
 class PhotoRealistic:
-    """ç§çEå®åæè½"""
+    """ççEå®åæè½"""
 
     def __init__(self, config: Dict[str, Any] = None):
         self.config = config or {}
@@ -105,14 +105,14 @@ class PhotoRealistic:
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlNetImg2Img(config={'device': self.config.get('device', 'cpu')})
-                logger.info("  âEåºå±EControlNet å¼æåå§åæå")
+                logger.info("  âEåºå±EControlNet å¼æåååæå")
             except Exception as e:
-                logger.warning(f"  åºå±å¼æåå§åå¤±è´¥: {e}")
+                logger.warning(f"  åºå±å¼æåååå¤±è´¥: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"ç§çEå®åæè½ v{self.version} åå§åå®æE")
+        logger.info(f"ççEå®åæè½ v{self.version} åååå®æE")
         logger.info(f"  ControlNet: {'âEå¯ç¨' if self.controlnet_engine else 'âEä¸å¯ç¨'}")
         logger.info(f"  OpenCV: {'âEå¯ç¨' if CV2_AVAILABLE else 'âEä¸å¯ç¨'}")
 
@@ -176,7 +176,7 @@ class PhotoRealistic:
             return {"status": "error", "error": str(e)}
 
     def add_realistic_features(self, image: Image.Image, iso: int = 400, add_noise: bool = True, add_vignette: bool = True, add_sharpening: bool = True) -> Image.Image:
-        """æ·»å çå®ç¸æºç¹å¾E¼EpenCVEE""
+        """æ·å çå®ç¸æºç¹å¾E¼EpenCVEE""
         if not CV2_AVAILABLE:
             return image
 
@@ -187,7 +187,7 @@ class PhotoRealistic:
             noise_strength = max(1, min(20, iso / 50))
             noise = np.random.normal(0, noise_strength, img_cv.shape).astype(np.uint8)
             img_cv = cv2.add(img_cv, noise)
-            logger.info(f"  âEæ·»å åªç¹ (ISO {iso})")
+            logger.info(f"  âEæ·å åªç¹ (ISO {iso})")
 
         if add_vignette:
             kernel_x = cv2.getGaussianKernel(w, w * 0.3)
@@ -196,7 +196,7 @@ class PhotoRealistic:
             mask = 1 - kernel * 0.25
             for i in range(3):
                 img_cv[:, :, i] = (img_cv[:, :, i] * mask).astype(np.uint8)
-            logger.info("  âEæ·»å æè§E)
+            logger.info("  âEæ·å æèE)
 
         if add_sharpening:
             kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]]) * 0.8 + 0.2 * np.eye(3)
@@ -211,7 +211,7 @@ class PhotoRealistic:
         image_path: str,
         output_path: Optional[str] = None,
         # ===== æ ¸å¿E¼å³ =====
-        ai_realistic: bool = False,       # æ¯å¦å¼å¯ ControlNet éç»E
+        ai_realistic: bool = False,       # æ¯å¦å¼å¯ ControlNet éçE
         enable_noise: bool = False,
         enable_vignette: bool = False,
         enable_sharpen: bool = False,
@@ -228,9 +228,9 @@ class PhotoRealistic:
         Args:
             image_path: è¾åEå¾çE·¯å¾E
             output_path: è¾åEè·¯å¾E
-            ai_realistic: æ¯å¦å¼å¯ ControlNet AI çå®åéç»E(è®¾ä¸º True å°E¼åEè°E¨ controlnet_img2img)
-            enable_noise: æ¯å¦æ·»å åªç¹
-            enable_vignette: æ¯å¦æ·»å æè§E
+            ai_realistic: æ¯å¦å¼å¯ ControlNet AI çå®åéçE(è®¾ä¸º True å°E¼åEè°E¨ controlnet_img2img)
+            enable_noise: æ¯å¦æ·å åªç¹
+            enable_vignette: æ¯å¦æ·å æèE
             enable_sharpen: æ¯å¦éå
             enable_exif: æ¯å¦æ³¨å¥ EXIF
         """
@@ -241,34 +241,34 @@ class PhotoRealistic:
         if not os.path.exists(abs_image_path):
             return {"status": "error", "error": f"è¾åEå¾çE¸å­å¨: {abs_image_path}"}
 
-        # é»è®¤è¾åEå°æ¬æè½ç®å½E
+        # éè®¤è¾åEå°æ¬æè½ç®å½E
         if output_path is None:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             output_path = str(self.output_dir / f"{Path(abs_image_path).stem}_realistic_{timestamp}.jpg")
 
-        # 1. åå¤æ­æ¯å¦è°E¨ ControlNet è¿è¡éç»E
+        # 1. åå¤æ­æ¯å¦è°E¨ ControlNet è¿è¡éçE
         if ai_realistic:
             if self.controlnet_engine is None:
                 return {"status": "error", "error": "ControlNet å¼æä¸å¯ç¨"}
-            logger.info("  ð¥ å¼å¯ ControlNet AI çå®åéç»E..")
+            logger.info("  ð¥ å¼å¯ ControlNet AI çå®åéçE..")
             result = self.controlnet_engine.execute(
                 input_image_path=str(abs_image_path),
                 prompt="photorealistic, real person, realistic skin texture, natural lighting, detailed, masterpiece, high quality, 8k",
                 negative_prompt="anime, cartoon, 2d, illustration, drawing, painting, sketch, blurry, low quality",
                 preprocessor_type="HED",
                 controlnet_model="canny",
-                strength=0.45,  # ä½éç»å¹Eº¦Eä¿æåå¾ç»æ
+                strength=0.45,  # ä½éçå¹Eº¦Eä¿æåå¾çæ
                 output_path=output_path
             )
             if result['status'] != 'success':
                 return result
-            # éç»åçE¾çE
+            # éçåçE¾çE
             image = Image.open(output_path).convert("RGB")
         else:
-            # ä¸éç»ï¼ç´æ¥è¯»ååå¾
+            # ä¸éçï¼ç´æ¥è¯ååå¾
             image = Image.open(abs_image_path).convert("RGB")
 
-        # 2. OpenCV åæææEåºäºéç»åçE¾çE¼E
+        # 2. OpenCV åæææEåºäºéçåçE¾çE¼E
         applied = {"noise": False, "vignette": False, "sharpen": False, "exif": False}
 
         # ç¡®å®EISO
@@ -289,7 +289,7 @@ class PhotoRealistic:
             applied["vignette"] = enable_vignette
             applied["sharpen"] = enable_sharpen
 
-        # 3. ä¿å­æç»ç»æ
+        # 3. ä¿å­æççæ
         image.save(output_path, format='JPEG', quality=92, optimize=True)
 
         result = {
@@ -311,7 +311,7 @@ class PhotoRealistic:
         return result
 
     def execute(self, **kwargs) -> Dict[str, Any]:
-        """æ§è¡æè½"""
+        """æè¡æè½"""
         action = kwargs.get('action', 'process')
 
         if action == 'process':
@@ -347,23 +347,23 @@ class PhotoRealistic:
         return f"<PhotoRealistic(name={self.name}, version={self.version})>"
 
 
-# ==================== å½ä»¤è¡åEå£ ====================
+# ==================== å½ä¤è¡åEå£ ====================
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description="ç§çEå®åå·¥å· v2.0")
+    parser = argparse.ArgumentParser(description="ççEå®åå·¥å· v2.0")
 
     parser.add_argument("--input", "-i", help="è¾åEå¾çE·¯å¾E)
     parser.add_argument("--output", "-o", help="è¾åEè·¯å¾E)
 
     parser.add_argument("--ai-realistic", action="store_true", help="å¼å¯ ControlNet AI çå®å")
-    parser.add_argument("--noise", action="store_true", help="æ·»å åªç¹")
-    parser.add_argument("--vignette", action="store_true", help="æ·»å æè§E)
+    parser.add_argument("--noise", action="store_true", help="æ·å åªç¹")
+    parser.add_argument("--vignette", action="store_true", help="æ·å æèE)
     parser.add_argument("--sharpen", action="store_true", help="éå")
     parser.add_argument("--exif", action="store_true", help="æ³¨å¥ EXIF")
 
     parser.add_argument("--camera", default="sony_a7iv", choices=list(CAMERA_PRESETS.keys()), help="ç¸æºé¢E®¾")
-    parser.add_argument("--style", default="portrait", choices=list(PHOTO_STYLES.keys()), help="ç§çE£æ ¼")
+    parser.add_argument("--style", default="portrait", choices=list(PHOTO_STYLES.keys()), help="ççE£æ ¼")
     parser.add_argument("--strength", default="medium", choices=["light", "medium", "strong"], help="å¼ºåº¦")
     parser.add_argument("--iso", type=int, help="ISO å¼")
 

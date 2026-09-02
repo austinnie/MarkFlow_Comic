@@ -1,6 +1,6 @@
 # skills/day_night_transfer/skill.py
 """
-æ¼å¤è½¬æ¢ Skill - å°E¾çE»ç½å¤©è½¬ä¸ºå¤ææåä¹E
+æ¼å¤è½¬æ¢ Skill - å°E¾çEç½å¤©è½¬ä¸ºå¤ææåä¹E
 å¤ç¨éç¨ ControlNet å¼æEELSD + Depth éç©ºé´å ä½ï¼å®æEåæ¯è½¬æ¢EE
 """
 
@@ -73,19 +73,19 @@ class DayNightTransfer:
         self.models_dir = Path(self.config.get('models_dir', self.project_root / 'models'))
         self.device = self.config.get('device', 'cuda' if torch.cuda.is_available() else 'cpu')
 
-        # ==================== åå§ååºå±å¼æ ====================
+        # ==================== ååååºå±å¼æ ====================
         self.controlnet_engine = None
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlNetImg2Img(config={'device': self.device})
-                logger.info("  âEåºå±EControlNet å¼æåå§åæå")
+                logger.info("  âEåºå±EControlNet å¼æåååæå")
             except Exception as e:
-                logger.warning(f"  åºå±å¼æåå§åå¤±è´¥: {e}")
+                logger.warning(f"  åºå±å¼æåååå¤±è´¥: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"DayNightTransfer v{self.version} åå§åå®æE")
+        logger.info(f"DayNightTransfer v{self.version} åååå®æE")
         logger.info(f"  è®¾å¤E {self.device}")
         logger.info(f"  æ¨¡å¼E {list(TIME_MODES.keys())}")
 
@@ -109,7 +109,7 @@ class DayNightTransfer:
 
     def execute(self, **kwargs) -> Dict[str, Any]:
         start_time = time.time()
-        logger.info(f"æ§è¡æè½: {self.name}")
+        logger.info(f"æè¡æè½: {self.name}")
 
         try:
             # ==================== ä¸¥æ ¼è·¯å¾E ¡éªE====================
@@ -137,7 +137,7 @@ class DayNightTransfer:
             if self.controlnet_engine is None:
                 return {"status": "error", "error": "åºå±EControlNet å¼æä¸å¯ç¨"}
 
-            # é»è®¤è¾åEå°æ¬æè½ç®å½E
+            # éè®¤è¾åEå°æ¬æè½ç®å½E
             output_path = kwargs.get('output_path')
             if output_path is None:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -146,13 +146,13 @@ class DayNightTransfer:
             logger.info(f"æ¨¡å¼E {mode}")
             logger.info(f"æç¤ºè¯E {prompt[:80]}...")
 
-            # ä½¿ç¨ MLSD æåå ä½çº¿æ¡ + åºå±EDepth æ¨¡åï¼å®ç¾ä¿æåºæ¯ç©ºé´ç»æ
+            # ä½¿ç¨ MLSD æåå ä½çº¿æ¡ + åºå±EDepth æ¨¡åï¼å®ç¾ä¿æåºæ¯ç©ºé´çæ
             result = self.controlnet_engine.execute(
                 input_image_path=str(abs_image_path),
                 prompt=prompt,
                 negative_prompt=negative_prompt,
-                preprocessor_type="MLSD",      # æåå»ºç­Eæ¯ç©ç´çº¿
-                controlnet_model="depth",      # ä½¿ç¨æ·±åº¦æ¨¡åéæ­»ç©ºé´å³ç³»
+                preprocessor_type="MLSD",      # æååºç­Eæ¯ç©ç´çº¿
+                controlnet_model="depth",      # ä½¿ç¨æ·±åº¦æ¨¡åéæ­ç©ºé´å³ç³
                 strength=strength,
                 steps=steps,
                 output_path=output_path
@@ -175,7 +175,7 @@ class DayNightTransfer:
             }
 
         except Exception as e:
-            logger.error(f"æ§è¡å¤±è´¥: {e}")
+            logger.error(f"æè¡å¤±è´¥: {e}")
             import traceback
             traceback.print_exc()
             return {"status": "error", "error": str(e)}
@@ -191,9 +191,9 @@ if __name__ == "__main__":
     parser.add_argument("--output", "-o", help="è¾åEè·¯å¾E)
     parser.add_argument("--mode", "-m", default="night",
                         choices=list(TIME_MODES.keys()), help="æ¨¡å¼E)
-    parser.add_argument("--strength", type=float, default=0.7, help="éç»å¼ºåº¦")
-    parser.add_argument("--steps", type=int, default=30, help="è¿­ä»£æ­¥æ°")
-    parser.add_argument("--seed", type=int, default=-1, help="éæºç§å­E)
+    parser.add_argument("--strength", type=float, default=0.7, help="éçå¼ºåº¦")
+    parser.add_argument("--steps", type=int, default=30, help="è¿­ä£æ­¥æ°")
+    parser.add_argument("--seed", type=int, default=-1, help="éæºçå­E)
     parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu")
 
     args = parser.parse_args()

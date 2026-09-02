@@ -1,7 +1,7 @@
 # skills/real_to_anime/skill.py
 """
 çäººè½¬å¨æ¼« Skill - å°Eå®çEçE½¬æ¢ä¸ºå¨æ¼«é£æ ¼
-å¤ç¨éç¨ ControlNet å¼æEEpenPoseä¿æå§¿æE¼é«å¹Eº¦éç»è½¬é£æ ¼EE
+å¤ç¨éç¨ ControlNet å¼æEEpenPoseä¿æå¿æE¼é«å¹Eº¦éçè½¬é£æ ¼EE
 """
 
 import time
@@ -82,21 +82,21 @@ class RealToAnime:
         self.models_dir = Path(self.config.get('models_dir', self.project_root / 'models'))
         self.device = self.config.get('device', 'cuda' if torch.cuda.is_available() else 'cpu')
 
-        # ==================== åå§ååºå±å¼æ ====================
+        # ==================== ååååºå±å¼æ ====================
         self.controlnet_engine = None
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlNetImg2Img(config={'device': self.device})
-                logger.info("  âEåºå±EControlNet å¼æåå§åæå")
+                logger.info("  âEåºå±EControlNet å¼æåååæå")
             except Exception as e:
-                logger.warning(f"  åºå±å¼æåå§åå¤±è´¥: {e}")
+                logger.warning(f"  åºå±å¼æåååå¤±è´¥: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"RealToAnime v{self.version} åå§åå®æE")
+        logger.info(f"RealToAnime v{self.version} åååå®æE")
         logger.info(f"  è®¾å¤E {self.device}")
-        logger.info(f"  å¨æ¼«é£æ ¼: {len(ANIME_STYLES)} ç§E)
+        logger.info(f"  å¨æ¼«é£æ ¼: {len(ANIME_STYLES)} çE)
 
     def _setup_logging(self):
         log_level = self.config.get('log_level', 'INFO')
@@ -106,7 +106,7 @@ class RealToAnime:
     def _setup_config(self):
         defaults = {
             'default_steps': 35,
-            'default_strength': 0.8, # è½¬å¨æ¼«éè¦è¾E«çéç»å¹Eº¦æ¥æ¹åç»é£E
+            'default_strength': 0.8, # è½¬å¨æ¼«éè¦è¾E«çéçå¹Eº¦æ¥æ¹åçé£E
             'default_style': 'modern',
         }
         for key, value in defaults.items():
@@ -117,9 +117,9 @@ class RealToAnime:
         return {"status": "success", "styles": list(ANIME_STYLES.keys())}
 
     def execute(self, **kwargs) -> Dict[str, Any]:
-        """æ§è¡çäººè½¬å¨æ¼«"""
+        """æè¡çäººè½¬å¨æ¼«"""
         start_time = time.time()
-        logger.info(f"æ§è¡æè½: {self.name}")
+        logger.info(f"æè¡æè½: {self.name}")
 
         try:
             # ==================== ä¸¥æ ¼è·¯å¾E ¡éªE====================
@@ -147,7 +147,7 @@ class RealToAnime:
             if self.controlnet_engine is None:
                 return {"status": "error", "error": "åºå±EControlNet å¼æä¸å¯ç¨"}
 
-            # é»è®¤è¾åEå°æ¬æè½ç®å½E
+            # éè®¤è¾åEå°æ¬æè½ç®å½E
             output_path = kwargs.get('output_path')
             if output_path is None:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -161,8 +161,8 @@ class RealToAnime:
                 prompt=prompt,
                 negative_prompt=negative_prompt,
                 preprocessor_type="OPENPOSE",   # æåäººä½éª¨æ¶
-                controlnet_model="openpose",    # å¼ºå¶éæ­»äººä½å§¿æE¼é²æ­¢åå½¢
-                strength=strength,              # è¾E«çéç»å¹Eº¦Eå®æEç»é£è½¬åE
+                controlnet_model="openpose",    # å¼ºå¶éæ­äººä½å¿æE¼é²æ­¢åå½¢
+                strength=strength,              # è¾E«çéçå¹Eº¦Eå®æEçé£è½¬åE
                 steps=steps,
                 output_path=output_path
             )
@@ -184,7 +184,7 @@ class RealToAnime:
             }
 
         except Exception as e:
-            logger.error(f"æ§è¡å¤±è´¥: {e}")
+            logger.error(f"æè¡å¤±è´¥: {e}")
             import traceback
             traceback.print_exc()
             return {"status": "error", "error": str(e)}
@@ -201,9 +201,9 @@ if __name__ == "__main__":
     parser.add_argument("--style", "-s", default="modern",
                         choices=list(ANIME_STYLES.keys()), help="å¨æ¼«é£æ ¼")
     parser.add_argument("--prompt", "-p", help="èªå®ä¹æç¤ºè¯E)
-    parser.add_argument("--strength", type=float, default=0.8, help="éç»å¼ºåº¦")
-    parser.add_argument("--steps", type=int, default=35, help="è¿­ä»£æ­¥æ°")
-    parser.add_argument("--seed", type=int, default=-1, help="éæºç§å­E)
+    parser.add_argument("--strength", type=float, default=0.8, help="éçå¼ºåº¦")
+    parser.add_argument("--steps", type=int, default=35, help="è¿­ä£æ­¥æ°")
+    parser.add_argument("--seed", type=int, default=-1, help="éæºçå­E)
     parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu")
 
     args = parser.parse_args()

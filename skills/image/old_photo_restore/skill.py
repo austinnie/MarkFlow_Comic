@@ -1,7 +1,7 @@
 # skills/old_photo_restore/skill.py
 """
-èçEçE¿®å¤E+ ä¸è² Skill - ä¿®å¤ç ´æEè¤ªè²/é»ç½èçEçE
-å¤ç¨éç¨ ControlNet å¼æEEED + LineartEä¿æåå§ç»æ
+èçEçE¿®å¤E+ ä¸è² Skill - ä¿®å¤ç ´æEè¤ªè²/éç½èçEçE
+å¤ç¨éç¨ ControlNet å¼æEEED + LineartEä¿æååçæ
 """
 
 import time
@@ -73,19 +73,19 @@ class OldPhotoRestore:
         self.models_dir = Path(self.config.get('models_dir', self.project_root / 'models'))
         self.device = self.config.get('device', 'cuda' if torch.cuda.is_available() else 'cpu')
 
-        # ==================== åå§ååºå±å¼æ ====================
+        # ==================== ååååºå±å¼æ ====================
         self.controlnet_engine = None
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlNetImg2Img(config={'device': self.device})
-                logger.info("  âEåºå±EControlNet å¼æåå§åæå")
+                logger.info("  âEåºå±EControlNet å¼æåååæå")
             except Exception as e:
-                logger.warning(f"  åºå±å¼æåå§åå¤±è´¥: {e}")
+                logger.warning(f"  åºå±å¼æåååå¤±è´¥: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"OldPhotoRestore v{self.version} åå§åå®æE")
+        logger.info(f"OldPhotoRestore v{self.version} åååå®æE")
         logger.info(f"  è®¾å¤E {self.device}")
         logger.info(f"  é£æ ¼: {list(STYLES.keys())}")
 
@@ -97,7 +97,7 @@ class OldPhotoRestore:
     def _setup_config(self):
         defaults = {
             'default_steps': 35,
-            'default_strength': 0.55,  # ä¿®å¤èçEçE¶Eéç»å¹Eº¦å»ºè®®ç¨ä½ä»¥ä¿çåè²E
+            'default_strength': 0.55,  # ä¿®å¤èçEçE¶Eéçå¹Eº¦åºè®®ç¨ä½ä¥ä¿çåè²E
             'default_style': 'natural',
             'default_negative': 'ugly, deformed, blurry, low quality, damaged, torn, scratch',
         }
@@ -110,7 +110,7 @@ class OldPhotoRestore:
 
     def execute(self, **kwargs) -> Dict[str, Any]:
         start_time = time.time()
-        logger.info(f"æ§è¡æè½: {self.name}")
+        logger.info(f"æè¡æè½: {self.name}")
 
         try:
             # ==================== ä¸¥æ ¼è·¯å¾E ¡éªE====================
@@ -138,7 +138,7 @@ class OldPhotoRestore:
             if self.controlnet_engine is None:
                 return {"status": "error", "error": "åºå±EControlNet å¼æä¸å¯ç¨"}
 
-            # é»è®¤è¾åEå°æ¬æè½ç®å½E
+            # éè®¤è¾åEå°æ¬æè½ç®å½E
             output_path = kwargs.get('output_path')
             if output_path is None:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -151,7 +151,7 @@ class OldPhotoRestore:
                 input_image_path=str(abs_image_path),
                 prompt=prompt,
                 negative_prompt=negative_prompt,
-                preprocessor_type="HED",      # æåæåè¾¹ç¼ï¼ä¿çèçEçEæ¬çE½®å»E
+                preprocessor_type="HED",      # æåæåè¾¹ç¼ï¼ä¿çèçEçEæ¬çE½®åE
                 controlnet_model="lineart",   # ä½¿ç¨æ¬å° Lineart æ¨¡åï¼å®ç¾å¹éEHED
                 strength=strength,
                 steps=steps,
@@ -175,7 +175,7 @@ class OldPhotoRestore:
             }
 
         except Exception as e:
-            logger.error(f"æ§è¡å¤±è´¥: {e}")
+            logger.error(f"æè¡å¤±è´¥: {e}")
             import traceback
             traceback.print_exc()
             return {"status": "error", "error": str(e)}
@@ -191,9 +191,9 @@ if __name__ == "__main__":
     parser.add_argument("--output", "-o", help="è¾åEè·¯å¾E)
     parser.add_argument("--style", "-s", default="natural",
                         choices=list(STYLES.keys()), help="ä¿®å¤é£æ ¼")
-    parser.add_argument("--strength", type=float, default=0.55, help="éç»å¼ºåº¦")
-    parser.add_argument("--steps", type=int, default=35, help="è¿­ä»£æ­¥æ°")
-    parser.add_argument("--seed", type=int, default=-1, help="éæºç§å­E)
+    parser.add_argument("--strength", type=float, default=0.55, help="éçå¼ºåº¦")
+    parser.add_argument("--steps", type=int, default=35, help="è¿­ä£æ­¥æ°")
+    parser.add_argument("--seed", type=int, default=-1, help="éæºçå­E)
     parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu")
 
     args = parser.parse_args()

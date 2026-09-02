@@ -1,7 +1,7 @@
 # skills/remove_object/skill.py
 """
-ç§»é¤ç©ä½ESkill - ä»å¾çE¸­ç§»é¤æE®ç©ä½E
-é»è®¤ä½¿ç¨æå¨é®ç½©Eè¥é®ç½©çæEæåEåEå¤ç¨éç¨ ControlNet å¼æå¹¶éå Inpaint ååºE
+çé¤ç©ä½ESkill - äå¾çE¸­çé¤æE®ç©ä½E
+éè®¤ä½¿ç¨æå¨é®ç½©Eè¥é®ç½©çæEæåEåEå¤ç¨éç¨ ControlNet å¼æå¹¶éå Inpaint ååºE
 """
 
 import time
@@ -41,7 +41,7 @@ except ImportError as e:
 
 
 class RemoveObject:
-    """ç§»é¤ç©ä½æè½ v2.0"""
+    """çé¤ç©ä½æè½ v2.0"""
 
     def __init__(self, config: Dict[str, Any] = None):
         self.config = config or {}
@@ -60,19 +60,19 @@ class RemoveObject:
         self.pipeline = None
         self.current_model = None
 
-        # ==================== åå§ååºå±å¼æ ====================
+        # ==================== ååååºå±å¼æ ====================
         self.controlnet_engine = None
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlNetImg2Img(config={'device': self.device})
-                logger.info("  âEåºå±EControlNet å¼æåå§åæå")
+                logger.info("  âEåºå±EControlNet å¼æåååæå")
             except Exception as e:
-                logger.warning(f"  åºå±å¼æåå§åå¤±è´¥: {e}")
+                logger.warning(f"  åºå±å¼æåååå¤±è´¥: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"RemoveObject v{self.version} åå§åå®æE")
+        logger.info(f"RemoveObject v{self.version} åååå®æE")
         logger.info(f"  è®¾å¤E {self.device}")
         logger.info(f"  åºå±å¼æ: {'âEå¯ç¨' if self.controlnet_engine else 'âEä¸å¯ç¨'}")
 
@@ -121,7 +121,7 @@ class RemoveObject:
         return self._load_pipeline(model_path)
 
     def _generate_manual_mask(self, image: Image.Image) -> Image.Image:
-        """æå¨ç»å¶è¦ç§»é¤çE©ä½éEç½©"""
+        """æå¨çå¶è¦çé¤çE©ä½éEç½©"""
         img_cv = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
         h, w = img_cv.shape[:2]
 
@@ -131,10 +131,10 @@ class RemoveObject:
         brush_size = 30
 
         print("\n" + "=" * 50)
-        print("æå¨ç»å¶è¦ç§»é¤çE©ä½E)
+        print("æå¨çå¶è¦çé¤çE©ä½E)
         print("=" * 50)
-        print("  æä½é¼ æ E·¦é®ç»å¶è¦ç§»é¤çEºåï¼ç½è²EE)
-        print("  æ»è½®è°Eç»ç¬å¤§å°E)
+        print("  æä½é¼ æ E·¦é®çå¶è¦çé¤çEºåï¼ç½è²EE)
+        print("  æè½®è°Eçç¬å¤å°E)
         print("  æER é®éç½®")
         print("  æEQ æEç©ºæ ¼é® å®æE")
         print("=" * 50 + "\n")
@@ -154,7 +154,7 @@ class RemoveObject:
             elif event == cv2.EVENT_MOUSEWHEEL:
                 delta = flags
                 brush_size = min(100, max(5, brush_size + (5 if delta > 0 else -5)))
-                print(f"   ç»ç¬å¤§å°E {brush_size}")
+                print(f"   çç¬å¤å°E {brush_size}")
 
         cv2.namedWindow('Draw Object to Remove')
         cv2.setMouseCallback('Draw Object to Remove', draw_callback)
@@ -178,7 +178,7 @@ class RemoveObject:
         cv2.destroyAllWindows()
 
         if np.sum(mask > 0) < 100:
-            print("  æªç»å¶ä»»ä½åºåï¼ä½¿ç¨é»è®¤æ¤­åEEç½©")
+            print("  æªçå¶ää½åºåï¼ä½¿ç¨éè®¤æ¤­åEEç½©")
             mask = np.zeros((h, w), dtype=np.uint8)
             cx, cy = w // 2, h // 2
             cv2.ellipse(mask, (cx, cy), (w // 4, h // 4), 0, 0, 360, 255, -1)
@@ -197,7 +197,7 @@ class RemoveObject:
 
     def execute(self, **kwargs) -> Dict[str, Any]:
         start_time = time.time()
-        logger.info(f"æ§è¡æè½: {self.name}")
+        logger.info(f"æè¡æè½: {self.name}")
 
         try:
             # ==================== ä¸¥æ ¼è·¯å¾E ¡éªE====================
@@ -224,24 +224,24 @@ class RemoveObject:
             logger.info(f"æç¤ºè¯E {prompt[:80]}...")
 
             # ==================== ç¬¬ä¸æ­¥EçæéEç½© ====================
-            # å¦æä½ å°E¥æ³è¦èEå¨åï¼è¿éå¯ä»¥æ¥å¥ YOLO/SAMãE
-            # ç®åä¸ºäºE¨³å®ï¼ç´æ¥è°E¨æå¨ç»å¶Eå¯ä»¥ä¼  skip_manual=True è·³è¿E¼E
+            # å¦æä½ å°E¥æ³è¦èEå¨åï¼è¿éå¯ä¥æ¥å¥ YOLO/SAMãE
+            # ç®åä¸ºäºE¨³å®ï¼ç´æ¥è°E¨æå¨çå¶Eå¯ä¥ä¼  skip_manual=True è·³è¿E¼E
             if not kwargs.get('skip_manual', False):
                 object_mask = self._generate_manual_mask(image)
             else:
-                # å¦æè·³è¿Eå¨Eçæä¸ä¸ªå¨é»çé®ç½©Eç­åäºåEå±éç»ï¼E
+                # å¦æè·³è¿Eå¨Eçæä¸ä¸ªå¨éçé®ç½©Eç­åäºåEå±éçï¼E
                 object_mask = Image.new("L", image.size, 0)
 
-            # é»è®¤è¾åEå°æ¬æè½ç®å½E
+            # éè®¤è¾åEå°æ¬æè½ç®å½E
             output_path = kwargs.get('output_path')
             if output_path is None:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 output_path = str(self.output_dir / f"{Path(abs_image_path).stem}_removed_{timestamp}.png")
 
-            # ==================== ç¬¬äºæ­¥Eæ§è¡ï¼å¼æä¼åEEInpaintååºï¼E====================
+            # ==================== ç¬¬äºæ­¥Eæè¡ï¼å¼æä¼åEEInpaintååºï¼E====================
             # å¦æåºå±å¼æå¯ç¨Eä¸ç¨æ·åè®¸Eè°E¨å¼æçæE
             if self.controlnet_engine is not None:
-                logger.info("  ð¥ ä½¿ç¨éç¨ ControlNet å¼æè¿è¡ç§»é¤Eä¿æåæç»æEE..")
+                logger.info("  ð¥ ä½¿ç¨éç¨ ControlNet å¼æè¿è¡çé¤Eä¿æåæçæEE..")
                 result = self.controlnet_engine.execute(
                     input_image_path=str(abs_image_path),
                     prompt=prompt,
@@ -294,19 +294,19 @@ class RemoveObject:
             }
 
         except Exception as e:
-            logger.error(f"æ§è¡å¤±è´¥: {e}")
+            logger.error(f"æè¡å¤±è´¥: {e}")
             return {"status": "error", "error": str(e)}
 
 
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser(description="ç§»é¤ç©ä½å·¥å· v2.0")
+    parser = argparse.ArgumentParser(description="çé¤ç©ä½å·¥å· v2.0")
     parser.add_argument("--input", "-i", required=True, help="è¾åEå¾çE·¯å¾E)
     parser.add_argument("--output", "-o", help="è¾åEè·¯å¾E)
-    parser.add_argument("--skip-manual", action="store_true", help="è·³è¿Eå¨ç»å¶é®ç½©")
-    parser.add_argument("--strength", type=float, default=0.7, help="éç»å¼ºåº¦")
-    parser.add_argument("--steps", type=int, default=30, help="è¿­ä»£æ­¥æ°")
-    parser.add_argument("--seed", type=int, default=-1, help="éæºç§å­E)
+    parser.add_argument("--skip-manual", action="store_true", help="è·³è¿Eå¨çå¶é®ç½©")
+    parser.add_argument("--strength", type=float, default=0.7, help="éçå¼ºåº¦")
+    parser.add_argument("--steps", type=int, default=30, help="è¿­ä£æ­¥æ°")
+    parser.add_argument("--seed", type=int, default=-1, help="éæºçå­E)
     parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu")
 
     args = parser.parse_args()

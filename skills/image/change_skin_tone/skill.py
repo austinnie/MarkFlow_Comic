@@ -1,7 +1,7 @@
 # skills/change_skin_tone/skill.py
 """
 æ¹åè¤è² Skill - æ¹åäººç©è¤è²Eç½çEå¤éEæ·±è²ç­ï¼E
-ä¼åEä½¿ç¨ YOLO å®ä½ç®è¤åºåï¼å¤ç¨éç¨ ControlNet å¼æè¿è¡å±é¨/å¨å±éç»E
+ä¼åEä½¿ç¨ YOLO å®ä½ç®è¤åºåï¼å¤ç¨éç¨ ControlNet å¼æè¿è¡å±é¨/å¨å±éçE
 """
 
 import time
@@ -90,21 +90,21 @@ class ChangeSkinTone:
         self.current_model = None
         self._yolo_model = None
 
-        # ==================== åå§ååºå±å¼æ ====================
+        # ==================== ååååºå±å¼æ ====================
         self.controlnet_engine = None
         if CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlNetImg2Img(config={'device': self.device})
-                logger.info("  âEåºå±EControlNet å¼æåå§åæå")
+                logger.info("  âEåºå±EControlNet å¼æåååæå")
             except Exception as e:
-                logger.warning(f"  åºå±å¼æåå§åå¤±è´¥: {e}")
+                logger.warning(f"  åºå±å¼æåååå¤±è´¥: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"ChangeSkinTone v{self.version} åå§åå®æE")
+        logger.info(f"ChangeSkinTone v{self.version} åååå®æE")
         logger.info(f"  è®¾å¤E {self.device}")
-        logger.info(f"  è¤è²ç±»åE {list(SKIN_TONES.keys())}")
+        logger.info(f"  è¤è²ç±åE {list(SKIN_TONES.keys())}")
 
     def _setup_logging(self):
         log_level = self.config.get('log_level', 'INFO')
@@ -114,7 +114,7 @@ class ChangeSkinTone:
     def _setup_config(self):
         defaults = {
             'default_steps': 30,
-            'default_strength': 0.45,  # æ¹åè¤è²ä¸èEå¤ªå¤§å¼ºåº¦Eä»¥åæ¹åäºå®E
+            'default_strength': 0.45,  # æ¹åè¤è²ä¸èEå¤ªå¤å¼ºåº¦Eä¥åæ¹åäºå®E
             'default_tone': 'fair',
             'default_negative': 'ugly, deformed, bad anatomy, extra limbs, blurry, low quality',
         }
@@ -174,7 +174,7 @@ class ChangeSkinTone:
 
     def execute(self, **kwargs) -> Dict[str, Any]:
         start_time = time.time()
-        logger.info(f"æ§è¡æè½: {self.name}")
+        logger.info(f"æè¡æè½: {self.name}")
 
         try:
             # ==================== ä¸¥æ ¼è·¯å¾E ¡éªE====================
@@ -198,7 +198,7 @@ class ChangeSkinTone:
             steps = kwargs.get('steps', self.config.get('default_steps', 30))
             seed = kwargs.get('seed', -1)
 
-            # é»è®¤è¾åEå°æ¬æè½ç®å½E
+            # éè®¤è¾åEå°æ¬æè½ç®å½E
             output_path = kwargs.get('output_path')
             if output_path is None:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -215,7 +215,7 @@ class ChangeSkinTone:
                 input_image_path=str(abs_image_path),
                 prompt=prompt,
                 negative_prompt=negative_prompt,
-                preprocessor_type="HED",      # ä¿çäºå®åèº«ä½è½®å»E
+                preprocessor_type="HED",      # ä¿çäºå®åèº«ä½è½®åE
                 controlnet_model="canny",     # å¯¹åºæ¬å°æ¨¡åE
                 strength=strength,            # ä½å¼ºåº¦Eé¿åäºå®åå½¢
                 steps=steps,
@@ -239,7 +239,7 @@ class ChangeSkinTone:
             }
 
         except Exception as e:
-            logger.error(f"æ§è¡å¤±è´¥: {e}")
+            logger.error(f"æè¡å¤±è´¥: {e}")
             import traceback
             traceback.print_exc()
             return {"status": "error", "error": str(e)}
@@ -254,10 +254,10 @@ if __name__ == "__main__":
     parser.add_argument("--input", "-i", required=True, help="è¾åEå¾çE·¯å¾E)
     parser.add_argument("--output", "-o", help="è¾åEè·¯å¾E)
     parser.add_argument("--tone", "-t", default="fair",
-                        choices=list(SKIN_TONES.keys()), help="è¤è²ç±»åE)
-    parser.add_argument("--strength", type=float, default=0.45, help="éç»å¼ºåº¦")
-    parser.add_argument("--steps", type=int, default=30, help="è¿­ä»£æ­¥æ°")
-    parser.add_argument("--seed", type=int, default=-1, help="éæºç§å­E)
+                        choices=list(SKIN_TONES.keys()), help="è¤è²ç±åE)
+    parser.add_argument("--strength", type=float, default=0.45, help="éçå¼ºåº¦")
+    parser.add_argument("--steps", type=int, default=30, help="è¿­ä£æ­¥æ°")
+    parser.add_argument("--seed", type=int, default=-1, help="éæºçå­E)
     parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu")
 
     args = parser.parse_args()

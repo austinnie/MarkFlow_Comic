@@ -1,8 +1,8 @@
 # markflow/skills/remove_clothes/skill.py
 """
-è¡£æç§»é¤ Skill - ä½¿ç¨æ¬å° SD Inpaint æ¨¡åE
+è¡£æçé¤ Skill - ä½¿ç¨æ¬å° SD Inpaint æ¨¡åE
 æ¯æEYOLO / Manual åE²Eå¤ç¨éç¨ ControlNet å¼æ
-ControlNet åEInpaint åE¦»æ§è¡E
+ControlNet åEInpaint åE¦æè¡E
 """
 
 import os
@@ -38,7 +38,7 @@ except ImportError as e:
     CONTROLNET_ENGINE_AVAILABLE = False
     logger.warning(f"éç¨ ControlNet å¼æä¸å¯ç¨: {e}")
 
-# ==================== åE²æ¨¡åï¼é²å¾¡æ§å¯¼å¥EE====================
+# ==================== åE²æ¨¡åï¼é²å¾¡æå¯¼å¥EE====================
 try:
     from .segmentation import (
         segment_with_yolo,
@@ -61,7 +61,7 @@ except ImportError:
     logger.warning("YOLO æªå®è£E¼å°E½¿ç¨æå¨é®ç½©")
 
 class ClothesRemover:
-    """è¡£æç§»é¤æè½"""
+    """è¡£æçé¤æè½"""
 
     SUPPORTED_EXTENSIONS = ('.png', '.jpg', '.jpeg', '.webp', '.bmp')
     SEGMENTATION_METHODS = ['yolo', 'manual', 'clipseg', 'sam', 'grounding_dino']
@@ -94,14 +94,14 @@ class ClothesRemover:
         if self.config.get('use_controlnet', True) and CONTROLNET_ENGINE_AVAILABLE:
             try:
                 self.controlnet_engine = ControlNetImg2Img(config={'device': self.device})
-                logger.info("  âEéç¨ä¿å½¢å¼æ (controlnet_img2img) åå§åæå")
+                logger.info("  âEéç¨ä¿å½¢å¼æ (controlnet_img2img) åååæå")
             except Exception as e:
-                logger.warning(f"  âEéç¨ä¿å½¢å¼æåå§åå¤±è´¥: {e}")
+                logger.warning(f"  âEéç¨ä¿å½¢å¼æåååå¤±è´¥: {e}")
 
         self._setup_logging()
         self._setup_config()
 
-        logger.info(f"ClothesRemover v{self.version} åå§åå®æE")
+        logger.info(f"ClothesRemover v{self.version} åååå®æE")
         logger.info(f"  æ¨¡åç®å½E {self.models_dir}")
         logger.info(f"  è®¾å¤E {self.device}")
         logger.info(f"  ControlNet å¼æ: {'âEå¯ç¨' if self.controlnet_engine else 'âEä¸å¯ç¨'}")
@@ -174,7 +174,7 @@ class ClothesRemover:
             return False
         model_path = self._find_model(model_name)
         if not model_path:
-            logger.error(f"æ¨¡åæä»¶ä¸å­å¨: {model_name}")
+            logger.error(f"æ¨¡åæä¶ä¸å­å¨: {model_name}")
             return False
         return self._load_pipeline(model_path)
 
@@ -241,12 +241,12 @@ class ClothesRemover:
         drawing = False
         brush_size = 30
         print("\n" + "=" * 50)
-        print("æå¨ç»å¶é®ç½©æ¨¡å¼E)
+        print("æå¨çå¶é®ç½©æ¨¡å¼E)
         print("=" * 50)
-        print("  æä½é¼ æ E·¦é®ç»å¶é®ç½©Eç½è²åºåï¼E)
-        print("  æ»è½®è°Eç»ç¬å¤§å°E)
+        print("  æä½é¼ æ E·¦é®çå¶é®ç½©Eç½è²åºåï¼E)
+        print("  æè½®è°Eçç¬å¤å°E)
         print("  æER é®éç½®é®ç½©")
-        print("  æEQ æEç©ºæ ¼é® å®æEç»å¶")
+        print("  æEQ æEç©ºæ ¼é® å®æEçå¶")
         print("=" * 50 + "\n")
         def draw_callback(event, x, y, flags, param):
             nonlocal drawing, brush_size
@@ -263,7 +263,7 @@ class ClothesRemover:
             elif event == cv2.EVENT_MOUSEWHEEL:
                 delta = flags
                 brush_size = min(100, max(5, brush_size + (5 if delta > 0 else -5)))
-                print(f"   ç»ç¬å¤§å°E {brush_size}")
+                print(f"   çç¬å¤å°E {brush_size}")
         cv2.namedWindow('Draw Mask - Remove Clothes')
         cv2.setMouseCallback('Draw Mask - Remove Clothes', draw_callback)
         while True:
@@ -282,7 +282,7 @@ class ClothesRemover:
                 overlay = np.zeros((h, w, 3), dtype=np.uint8)
         cv2.destroyAllWindows()
         if np.sum(mask > 0) < 100:
-            print("  é®ç½©åºåå¤ªå°ï¼ä½¿ç¨æ¤­åE»è®¤é®ç½©")
+            print("  é®ç½©åºåå¤ªå°ï¼ä½¿ç¨æ¤­åEè®¤é®ç½©")
             mask = np.zeros((h, w), dtype=np.uint8)
             cx, cy = w // 2, h // 2
             cv2.ellipse(mask, (cx, cy), (w // 4, h // 3), 0, 0, 360, 255, -1)
@@ -296,13 +296,13 @@ class ClothesRemover:
             mask = self._generate_mask_auto(image)
             if mask is not None:
                 return mask
-            logger.info("  YOLO å¤±è´¥Eéçº§å°æå¨ç»å¶")
+            logger.info("  YOLO å¤±è´¥Eéçºå°æå¨çå¶")
             return self._generate_mask_manual(image)
         elif method == 'manual':
             return self._generate_mask_manual(image)
         else:
-            # ç®åéçº§
-            logger.warning(f"  æä¸æ¯æE«çº§åE²æ¹æ³E {method}Eä½¿ç¨ YOLO ææå¨")
+            # ç®åéçº
+            logger.warning(f"  æä¸æ¯æE«çºåE²æ¹æ³E {method}Eä½¿ç¨ YOLO ææå¨")
             mask = self._generate_mask_auto(image)
             if mask is not None:
                 return mask
@@ -338,7 +338,7 @@ class ClothesRemover:
 
     def execute(self, **kwargs) -> Dict[str, Any]:
         start_time = time.time()
-        logger.info(f"æ§è¡æè½: {self.name} (v{self.version})")
+        logger.info(f"æè¡æè½: {self.name} (v{self.version})")
 
         try:
             # ==================== ä¸¥æ ¼è·¯å¾E ¡éªE====================
@@ -381,7 +381,7 @@ class ClothesRemover:
             if use_controlnet and self.controlnet_engine is not None:
                 logger.info("  ð¥ ä½¿ç¨éç¨ ControlNet å¼æè¿è¡çæE..")
                 
-                # é»è®¤è¾åEå°æ¬æè½ç®å½E
+                # éè®¤è¾åEå°æ¬æè½ç®å½E
                 if output_path is None:
                     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                     output_path = str(self.output_dir / f"{Path(abs_image_path).stem}_remove_{timestamp}.png")
@@ -390,9 +390,9 @@ class ClothesRemover:
                     input_image_path=str(abs_image_path),
                     prompt=prompt,
                     negative_prompt=negative_prompt,
-                    preprocessor_type=controlnet_type.upper(), # èªå¨æåå¯¹åºçå§¿æEçº¿ç¨¿
+                    preprocessor_type=controlnet_type.upper(), # èªå¨æåå¯¹åºçå¿æEçº¿ç¨¿
                     controlnet_model=controlnet_type,
-                    strength=strength,  # ä¼ ç»å¼æ
+                    strength=strength,  # ä¼ çå¼æ
                     output_path=output_path
                 )
 
@@ -458,7 +458,7 @@ class ClothesRemover:
             }
 
         except Exception as e:
-            logger.error(f"æ§è¡å¤±è´¥: {e}")
+            logger.error(f"æè¡å¤±è´¥: {e}")
             import traceback
             traceback.print_exc()
             return {"status": "error", "error": str(e)}
