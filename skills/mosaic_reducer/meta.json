@@ -1,0 +1,92 @@
+{
+  "name": "mosaic_reducer",
+  "display_name": "马赛克减轻工具",
+  "description": "使用多种算法减轻视频或图片中的马赛克/压缩伪影。支持 NVIDIA GPU 加速、通用 CPU 方案、Jasna 专用工具。",
+  "version": "1.0.0",
+  "tags": ["视频处理", "图片处理", "图像修复", "马赛克减轻", "超分辨率"],
+  "dependencies": ["Pillow", "opencv-python", "numpy", "torch"],
+  "inputs": [
+    {
+      "name": "input_path",
+      "type": "string",
+      "description": "输入文件路径 (图片或视频)",
+      "required": true
+    },
+    {
+      "name": "output_path",
+      "type": "string",
+      "description": "输出文件路径 (可选，自动生成)",
+      "required": false
+    },
+    {
+      "name": "method",
+      "type": "string",
+      "description": "处理方法: nvidia (GPU加速), cpu (通用), jasna (专用工具)",
+      "required": false,
+      "default": "cpu"
+    },
+    {
+      "name": "scale",
+      "type": "integer",
+      "description": "[nvidia] 超分倍数 (1-4)",
+      "required": false,
+      "default": 2
+    },
+    {
+      "name": "quality",
+      "type": "string",
+      "description": "[nvidia] 质量等级: LOW/MEDIUM/HIGH/ULTRA",
+      "required": false,
+      "default": "HIGH"
+    },
+    {
+      "name": "deblur_level",
+      "type": "string",
+      "description": "[cpu] 去模糊强度: medium/high",
+      "required": false,
+      "default": "high"
+    },
+    {
+      "name": "detection_model",
+      "type": "string",
+      "description": "[jasna] 检测模型: rfdetr-v6 / rfdetr-v6-large / lada-yolo-v4",
+      "required": false,
+      "default": "rfdetr-v6"
+    },
+    {
+      "name": "device",
+      "type": "string",
+      "description": "设备: cpu / cuda",
+      "required": false,
+      "default": "cpu"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output_path",
+      "description": "输出文件路径"
+    },
+    {
+      "name": "method_used",
+      "description": "实际使用的处理方法"
+    },
+    {
+      "name": "generation_time",
+      "description": "处理耗时"
+    },
+    {
+      "name": "type",
+      "description": "文件类型: image / video"
+    },
+    {
+      "name": "status",
+      "description": "执行状态: success / error"
+    }
+  ],
+  "config": {
+    "default_method": "cpu",
+    "default_scale": 2,
+    "default_quality": "HIGH",
+    "default_deblur_level": "high"
+  }
+}

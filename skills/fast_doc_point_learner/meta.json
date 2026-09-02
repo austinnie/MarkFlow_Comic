@@ -1,0 +1,83 @@
+{
+  "name": "文档快速学习助手",
+  "description": "输入 Word、PDF、PPT、Excel、TXT 等文档，自动提取核心内容，生成结构化摘要，理清文档之间的关系",
+  "version": "1.0.0",
+  "inputs": [
+    {
+      "name": "doc_path",
+      "type": "string",
+      "required": true,
+      "description": "文档路径（文件或目录）"
+    },
+    {
+      "name": "recursive",
+      "type": "boolean",
+      "required": false,
+      "description": "是否递归处理子目录",
+      "default": true
+    },
+    {
+      "name": "max_chars",
+      "type": "integer",
+      "required": false,
+      "description": "每个文档最大提取字符数",
+      "default": 5000
+    },
+    {
+      "name": "summary_length",
+      "type": "integer",
+      "required": false,
+      "description": "摘要长度（字数）",
+      "default": 300
+    },
+    {
+      "name": "output_format",
+      "type": "string",
+      "required": false,
+      "description": "输出格式 (md/json)",
+      "default": "md"
+    },
+    {
+      "name": "extract_images",
+      "type": "boolean",
+      "required": false,
+      "description": "是否提取图片中的文字 (OCR)",
+      "default": false
+    },
+    {
+      "name": "extract_tables",
+      "type": "boolean",
+      "required": false,
+      "description": "是否提取表格内容",
+      "default": true
+    },
+    {
+      "name": "relationship_depth",
+      "type": "integer",
+      "required": false,
+      "description": "关系分析深度",
+      "default": 2
+    },
+    {
+      "name": "language",
+      "type": "string",
+      "required": false,
+      "description": "输出语言 (zh/en/ja/ko/es/fr/de)",
+      "default": "zh"
+    }
+  ],
+  "outputs": [
+    {"name": "report_path", "description": "报告文件路径"},
+    {"name": "total_docs", "description": "文档总数"},
+    {"name": "docs", "description": "文档列表及摘要"},
+    {"name": "relationships", "description": "文档关系图谱"},
+    {"name": "generated_at", "description": "生成时间"}
+  ],
+  "dependencies": [
+    "python-docx",
+    "PyPDF2",
+    "python-pptx",
+    "openpyxl",
+    "requests"
+  ]
+}

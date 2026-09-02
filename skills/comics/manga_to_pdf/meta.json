@@ -1,0 +1,20 @@
+# skills/comics/manga_to_pdf/meta.json
+{
+  "name": "漫画PDF导出",
+  "description": "将漫画页面导出为 PDF 文件",
+  "version": "1.0.0",
+  "inputs": [
+    {"name": "image_paths", "type": "list", "description": "图片路径列表", "required": true},
+    {"name": "output_path", "type": "string", "description": "输出路径", "default": ""},
+    {"name": "title", "type": "string", "description": "标题", "default": "漫画"},
+    {"name": "page_size", "type": "string", "description": "页面大小: A4/A3/LETTER", "default": "A4"}
+  ],
+  "outputs": [
+    {"name": "output_path", "description": "PDF路径"},
+    {"name": "pages", "description": "页数"},
+    {"name": "method", "description": "导出方法"},
+    {"name": "size", "description": "文件大小"}
+  ],
+  "dependencies": ["Pillow", "img2pdf", "reportlab"],
+  "tags": ["漫画", "PDF", "导出"]
+}

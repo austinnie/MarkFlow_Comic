@@ -1,0 +1,851 @@
+{
+  "name": "韩语",
+  "code": "ko",
+  "voice": "ko-KR-SunHiNeural",
+  "words": [
+    {
+      "word": "안녕하세요",
+      "meaning": "你好",
+      "example": "안녕하세요, 반갑습니다.",
+      "level": 1
+    },
+    {
+      "word": "감사합니다",
+      "meaning": "谢谢",
+      "example": "감사합니다!",
+      "level": 1
+    },
+    {
+      "word": "죄송합니다",
+      "meaning": "对不起",
+      "example": "죄송합니다.",
+      "level": 1
+    },
+    {
+      "word": "네",
+      "meaning": "是的",
+      "example": "네, 알겠습니다.",
+      "level": 1
+    },
+    {
+      "word": "아니요",
+      "meaning": "不是",
+      "example": "아니요, 괜찮아요.",
+      "level": 1
+    },
+    {
+      "word": "사랑해요",
+      "meaning": "我爱你",
+      "example": "사랑해요.",
+      "level": 2
+    },
+    {
+      "word": "고마워요",
+      "meaning": "谢谢(非正式)",
+      "example": "고마워요!",
+      "level": 2
+    },
+    {
+      "word": "괜찮아요",
+      "meaning": "没关系",
+      "example": "괜찮아요.",
+      "level": 2
+    },
+    {
+      "word": "반갑습니다",
+      "meaning": "很高兴见到你",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "잘 부탁드립니다",
+      "meaning": "请多关照",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "어떻게 지내세요?",
+      "meaning": "你好吗？",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "저",
+      "meaning": "我（正式）",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "나",
+      "meaning": "我（非正式）",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "당신",
+      "meaning": "你",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "그",
+      "meaning": "他",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "그녀",
+      "meaning": "她",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "우리",
+      "meaning": "我们",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "여러분",
+      "meaning": "各位、大家",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "가족",
+      "meaning": "家庭",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "아버지",
+      "meaning": "父亲",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "어머니",
+      "meaning": "母亲",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "형",
+      "meaning": "哥哥（男用）",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "오빠",
+      "meaning": "哥哥（女用）",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "누나",
+      "meaning": "姐姐（男用）",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "언니",
+      "meaning": "姐姐（女用）",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "동생",
+      "meaning": "弟弟/妹妹",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "아들",
+      "meaning": "儿子",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "딸",
+      "meaning": "女儿",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "김치",
+      "meaning": "泡菜",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "비빔밥",
+      "meaning": "拌饭",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "불고기",
+      "meaning": "烤肉",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "떡볶이",
+      "meaning": "炒年糕",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "삼겹살",
+      "meaning": "五花肉",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "김밥",
+      "meaning": "紫菜包饭",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "라면",
+      "meaning": "拉面",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "짜장면",
+      "meaning": "炸酱面",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "탕수육",
+      "meaning": "糖醋肉",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "막걸리",
+      "meaning": "米酒",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "학교",
+      "meaning": "学校",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "선생님",
+      "meaning": "老师",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "학생",
+      "meaning": "学生",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "책",
+      "meaning": "书",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "가방",
+      "meaning": "包",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "휴대폰",
+      "meaning": "手机",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "컴퓨터",
+      "meaning": "电脑",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "의자",
+      "meaning": "椅子",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "책상",
+      "meaning": "桌子",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "침대",
+      "meaning": "床",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "빨간색",
+      "meaning": "红色",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "파란색",
+      "meaning": "蓝色",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "초록색",
+      "meaning": "绿色",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "노란색",
+      "meaning": "黄色",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "검은색",
+      "meaning": "黑色",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "흰색",
+      "meaning": "白色",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "분홍색",
+      "meaning": "粉色",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "보라색",
+      "meaning": "紫色",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "갈색",
+      "meaning": "棕色",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "주황색",
+      "meaning": "橙色",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "사랑",
+      "meaning": "爱",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "행복",
+      "meaning": "幸福",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "슬픔",
+      "meaning": "悲伤",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "기쁨",
+      "meaning": "喜悦",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "화",
+      "meaning": "愤怒",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "두려움",
+      "meaning": "恐惧",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "놀람",
+      "meaning": "惊讶",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "편안함",
+      "meaning": "舒适",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "가다",
+      "meaning": "去",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "오다",
+      "meaning": "来",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "보다",
+      "meaning": "看",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "듣다",
+      "meaning": "听",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "말하다",
+      "meaning": "说",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "읽다",
+      "meaning": "读",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "쓰다",
+      "meaning": "写",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "먹다",
+      "meaning": "吃",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "마시다",
+      "meaning": "喝",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "자다",
+      "meaning": "睡",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "일어나다",
+      "meaning": "起床",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "걷다",
+      "meaning": "走",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "뛰다",
+      "meaning": "跑",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "공부하다",
+      "meaning": "学习",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "일하다",
+      "meaning": "工作",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "오늘",
+      "meaning": "今天",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "내일",
+      "meaning": "明天",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "어제",
+      "meaning": "昨天",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "시간",
+      "meaning": "时间",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "아침",
+      "meaning": "早上",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "점심",
+      "meaning": "中午",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "저녁",
+      "meaning": "晚上",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "밤",
+      "meaning": "夜晚",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "주말",
+      "meaning": "周末",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "월요일",
+      "meaning": "星期一",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "화요일",
+      "meaning": "星期二",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "수요일",
+      "meaning": "星期三",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "목요일",
+      "meaning": "星期四",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "금요일",
+      "meaning": "星期五",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "토요일",
+      "meaning": "星期六",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "일요일",
+      "meaning": "星期日",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "서울",
+      "meaning": "首尔",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "부산",
+      "meaning": "釜山",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "인천",
+      "meaning": "仁川",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "대구",
+      "meaning": "大邱",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "광주",
+      "meaning": "光州",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "대전",
+      "meaning": "大田",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "울산",
+      "meaning": "蔚山",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "한국",
+      "meaning": "韩国",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "한국어",
+      "meaning": "韩语",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "영어",
+      "meaning": "英语",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "중국어",
+      "meaning": "中文",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "일본어",
+      "meaning": "日语",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "친구",
+      "meaning": "朋友",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "이름",
+      "meaning": "名字",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "나라",
+      "meaning": "国家",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "도시",
+      "meaning": "城市",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "사람",
+      "meaning": "人",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "남자",
+      "meaning": "男人",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "여자",
+      "meaning": "女人",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "아이",
+      "meaning": "孩子",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "어른",
+      "meaning": "成年人",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "선물",
+      "meaning": "礼物",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "여행",
+      "meaning": "旅行",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "음악",
+      "meaning": "音乐",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "영화",
+      "meaning": "电影",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "사진",
+      "meaning": "照片",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "운동",
+      "meaning": "运动",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "요리",
+      "meaning": "料理",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "쇼핑",
+      "meaning": "购物",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "날씨",
+      "meaning": "天气",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "계절",
+      "meaning": "季节",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "봄",
+      "meaning": "春天",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "여름",
+      "meaning": "夏天",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "가을",
+      "meaning": "秋天",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "겨울",
+      "meaning": "冬天",
+      "example": "",
+      "level": 1
+    }
+  ],
+  "sentences": [
+    {
+      "en": "안녕하세요!",
+      "zh": "你好！",
+      "level": 1
+    },
+    {
+      "en": "어떻게 지내세요?",
+      "zh": "你好吗？",
+      "level": 1
+    },
+    {
+      "en": "이름이 뭐예요?",
+      "zh": "你叫什么名字？",
+      "level": 1
+    },
+    {
+      "en": "감사합니다!",
+      "zh": "谢谢！",
+      "level": 1
+    },
+    {
+      "en": "도와주세요!",
+      "zh": "请帮帮我！",
+      "level": 2
+    },
+    {
+      "en": "한국어를 공부하고 있어요.",
+      "zh": "我在学习韩语。",
+      "level": 2
+    }
+  ],
+  "grammar": [
+    {
+      "title": "基本语序",
+      "rule": "主语 + 宾语 + 动词 (SOV)",
+      "example": "나는 밥을 먹어요。",
+      "level": 1
+    },
+    {
+      "title": "敬语终结",
+      "rule": "动词词干 + 아/어요",
+      "example": "먹어요 / 해요",
+      "level": 1
+    },
+    {
+      "title": "过去时",
+      "rule": "动词词干 + 았/었어요",
+      "example": "했어요 / 먹었어요",
+      "level": 2
+    }
+  ]
+}

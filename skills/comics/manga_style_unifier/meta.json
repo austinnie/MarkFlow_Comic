@@ -1,0 +1,21 @@
+# skills/comics/manga_style_unifier/meta.json
+{
+  "name": "画风统一器",
+  "description": "将多张漫画页面统一为同一画风",
+  "version": "1.0.0",
+  "inputs": [
+    {"name": "image_paths", "type": "list", "description": "图片路径列表", "required": true},
+    {"name": "style", "type": "string", "description": "目标风格: manga/anime/comic/webtoon/watercolor/sketch", "default": "anime"},
+    {"name": "strength", "type": "float", "description": "转换强度", "default": 0.65},
+    {"name": "steps", "type": "integer", "description": "采样步数", "default": 30}
+  ],
+  "outputs": [
+    {"name": "total", "description": "总数"},
+    {"name": "success", "description": "成功数"},
+    {"name": "failed", "description": "失败数"},
+    {"name": "results", "description": "详细结果"},
+    {"name": "output_dir", "description": "输出目录"}
+  ],
+  "dependencies": ["style_transfer", "sd_image_generator", "real_to_anime"],
+  "tags": ["漫画", "风格", "统一"]
+}

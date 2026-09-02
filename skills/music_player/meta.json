@@ -1,0 +1,60 @@
+{
+  "name": "音乐播放器",
+  "description": "AI 智能歌单生成和音乐管理",
+  "version": "1.0.0",
+  "inputs": [
+    {
+      "name": "action",
+      "type": "string",
+      "required": true,
+      "description": "操作 (play/search/playlist/lyrics)",
+      "default": ""
+    },
+    {
+      "name": "query",
+      "type": "string",
+      "required": false,
+      "description": "搜索关键词",
+      "default": ""
+    },
+    {
+      "name": "playlist_name",
+      "type": "string",
+      "required": false,
+      "description": "播放列表名",
+      "default": ""
+    },
+    {
+      "name": "mood",
+      "type": "string",
+      "required": false,
+      "description": "情绪 (happy/sad/relax/energetic)",
+      "default": "happy"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "tracks",
+      "description": "歌曲列表"
+    },
+    {
+      "name": "playlist",
+      "description": "生成的播放列表"
+    },
+    {
+      "name": "lyrics",
+      "description": "歌词内容"
+    }
+  ],
+  "dependencies": [
+    "spotipy",
+    "yt-dlp",
+    "mutagen",
+    "pygame"
+  ],
+  "tags": [
+    "AI 生成",
+    "pending"
+  ],
+  "difficulty": "⭐⭐"
+}

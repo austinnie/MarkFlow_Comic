@@ -1,0 +1,54 @@
+# ==================== Python ?存 ====================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.py[cod]
+
+# ==================== 虚??境 ====================
+venv/
+env/
+.venv/
+
+# ==================== IDE 配置 ====================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ==================== ?出目?（保留目???，忽略文件） ====================
+skills/*/output/*
+!skills/*/output/.gitkeep
+output/*
+!output/.gitkeep
+
+# ==================== 模型文件（大文件，?格忽略） ====================
+*.safetensors
+*.ckpt
+*.pth
+*.bin
+*.pt
+*.onnx
+models/
+
+# ==================== 生成文件（不提交） ====================
+*.mp3
+*.mp4
+*.log
+*.tmp
+*.bak
+
+# ==================== ?? 核心?目文件（?制放行，不允?被忽略） ====================
+!README.md
+!requirements.txt
+
+# ==================== ?? 重要：保留核心?目文件 ?? ====================
+# ?里明?放行，?保不被忽略！
+!requirements.txt
+!README.md
+!*.md"
+
+scripts/lora_index.json
+scripts/models_index.json
+scripts/batch_remove_clothes.bat 
+scripts/batch_remove_clothes.py

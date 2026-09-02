@@ -1,0 +1,75 @@
+{
+  "learned_words": [],
+  "learned_grammar": [],
+  "history": [],
+  "current_language": "ja",
+  "updated_at": "2026-08-24T13:48:38.015644",
+  "en": {
+    "learned_words": [
+      "apple"
+    ],
+    "learned_sentences": [],
+    "learned_grammar": [],
+    "review_queue": [],
+    "stats": {
+      "total_attempts": 1,
+      "correct_answers": 0,
+      "last_study": "2026-08-24T13:56:05.346520"
+    }
+  },
+  "ja": {
+    "learned_words": [],
+    "learned_sentences": [],
+    "learned_grammar": [],
+    "review_queue": [],
+    "stats": {
+      "total_attempts": 0,
+      "correct_answers": 0,
+      "last_study": null
+    }
+  },
+  "ko": {
+    "learned_words": [],
+    "learned_sentences": [],
+    "learned_grammar": [],
+    "review_queue": [],
+    "stats": {
+      "total_attempts": 0,
+      "correct_answers": 0,
+      "last_study": null
+    }
+  },
+  "fr": {
+    "learned_words": [],
+    "learned_sentences": [],
+    "learned_grammar": [],
+    "review_queue": [],
+    "stats": {
+      "total_attempts": 0,
+      "correct_answers": 0,
+      "last_study": null
+    }
+  },
+  "de": {
+    "learned_words": [],
+    "learned_sentences": [],
+    "learned_grammar": [],
+    "review_queue": [],
+    "stats": {
+      "total_attempts": 0,
+      "correct_answers": 0,
+      "last_study": null
+    }
+  },
+  "es": {
+    "learned_words": [],
+    "learned_sentences": [],
+    "learned_grammar": [],
+    "review_queue": [],
+    "stats": {
+      "total_attempts": 0,
+      "correct_answers": 0,
+      "last_study": null
+    }
+  }
+}

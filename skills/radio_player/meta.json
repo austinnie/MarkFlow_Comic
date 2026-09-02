@@ -1,0 +1,79 @@
+// meta.json
+{
+  "name": "radio_player",
+  "description": "网络广播播放器 - 直接播放网络电台",
+  "version": "1.0.0",
+  "inputs": [
+    {
+      "name": "action",
+      "type": "string",
+      "required": false,
+      "description": "操作类型 (play/stop/pause/volume/list/search/favorite/favorites/status)",
+      "default": "play"
+    },
+    {
+      "name": "station",
+      "type": "string",
+      "required": false,
+      "description": "电台名称"
+    },
+    {
+      "name": "category",
+      "type": "string",
+      "required": false,
+      "description": "电台分类 (japan/china/korea/international/music/general)",
+      "default": "china"
+    },
+    {
+      "name": "url",
+      "type": "string",
+      "required": false,
+      "description": "直接播放URL"
+    },
+    {
+      "name": "volume",
+      "type": "integer",
+      "required": false,
+      "description": "音量 (0-100)",
+      "default": 80
+    },
+    {
+      "name": "keyword",
+      "type": "string",
+      "required": false,
+      "description": "搜索关键词"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "status",
+      "description": "执行状态"
+    },
+    {
+      "name": "action",
+      "description": "执行的操作"
+    },
+    {
+      "name": "stations",
+      "description": "电台列表"
+    },
+    {
+      "name": "current_station",
+      "description": "当前播放的电台"
+    },
+    {
+      "name": "favorites",
+      "description": "收藏列表"
+    }
+  ],
+  "dependencies": [
+    "python-vlc"
+  ],
+  "tags": [
+    "广播",
+    "电台",
+    "音频",
+    "播放器"
+  ],
+  "difficulty": "⭐⭐⭐"
+}

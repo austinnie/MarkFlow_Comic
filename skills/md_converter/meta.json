@@ -1,0 +1,71 @@
+{
+  "name": "md_converter",
+  "description": "智能Markdown转换器 - 自动修复和转换Markdown格式",
+  "version": "3.0.0",
+  "inputs": [
+    {
+      "name": "file_path",
+      "type": "string",
+      "required": false,
+      "description": "输入文件路径 (支持 .txt/.md/.html/.docx)",
+      "default": ""
+    },
+    {
+      "name": "content",
+      "type": "string",
+      "required": false,
+      "description": "直接输入的内容字符串",
+      "default": ""
+    },
+    {
+      "name": "title",
+      "type": "string",
+      "required": false,
+      "description": "文档标题 (默认: 文件名或'转换文档')",
+      "default": "转换文档"
+    },
+    {
+      "name": "output_name",
+      "type": "string",
+      "required": false,
+      "description": "输出文件名 (不含扩展名)",
+      "default": ""
+    }
+  ],
+  "outputs": [
+    {
+      "name": "file_path",
+      "description": "生成的Markdown文件路径"
+    },
+    {
+      "name": "content",
+      "description": "转换后的Markdown内容"
+    },
+    {
+      "name": "title",
+      "description": "文档标题"
+    },
+    {
+      "name": "size",
+      "description": "内容大小(字符数)"
+    },
+    {
+      "name": "line_count",
+      "description": "内容行数"
+    },
+    {
+      "name": "source",
+      "description": "来源 (文件路径 或 direct)"
+    }
+  ],
+  "dependencies": [
+    "python-docx"
+  ],
+  "tags": [
+    "markdown",
+    "转换",
+    "文档处理",
+    "格式化"
+  ],
+  "difficulty": "⭐⭐"
+}

@@ -1,0 +1,59 @@
+{
+  "name": "新闻聚合器",
+  "description": "RSS 新闻抓取 + AI 摘要生成",
+  "version": "1.0.0",
+  "inputs": [
+    {
+      "name": "sources",
+      "type": "string",
+      "required": false,
+      "description": "RSS 源列表",
+      "default": ""
+    },
+    {
+      "name": "category",
+      "type": "string",
+      "required": false,
+      "description": "新闻分类 (tech/business/world)",
+      "default": "tech"
+    },
+    {
+      "name": "top_n",
+      "type": "integer",
+      "required": false,
+      "description": "提取 Top N 条新闻",
+      "default": 10
+    },
+    {
+      "name": "summary_length",
+      "type": "integer",
+      "required": false,
+      "description": "摘要长度",
+      "default": 100
+    }
+  ],
+  "outputs": [
+    {
+      "name": "news",
+      "description": "新闻列表"
+    },
+    {
+      "name": "summaries",
+      "description": "AI 摘要"
+    },
+    {
+      "name": "daily_report",
+      "description": "每日简报"
+    }
+  ],
+  "dependencies": [
+    "feedparser",
+    "requests",
+    "ollama"
+  ],
+  "tags": [
+    "数据处理",
+    "pending"
+  ],
+  "difficulty": "⭐⭐"
+}

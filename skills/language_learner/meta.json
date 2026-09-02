@@ -1,0 +1,62 @@
+{
+  "name": "语言学习助手",
+  "description": "AI 驱动的多语言学习助手，支持单词、语法、句子学习，集成语音发音",
+  "version": "1.0.0",
+  "inputs": [
+    {
+      "name": "action",
+      "type": "string",
+      "required": true,
+      "description": "操作类型 (learn_word/learn_grammar/practice/quiz/speak/stats/list_languages/set_language/translate/review)",
+      "default": ""
+    },
+    {
+      "name": "language",
+      "type": "string",
+      "required": false,
+      "description": "目标语言 (en/ja/ko/fr/de/es)",
+      "default": "en"
+    },
+    {
+      "name": "text",
+      "type": "string",
+      "required": false,
+      "description": "要发音或翻译的文本",
+      "default": ""
+    },
+    {
+      "name": "word",
+      "type": "string",
+      "required": false,
+      "description": "测验时的单词",
+      "default": ""
+    },
+    {
+      "name": "answer",
+      "type": "string",
+      "required": false,
+      "description": "用户的答案",
+      "default": ""
+    },
+    {
+      "name": "count",
+      "type": "integer",
+      "required": false,
+      "description": "复习数量",
+      "default": 5
+    }
+  ],
+  "outputs": [
+    {"name": "word", "description": "学习的单词"},
+    {"name": "meaning", "description": "单词含义"},
+    {"name": "example", "description": "例句"},
+    {"name": "audio_path", "description": "语音文件路径"},
+    {"name": "grammar", "description": "语法规则"},
+    {"name": "sentence", "description": "练习句子"},
+    {"name": "translation", "description": "翻译结果"},
+    {"name": "stats", "description": "学习统计"}
+  ],
+  "dependencies": ["nltk", "edge-tts", "requests", "jamdict", "jieba"],
+  "tags": ["学习", "语言", "教育", "AI"],
+  "difficulty": "⭐⭐⭐"
+}

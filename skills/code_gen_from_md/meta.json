@@ -1,0 +1,100 @@
+{
+  "name": "code_gen_from_md",
+  "display_name": "code_gen_from_md",
+  "description": "代码生成器，从 Markdown 需求文档自动生成高质量代码。支持 Python、JavaScript、Java、Go、Rust 等多种语言，内置语法检查、代码优化、单元测试生成和 AI 代码审查。",
+  "version": "1.0.0",
+  "inputs": [
+    {
+      "name": "md_file",
+      "type": "string",
+      "description": "Markdown 需求文件路径",
+      "required": false,
+      "default": ""
+    },
+    {
+      "name": "md_content",
+      "type": "string",
+      "description": "Markdown 需求内容（直接传入）",
+      "required": false,
+      "default": ""
+    },
+    {
+      "name": "language",
+      "type": "string",
+      "description": "目标语言（从 Markdown 自动检测）",
+      "required": false,
+      "default": "python"
+    },
+    {
+      "name": "model",
+      "type": "string",
+      "description": "Ollama 模型",
+      "required": false,
+      "default": "qwen2.5:7b"
+    },
+    {
+      "name": "mode",
+      "type": "string",
+      "description": "生成模式 (full/step)",
+      "required": false,
+      "default": "full"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "title",
+      "description": "项目名称"
+    },
+    {
+      "name": "language",
+      "description": "目标语言"
+    },
+    {
+      "name": "saved_files",
+      "description": "生成的文件列表"
+    },
+    {
+      "name": "quality_score",
+      "description": "质量评分 (0-100)"
+    },
+    {
+      "name": "validations_passed",
+      "description": "是否通过校验"
+    },
+    {
+      "name": "optimized",
+      "description": "是否经过优化"
+    },
+    {
+      "name": "generated_at",
+      "description": "生成时间"
+    }
+  ],
+  "dependencies": [
+    "requests",
+    "black",
+    "pylint"
+  ],
+  "tags": [],
+  "features": [
+    "📝 **Markdown 解析** - 自动解析需求文档中的标题、描述、需求列表和代码示例",
+    "🤖 **AI 代码生成** - 使用 Ollama 生成高质量代码",
+    "✅ **语法检查** - 自动检查 Python 语法、导入语句、文档字符串、命名规范",
+    "🔧 **代码优化** - 自动修复代码问题，格式化代码",
+    "🧪 **单元测试生成** - 自动生成 Python 单元测试",
+    "📊 **代码审查** - AI 多维度审查代码质量并评分",
+    "🌐 **多语言支持** - Python、JavaScript、TypeScript、Java、Go、Rust、C++、HTML、CSS、Bash、SQL 等"
+  ],
+  "generated_at": "2026-08-28T17:33:40.485662",
+  "quality": {
+    "score": 85,
+    "passed": true,
+    "checks_count": 4,
+    "errors_count": 0
+  },
+  "trace": {
+    "coverage": 1.0,
+    "total_requirements": 7,
+    "implemented": 7
+  }
+}

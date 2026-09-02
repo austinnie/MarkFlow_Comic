@@ -1,0 +1,21 @@
+{
+  "name": "漫画剧本生成",
+  "description": "生成漫画分镜剧本，支持多种题材",
+  "version": "1.0.0",
+  "inputs": [
+    {"name": "genre", "type": "string", "description": "题材", "default": "冒险"},
+    {"name": "theme", "type": "string", "description": "主题", "default": "友情与成长"},
+    {"name": "pages", "type": "integer", "description": "页数", "default": 4},
+    {"name": "characters", "type": "string", "description": "角色列表", "default": "主角, 朋友"},
+    {"name": "setting", "type": "string", "description": "世界观", "default": "奇幻世界"},
+    {"name": "plot", "type": "string", "description": "剧情梗概", "default": ""}
+  ],
+  "outputs": [
+    {"name": "script", "description": "剧本"},
+    {"name": "output_path", "description": "保存路径"},
+    {"name": "story_text", "description": "故事文本"},
+    {"name": "metadata", "description": "元数据"}
+  ],
+  "dependencies": ["novel_writer"],
+  "tags": ["漫画", "剧本"]
+}

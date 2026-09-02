@@ -1,0 +1,64 @@
+{
+  "name": "代码审查助手",
+  "description": "AI 代码审查，发现问题和安全风险",
+  "version": "1.0.0",
+  "inputs": [
+    {
+      "name": "code_path",
+      "type": "string",
+      "required": true,
+      "description": "代码文件或目录路径",
+      "default": ""
+    },
+    {
+      "name": "language",
+      "type": "string",
+      "required": false,
+      "description": "编程语言 (python/js/go)",
+      "default": "python"
+    },
+    {
+      "name": "review_level",
+      "type": "string",
+      "required": false,
+      "description": "审查深度 (basic/deep)",
+      "default": "basic"
+    },
+    {
+      "name": "focus",
+      "type": "string",
+      "required": false,
+      "description": "审查重点 (security/performance/style)",
+      "default": "security"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "issues",
+      "description": "发现的问题列表"
+    },
+    {
+      "name": "suggestions",
+      "description": "改进建议"
+    },
+    {
+      "name": "security_risks",
+      "description": "安全风险警告"
+    },
+    {
+      "name": "code_score",
+      "description": "代码质量评分"
+    }
+  ],
+  "dependencies": [
+    "pylint",
+    "flake8",
+    "radon",
+    "ollama"
+  ],
+  "tags": [
+    "开发工具",
+    "pending"
+  ],
+  "difficulty": "⭐⭐⭐"
+}

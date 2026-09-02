@@ -1,0 +1,21 @@
+# skills/comics/manga_to_epub/meta.json
+{
+  "name": "漫画EPUB导出",
+  "description": "将漫画页面导出为 EPUB 电子书",
+  "version": "1.0.0",
+  "inputs": [
+    {"name": "image_paths", "type": "list", "description": "图片路径列表", "required": true},
+    {"name": "output_path", "type": "string", "description": "输出路径", "default": ""},
+    {"name": "title", "type": "string", "description": "标题", "default": "漫画"},
+    {"name": "author", "type": "string", "description": "作者", "default": "AI 生成"},
+    {"name": "description", "type": "string", "description": "描述", "default": "AI 生成的漫画"}
+  ],
+  "outputs": [
+    {"name": "output_path", "description": "EPUB路径"},
+    {"name": "pages", "description": "页数"},
+    {"name": "method", "description": "导出方法"},
+    {"name": "size", "description": "文件大小"}
+  ],
+  "dependencies": ["Pillow", "doc_generator"],
+  "tags": ["漫画", "EPUB", "导出"]
+}

@@ -1,0 +1,21 @@
+# skills/comics/manga_audio_book/meta.json
+{
+  "name": "有声漫画",
+  "description": "将漫画转换为有声读物",
+  "version": "1.0.0",
+  "inputs": [
+    {"name": "script_data", "type": "json", "description": "剧本数据", "default": {}},
+    {"name": "image_paths", "type": "list", "description": "图片路径列表", "default": []},
+    {"name": "voice", "type": "string", "description": "语音", "default": "zh-CN-XiaoxiaoNeural"},
+    {"name": "speed", "type": "float", "description": "语速", "default": 1.0},
+    {"name": "output_path", "type": "string", "description": "输出路径", "default": ""}
+  ],
+  "outputs": [
+    {"name": "output_path", "description": "音频路径"},
+    {"name": "duration", "description": "时长"},
+    {"name": "text_length", "description": "文本长度"},
+    {"name": "voice", "description": "使用语音"}
+  ],
+  "dependencies": ["voice_assistant"],
+  "tags": ["漫画", "有声", "音频"]
+}

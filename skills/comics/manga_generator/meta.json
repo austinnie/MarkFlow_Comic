@@ -1,0 +1,27 @@
+{
+  "name": "AI漫画生成器",
+  "description": "一键生成完整漫画，支持剧本文件输入",
+  "version": "1.0.0",
+  "inputs": [
+    {"name": "script_path", "type": "string", "description": "剧本JSON文件路径", "default": ""},
+    {"name": "source_type", "type": "string", "description": "来源: text/news/novel", "default": "text"},
+    {"name": "source_content", "type": "string", "description": "故事内容（无剧本时使用）", "default": ""},
+    {"name": "template", "type": "string", "description": "模板: story/news/strip/webtoon", "default": "story"},
+    {"name": "style", "type": "string", "description": "风格: manga/anime/comic/webtoon", "default": "manga"},
+    {"name": "pages", "type": "integer", "description": "页数", "default": 4},
+    {"name": "character_image", "type": "string", "description": "角色参考图路径", "default": ""},
+    {"name": "strength", "type": "float", "description": "生成强度 (0-1)", "default": 0.65},
+    {"name": "steps", "type": "integer", "description": "采样步数", "default": 30},
+    {"name": "audio", "type": "boolean", "description": "生成有声版", "default": false},
+    {"name": "export_formats", "type": "list", "description": "导出格式: pdf", "default": ["pdf"]}
+  ],
+  "outputs": [
+    {"name": "output_path", "description": "漫画排版图路径"},
+    {"name": "audio_path", "description": "有声漫画音频路径"},
+    {"name": "exported_files", "description": "导出的文件列表"},
+    {"name": "pages", "description": "每页详情"},
+    {"name": "metadata", "description": "元数据"}
+  ],
+  "dependencies": ["Pillow", "img2pdf", "sd_image_generator", "change_pose", "voice_assistant"],
+  "tags": ["漫画", "AI生成", "图像"]
+}

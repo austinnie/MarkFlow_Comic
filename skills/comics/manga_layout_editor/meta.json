@@ -1,0 +1,18 @@
+# skills/comics/manga_layout_editor/meta.json
+{
+  "name": "漫画排版编辑",
+  "description": "多种布局方式排版漫画",
+  "version": "1.0.0",
+  "inputs": [
+    {"name": "image_paths", "type": "list", "description": "图片路径列表", "required": true},
+    {"name": "layout_type", "type": "string", "description": "布局: grid/vertical/horizontal", "default": "grid"},
+    {"name": "title", "type": "string", "description": "标题", "default": "漫画"}
+  ],
+  "outputs": [
+    {"name": "output_path", "description": "输出路径"},
+    {"name": "pages", "description": "页数"},
+    {"name": "layout_type", "description": "布局类型"}
+  ],
+  "dependencies": ["Pillow"],
+  "tags": ["漫画", "排版"]
+}

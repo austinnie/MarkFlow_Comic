@@ -1,0 +1,1428 @@
+{
+  "name": "德语",
+  "code": "de",
+  "voice": "de-DE-KatjaNeural",
+  "words": [
+    {
+      "word": "Hallo",
+      "meaning": "你好",
+      "example": "Hallo, wie geht es dir?",
+      "level": 1
+    },
+    {
+      "word": "Danke",
+      "meaning": "谢谢",
+      "example": "Danke schön!",
+      "level": 1
+    },
+    {
+      "word": "Tschüss",
+      "meaning": "再见",
+      "example": "Tschüss!",
+      "level": 1
+    },
+    {
+      "word": "Ja",
+      "meaning": "是的",
+      "example": "Ja, ich verstehe.",
+      "level": 1
+    },
+    {
+      "word": "Nein",
+      "meaning": "不是",
+      "example": "Nein, nicht einverstanden.",
+      "level": 1
+    },
+    {
+      "word": "Bitte",
+      "meaning": "请",
+      "example": "Bitte, hilf mir.",
+      "level": 1
+    },
+    {
+      "word": "Ich liebe dich",
+      "meaning": "我爱你",
+      "example": "Ich liebe dich.",
+      "level": 2
+    },
+    {
+      "word": "Guten Tag",
+      "meaning": "你好（白天）",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Guten Morgen",
+      "meaning": "早上好",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Guten Abend",
+      "meaning": "晚上好",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Gute Nacht",
+      "meaning": "晚安",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Auf Wiedersehen",
+      "meaning": "再见",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Danke schön",
+      "meaning": "非常感谢",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Entschuldigung",
+      "meaning": "对不起",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Herr",
+      "meaning": "先生",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Frau",
+      "meaning": "女士",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Fräulein",
+      "meaning": "小姐",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Willkommen",
+      "meaning": "欢迎",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Prost",
+      "meaning": "干杯",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Zum Wohl",
+      "meaning": "祝你健康（干杯）",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Gute Besserung",
+      "meaning": "早日康复",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Herzlichen Glückwunsch",
+      "meaning": "祝贺你",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Alles Gute",
+      "meaning": "一切顺利",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Viel Erfolg",
+      "meaning": "祝成功",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Familie",
+      "meaning": "家庭",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Vater",
+      "meaning": "父亲",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Mutter",
+      "meaning": "母亲",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Bruder",
+      "meaning": "兄弟",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Schwester",
+      "meaning": "姐妹",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Sohn",
+      "meaning": "儿子",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Tochter",
+      "meaning": "女儿",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Onkel",
+      "meaning": "叔叔",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Tante",
+      "meaning": "阿姨",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Großvater",
+      "meaning": "祖父",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Großmutter",
+      "meaning": "祖母",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Ehemann",
+      "meaning": "丈夫",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Ehefrau",
+      "meaning": "妻子",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Kind",
+      "meaning": "孩子",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Eltern",
+      "meaning": "父母",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Schule",
+      "meaning": "学校",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Lehrer",
+      "meaning": "老师",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Schüler",
+      "meaning": "学生",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Buch",
+      "meaning": "书",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Klasse",
+      "meaning": "班级",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Universität",
+      "meaning": "大学",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Student",
+      "meaning": "大学生",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Prüfung",
+      "meaning": "考试",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Hausaufgabe",
+      "meaning": "作业",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Lernen",
+      "meaning": "学习",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Bildung",
+      "meaning": "教育",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Wissen",
+      "meaning": "知识",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Bibliothek",
+      "meaning": "图书馆",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Stift",
+      "meaning": "笔",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Papier",
+      "meaning": "纸",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Essen",
+      "meaning": "食物",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Trinken",
+      "meaning": "饮料",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Brot",
+      "meaning": "面包",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Wasser",
+      "meaning": "水",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Bier",
+      "meaning": "啤酒",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Wein",
+      "meaning": "葡萄酒",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Kaffee",
+      "meaning": "咖啡",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Tee",
+      "meaning": "茶",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Milch",
+      "meaning": "牛奶",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Fleisch",
+      "meaning": "肉",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Fisch",
+      "meaning": "鱼",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Gemüse",
+      "meaning": "蔬菜",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Obst",
+      "meaning": "水果",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Kuchen",
+      "meaning": "蛋糕",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Schokolade",
+      "meaning": "巧克力",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Käse",
+      "meaning": "奶酪",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Wurst",
+      "meaning": "香肠",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Salat",
+      "meaning": "沙拉",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Natur",
+      "meaning": "自然",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Blume",
+      "meaning": "花",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Baum",
+      "meaning": "树",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Berg",
+      "meaning": "山",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Meer",
+      "meaning": "海",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Himmel",
+      "meaning": "天空",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Sonne",
+      "meaning": "太阳",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Mond",
+      "meaning": "月亮",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Stern",
+      "meaning": "星星",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Regen",
+      "meaning": "雨",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Schnee",
+      "meaning": "雪",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Wind",
+      "meaning": "风",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Wald",
+      "meaning": "森林",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "See",
+      "meaning": "湖",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Insel",
+      "meaning": "岛",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Fluss",
+      "meaning": "河流",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Blatt",
+      "meaning": "叶子",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Wiese",
+      "meaning": "草地",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Liebe",
+      "meaning": "爱",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Glück",
+      "meaning": "幸福",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Traurigkeit",
+      "meaning": "悲伤",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Freude",
+      "meaning": "喜悦",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Angst",
+      "meaning": "恐惧",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Überraschung",
+      "meaning": "惊讶",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Ruhe",
+      "meaning": "平静",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Zufriedenheit",
+      "meaning": "满足",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Hass",
+      "meaning": "恨",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Wut",
+      "meaning": "愤怒",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Neid",
+      "meaning": "嫉妒",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Mitleid",
+      "meaning": "同情",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Mut",
+      "meaning": "勇气",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Hoffnung",
+      "meaning": "希望",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Vertrauen",
+      "meaning": "信任",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "gehen",
+      "meaning": "去/走",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "kommen",
+      "meaning": "来",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "sehen",
+      "meaning": "看",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "hören",
+      "meaning": "听",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "sprechen",
+      "meaning": "说",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "lesen",
+      "meaning": "阅读",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "schreiben",
+      "meaning": "写",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "essen",
+      "meaning": "吃",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "trinken",
+      "meaning": "喝",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "schlafen",
+      "meaning": "睡觉",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "aufwachen",
+      "meaning": "起床",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "laufen",
+      "meaning": "跑",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "schwimmen",
+      "meaning": "游泳",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "singen",
+      "meaning": "唱歌",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "tanzen",
+      "meaning": "跳舞",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "spielen",
+      "meaning": "玩耍",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "arbeiten",
+      "meaning": "工作",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "lernen",
+      "meaning": "学习",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "lieben",
+      "meaning": "爱",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "hassen",
+      "meaning": "恨",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "sitzen",
+      "meaning": "坐",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "stehen",
+      "meaning": "站",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "liegen",
+      "meaning": "躺",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "springen",
+      "meaning": "跳",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "fliegen",
+      "meaning": "飞",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "reiten",
+      "meaning": "骑马",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "fahren",
+      "meaning": "驾驶",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "zeichnen",
+      "meaning": "画画",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "malen",
+      "meaning": "绘画",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "bauen",
+      "meaning": "建造",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Zeit",
+      "meaning": "时间",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Tag",
+      "meaning": "天",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Nacht",
+      "meaning": "夜晚",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Woche",
+      "meaning": "周",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Monat",
+      "meaning": "月",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Jahr",
+      "meaning": "年",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Frühling",
+      "meaning": "春天",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Sommer",
+      "meaning": "夏天",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Herbst",
+      "meaning": "秋天",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Winter",
+      "meaning": "冬天",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Montag",
+      "meaning": "星期一",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Dienstag",
+      "meaning": "星期二",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Mittwoch",
+      "meaning": "星期三",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Donnerstag",
+      "meaning": "星期四",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Freitag",
+      "meaning": "星期五",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Samstag",
+      "meaning": "星期六",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Sonntag",
+      "meaning": "星期天",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Morgen",
+      "meaning": "早晨",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Mittag",
+      "meaning": "中午",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Abend",
+      "meaning": "晚上",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Mitternacht",
+      "meaning": "午夜",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Sekunde",
+      "meaning": "秒",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Minute",
+      "meaning": "分钟",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Stunde",
+      "meaning": "小时",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Deutschland",
+      "meaning": "德国",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Berlin",
+      "meaning": "柏林",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "München",
+      "meaning": "慕尼黑",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Hamburg",
+      "meaning": "汉堡",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Köln",
+      "meaning": "科隆",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Frankfurt",
+      "meaning": "法兰克福",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Stuttgart",
+      "meaning": "斯图加特",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Düsseldorf",
+      "meaning": "杜塞尔多夫",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Dresden",
+      "meaning": "德累斯顿",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Leipzig",
+      "meaning": "莱比锡",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Nürnberg",
+      "meaning": "纽伦堡",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Hannover",
+      "meaning": "汉诺威",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Bremen",
+      "meaning": "不莱梅",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Dortmund",
+      "meaning": "多特蒙德",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Deutsch",
+      "meaning": "德语",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Englisch",
+      "meaning": "英语",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Französisch",
+      "meaning": "法语",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Spanisch",
+      "meaning": "西班牙语",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Chinesisch",
+      "meaning": "中文",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Japanisch",
+      "meaning": "日语",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Russisch",
+      "meaning": "俄语",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Italienisch",
+      "meaning": "意大利语",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Latein",
+      "meaning": "拉丁语",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Musik",
+      "meaning": "音乐",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Film",
+      "meaning": "电影",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Kunst",
+      "meaning": "艺术",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Kultur",
+      "meaning": "文化",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Sport",
+      "meaning": "运动",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Reisen",
+      "meaning": "旅行",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Ferien",
+      "meaning": "假期",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Urlaub",
+      "meaning": "度假",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Hobby",
+      "meaning": "爱好",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Freizeit",
+      "meaning": "空闲时间",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Theater",
+      "meaning": "剧院",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Museum",
+      "meaning": "博物馆",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Ausstellung",
+      "meaning": "展览",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Konzert",
+      "meaning": "音乐会",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Festival",
+      "meaning": "节日",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Stadt",
+      "meaning": "城市",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Land",
+      "meaning": "国家/乡村",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Mensch",
+      "meaning": "人",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Freund",
+      "meaning": "朋友",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Geschenk",
+      "meaning": "礼物",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Wetter",
+      "meaning": "天气",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Jahreszeit",
+      "meaning": "季节",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Arbeit",
+      "meaning": "工作",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Beruf",
+      "meaning": "职业",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Firma",
+      "meaning": "公司",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Büro",
+      "meaning": "办公室",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Computer",
+      "meaning": "电脑",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Internet",
+      "meaning": "互联网",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Handy",
+      "meaning": "手机",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Auto",
+      "meaning": "汽车",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Zug",
+      "meaning": "火车",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Flugzeug",
+      "meaning": "飞机",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Schiff",
+      "meaning": "船",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Straße",
+      "meaning": "街道",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Haus",
+      "meaning": "房子",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Zimmer",
+      "meaning": "房间",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Küche",
+      "meaning": "厨房",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Bad",
+      "meaning": "浴室",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Garten",
+      "meaning": "花园",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Tür",
+      "meaning": "门",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Fenster",
+      "meaning": "窗户",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Tisch",
+      "meaning": "桌子",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Stuhl",
+      "meaning": "椅子",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Bett",
+      "meaning": "床",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Kleidung",
+      "meaning": "衣服",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Schuhe",
+      "meaning": "鞋子",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Hut",
+      "meaning": "帽子",
+      "example": "",
+      "level": 1
+    },
+    {
+      "word": "Brille",
+      "meaning": "眼镜",
+      "example": "",
+      "level": 1
+    }
+  ],
+  "sentences": [
+    {
+      "en": "Hallo!",
+      "zh": "你好！",
+      "level": 1
+    },
+    {
+      "en": "Wie geht es dir?",
+      "zh": "你好吗？",
+      "level": 1
+    },
+    {
+      "en": "Ich heiße...",
+      "zh": "我叫...",
+      "level": 1
+    },
+    {
+      "en": "Danke schön!",
+      "zh": "非常感谢！",
+      "level": 1
+    },
+    {
+      "en": "Kannst du mir helfen?",
+      "zh": "你能帮我吗？",
+      "level": 2
+    }
+  ],
+  "grammar": [
+    {
+      "title": "主谓结构",
+      "rule": "主语 + 动词 + 宾语",
+      "example": "Ich spreche Deutsch.",
+      "level": 1
+    },
+    {
+      "title": "否定句",
+      "rule": "主语 + 动词 + nicht",
+      "example": "Ich spreche nicht Englisch.",
+      "level": 2
+    }
+  ]
+}

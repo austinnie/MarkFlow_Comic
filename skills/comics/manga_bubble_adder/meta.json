@@ -1,0 +1,18 @@
+# skills/comics/manga_bubble_adder/meta.json
+{
+  "name": "对话气泡添加",
+  "description": "为漫画添加对话气泡",
+  "version": "1.0.0",
+  "inputs": [
+    {"name": "image_path", "type": "string", "description": "图片路径", "required": true},
+    {"name": "dialogues", "type": "list", "description": "对话列表", "default": []},
+    {"name": "positions", "type": "list", "description": "位置列表", "default": []},
+    {"name": "bubble_style", "type": "string", "description": "气泡样式: rounded/rect", "default": "rounded"}
+  ],
+  "outputs": [
+    {"name": "output_path", "description": "输出路径"},
+    {"name": "bubbles_added", "description": "添加数量"}
+  ],
+  "dependencies": ["Pillow"],
+  "tags": ["漫画", "气泡"]
+}
