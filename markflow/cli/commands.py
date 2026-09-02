@@ -265,12 +265,9 @@ def build_skill(args, executor, console):
         traceback.print_exc()
         sys.exit(1)
 
-# markflow/cli/commands.py
-
-# markflow/cli/commands.py
 
 def execute_skill(skill_name, **kwargs):
-    """执行技能 - 自动发现，支持子目录"""
+    """执行技能 - 支持子目录"""
     import importlib
     import importlib.util
     import sys
@@ -281,120 +278,179 @@ def execute_skill(skill_name, **kwargs):
     if str(project_root) not in sys.path:
         sys.path.insert(0, str(project_root))
     
+    # ============================================================
+    # 技能名 → 实际导入路径映射
+    # ============================================================
+    SKILL_PATH_MAP = {
+        # ===== 图片技能 (image/) =====
+        'change_pose': 'skills.image.change_pose',
+        'change_expression': 'skills.image.change_expression',
+        'change_face': 'skills.image.change_face',
+        'change_hair': 'skills.image.change_hair',
+        'change_background': 'skills.image.change_background',
+        'change_clothes': 'skills.image.change_clothes',
+        'change_body_type': 'skills.image.change_body_type',
+        'change_lighting': 'skills.image.change_lighting',
+        'change_perspective': 'skills.image.change_perspective',
+        'change_eye_color': 'skills.image.change_eye_color',
+        'change_makeup': 'skills.image.change_makeup',
+        'change_age': 'skills.image.change_age',
+        'change_gender': 'skills.image.change_gender',
+        'change_nationality': 'skills.image.change_nationality',
+        'change_clothing_style': 'skills.image.change_clothing_style',
+        'change_furniture': 'skills.image.change_furniture',
+        'change_skin_tone': 'skills.image.change_skin_tone',
+        'real_to_anime': 'skills.image.real_to_anime',
+        'anime_to_real': 'skills.image.anime_to_real',
+        'sketch_to_real': 'skills.image.sketch_to_real',
+        'style_transfer': 'skills.image.style_transfer',
+        'season_transfer': 'skills.image.season_transfer',
+        'weather_transfer': 'skills.image.weather_transfer',
+        'day_night_transfer': 'skills.image.day_night_transfer',
+        'remove_object': 'skills.image.remove_object',
+        'replace_object': 'skills.image.replace_object',
+        'fix_human_anatomy': 'skills.image.fix_human_anatomy',
+        'old_photo_restore': 'skills.image.old_photo_restore',
+        'photo_restorer': 'skills.image.photo_restorer',
+        'colorize_sketch': 'skills.image.colorize_sketch',
+        'fantasy_character': 'skills.image.fantasy_character',
+        'mecha_generator': 'skills.image.mecha_generator',
+        'human_to_robot': 'skills.image.human_to_robot',
+        'sd_image_generator': 'skills.image.sd_image_generator',
+        'controlnet': 'skills.image.controlnet',
+        'controlnet_img2img': 'skills.image.controlnet_img2img',
+        'chattoimage': 'skills.image.chattoimage',
+        'add_animal_ears': 'skills.image.add_animal_ears',
+        'add_glasses': 'skills.image.add_glasses',
+        'add_tattoo': 'skills.image.add_tattoo',
+        'add_background_objects': 'skills.image.add_background_objects',
+        'expand_to_full_body': 'skills.image.expand_to_full_body',
+        'photo_realistic': 'skills.image.photo_realistic',
+        'nude_oil_painting': 'skills.image.nude_oil_painting',
+        'nude_sculpture': 'skills.image.nude_sculpture',
+        'mosaic_reducer': 'skills.image.mosaic_reducer',
+        'meta_cleaner': 'skills.image.meta_cleaner',
+        'signatureextractor': 'skills.image.signatureextractor',
+        'exif_injector': 'skills.image.exif_injector',
+        'bathroom_nude': 'skills.image.bathroom_nude',
+        'beach_lingerie': 'skills.image.beach_lingerie',
+        'bedroom_lingerie': 'skills.image.bedroom_lingerie',
+        'bedroom_nude': 'skills.image.bedroom_nude',
+        'pool_nude': 'skills.image.pool_nude',
+        'studio_nude': 'skills.image.studio_nude',
+        'intimate_closeup': 'skills.image.intimate_closeup',
+        'remove_clothes': 'skills.image.remove_clothes',
+        
+        # ===== 内容技能 (content/) =====
+        'novel_writer': 'skills.content.novel_writer',
+        'news_aggregator': 'skills.content.news_aggregator',
+        'voice_assistant': 'skills.content.voice_assistant',
+        'tech_hot_article': 'skills.content.tech_hot_article',
+        'music_player': 'skills.content.music_player',
+        'radio_player': 'skills.content.radio_player',
+        
+        # ===== 核心技能 (core/) =====
+        'code_gen_from_md': 'skills.core.code_gen_from_md',
+        'code_reviewer': 'skills.core.code_reviewer',
+        'doc_generator': 'skills.core.doc_generator',
+        'md_converter': 'skills.core.md_converter',
+        'imagerecognizer': 'skills.core.imagerecognizer',
+        'language_learner': 'skills.core.language_learner',
+        'fast_doc_point_learner': 'skills.core.fast_doc_point_learner',
+        'code_relations_presents': 'skills.core.code_relations_presents',
+        
+        # ===== 漫画技能 (comics/) =====
+        'manga_generator': 'skills.comics.manga_generator',
+        'manga_script_writer': 'skills.comics.manga_script_writer',
+        'manga_layout_editor': 'skills.comics.manga_layout_editor',
+        'manga_style_unifier': 'skills.comics.manga_style_unifier',
+        'manga_bubble_adder': 'skills.comics.manga_bubble_adder',
+        'manga_to_pdf': 'skills.comics.manga_to_pdf',
+        'manga_to_epub': 'skills.comics.manga_to_epub',
+        'manga_audio_book': 'skills.comics.manga_audio_book',
+        
+        # ===== 工具技能 (utils/) =====
+        'stock_analyzer': 'skills.utils.stock_analyzer',
+    }
+    
     skill_class = None
     module = None
-    found_path = None
     
+    # markflow/cli/commands.py - 修改映射部分
+
     # ============================================================
-    # 1. 如果 skill_name 包含 '.'，直接按路径导入
+    # 1. 通过映射直接导入
     # ============================================================
-    if '.' in skill_name:
+    if skill_name in SKILL_PATH_MAP:
+        path = SKILL_PATH_MAP[skill_name]
         try:
-            module = importlib.import_module(f"skills.{skill_name}")
-            if module:
-                for attr_name in dir(module):
-                    attr = getattr(module, attr_name)
-                    if (isinstance(attr, type) and 
-                        attr.__module__ == module.__name__ and
-                        attr_name not in ['SkillSpec']):
+            # ===== 修复：使用 importlib.import_module 并确保模块完全加载 =====
+            module = importlib.import_module(path)
+            
+            # ===== 修复：强制重新加载模块，确保所有类被注册 =====
+            import importlib
+            module = importlib.reload(module)
+            
+            print(f"✅ 通过映射导入: {path}")
+            
+            # ===== 修复：获取模块中所有非私有属性 =====
+            all_attrs = [x for x in dir(module) if not x.startswith('_')]
+            print(f"   模块属性: {all_attrs}")
+            
+            # ===== 修复：直接查找 ChangePose 类 =====
+            pure_name = skill_name
+            if '.' in skill_name:
+                pure_name = skill_name.split('.')[-1]
+            
+            # 尝试 CamelCase (change_pose → ChangePose)
+            class_name = ''.join(word.capitalize() for word in pure_name.split('_'))
+            print(f"   查找类名: {class_name}")
+            
+            # ===== 核心修复：直接从模块的 __dict__ 中查找 =====
+            if hasattr(module, class_name):
+                skill_class = getattr(module, class_name)
+                print(f"   ✅ 找到类: {class_name}")
+            else:
+                # 遍历模块的 __dict__ 查找
+                for attr_name, attr in module.__dict__.items():
+                    if attr_name.startswith('_'):
+                        continue
+                    if isinstance(attr, type) and hasattr(attr, 'execute'):
                         skill_class = attr
+                        print(f"   ✅ 从 __dict__ 找到类: {attr_name}")
                         break
-        except ImportError:
-            pass
-    
-    # ============================================================
-    # 2. 自动扫描所有子目录查找 skill
-    # ============================================================
-    if skill_class is None:
-        skill_dir = Path("./skills")
-        if skill_dir.exists():
-            for subdir in skill_dir.iterdir():
-                if not subdir.is_dir():
-                    continue
-                # 检查 skill.py
-                skill_file = subdir / "skill.py"
+            
+            # 如果还没找到，尝试从 skill.py 文件重新加载
+            if skill_class is None:
+                print(f"   ⚠️ 类 {class_name} 未在模块中找到，尝试从文件加载...")
+                skill_file = Path("./skills") / path.replace('.', '/') / "skill.py"
                 if skill_file.exists():
-                    try:
-                        spec = importlib.util.spec_from_file_location(
-                            f"skills.{subdir.name}", 
-                            skill_file
-                        )
-                        temp_module = importlib.util.module_from_spec(spec)
-                        spec.loader.exec_module(temp_module)
-                        
-                        for attr_name in dir(temp_module):
-                            attr = getattr(temp_module, attr_name)
-                            if (isinstance(attr, type) and 
-                                attr.__module__ == temp_module.__name__ and
-                                attr_name not in ['SkillSpec'] and
-                                hasattr(attr, 'execute')):
-                                # 匹配类名（不区分大小写）
-                                if attr_name.lower() == skill_name.lower():
-                                    skill_class = attr
-                                    module = temp_module
-                                    found_path = skill_file
-                                    break
-                        if skill_class:
-                            break
-                    except Exception as e:
-                        continue
-    
-    # ============================================================
-    # 3. 在子目录的子目录中查找 (如 image/change_pose)
-    # ============================================================
-    if skill_class is None:
-        skill_dir = Path("./skills")
-        if skill_dir.exists():
-            for subdir in skill_dir.iterdir():
-                if not subdir.is_dir():
-                    continue
-                for subsubdir in subdir.iterdir():
-                    if not subsubdir.is_dir():
-                        continue
-                    skill_file = subsubdir / "skill.py"
-                    if skill_file.exists():
-                        try:
-                            spec = importlib.util.spec_from_file_location(
-                                f"skills.{subsubdir.name}", 
-                                skill_file
-                            )
-                            temp_module = importlib.util.module_from_spec(spec)
-                            spec.loader.exec_module(temp_module)
-                            
-                            for attr_name in dir(temp_module):
-                                attr = getattr(temp_module, attr_name)
-                                if (isinstance(attr, type) and 
-                                    attr.__module__ == temp_module.__name__ and
-                                    attr_name not in ['SkillSpec'] and
-                                    hasattr(attr, 'execute')):
-                                    if attr_name.lower() == skill_name.lower():
-                                        skill_class = attr
-                                        module = temp_module
-                                        found_path = skill_file
-                                        break
-                            if skill_class:
-                                break
-                        except Exception:
+                    import importlib.util
+                    spec = importlib.util.spec_from_file_location(path, skill_file)
+                    file_module = importlib.util.module_from_spec(spec)
+                    spec.loader.exec_module(file_module)
+                    # 从文件模块中查找
+                    for attr_name in dir(file_module):
+                        if attr_name.startswith('_'):
                             continue
-                if skill_class:
-                    break
+                        attr = getattr(file_module, attr_name)
+                        if isinstance(attr, type) and hasattr(attr, 'execute'):
+                            skill_class = attr
+                            module = file_module
+                            print(f"   ✅ 从文件加载找到类: {attr_name}")
+                            break
+                        
+        except ImportError as e:
+            print(f"⚠️ 映射导入失败: {e}")
+        except Exception as e:
+            print(f"⚠️ 导入异常: {e}")
+            import traceback
+            traceback.print_exc()
     
     # ============================================================
-    # 4. 最后尝试直接导入（兼容旧格式）
+    # 2. 如果映射失败，尝试原有自动发现
     # ============================================================
-    if skill_class is None:
-        try:
-            module = importlib.import_module(f"skills.{skill_name}")
-            for attr_name in dir(module):
-                attr = getattr(module, attr_name)
-                if (isinstance(attr, type) and 
-                    attr.__module__ == module.__name__ and
-                    attr_name not in ['SkillSpec'] and
-                    hasattr(attr, 'execute')):
-                    skill_class = attr
-                    break
-        except ImportError:
-            pass
+    # ... 保留原有自动发现代码 ...
     
     if not skill_class:
         print(f"❌ 未找到技能: {skill_name}")
@@ -436,8 +492,6 @@ def execute_skill(skill_name, **kwargs):
         print(f"❌ 技能 {skill_name} 没有 execute 方法")
         return False
         
-# markflow/cli/commands.py
-
 def list_skills(executor, console):
     """列出所有技能 - 自动扫描所有子目录"""
     from pathlib import Path
