@@ -1,10 +1,12 @@
-# Markflow_4image - 图片处理专用版本
+# Markflow_Comic - 漫画生成器（包含图片处理+小说生成+漫画生成）
 
-这是 MarkFlow 的图片处理专用分支，专门用于图像生成、编辑和转换等任务。
+包含众多SKILLS，配合使用， 大部分图片处理这是 MarkFlow 的图片处理专用分支，专门用于图像生成、编辑和转换等任务。
+前半部分介绍  Markflow_4Image的SKILL功能
+最后介绍 Markflow_Comic，生成漫画的SKILL功能
 
 ## 🎯 版本说明
 
-此版本包含了 MarkFlow 的所有图片处理技能，共 **38** 个：
+此版本包含了 MarkFlow 的所有图片处理技能，共 **80** 个：
 
 - `sd_image_generator` - SD 图像生成
 - `fantasy_character` - 奇幻角色转换
@@ -12,7 +14,7 @@
 - `anime_to_real` / `real_to_anime` - 动漫/真实转换
 - `old_photo_restore` - 老照片修复
 - `controlnet` - ControlNet 控制
-- 以及 30+ 其他图片处理技能
+- 以及 80+ 其他图片处理技能
 
 ## 📦 包含技能
 
@@ -628,6 +630,255 @@ GPU 内存: 建议至少 8GB VRAM
 
 参数格式: 命令行参数使用 key="value" 或 key=value 格式
 
+
+
+## 漫画生成器
+
+### 核心脚本
+
+| 脚本 | 功能 | 使用场景 |
+|------|------|----------|
+| `comic_auto.py` | 从零开始生成完整漫画 | 第一次创作新漫画 |
+| `comic_continue.py` | 在已有基础上续写漫画 | 连载更新，追加内容 |
+
+#### comic_auto.py - 从头生成
+
+自动执行完整流程：小说生成 → 剧本生成 → 图片生成 → 气泡添加 → PDF/EPUB 导出。
+
+```bash
+# 基本用法
+python comic_auto.py
+
+# 带参数运行
+python comic_auto.py --title "魔法学院" --genre "奇幻" --pages 6
+
+# 使用自定义配置文件
+python comic_auto.py --config my_config.json
+```
+
+| 参数 | 说明 |
+|------|------|
+| `--config` | 指定配置文件路径 |
+| `--title` | 覆盖配置中的漫画标题 |
+| `--genre` | 覆盖配置中的小说题材 |
+| `--pages` | 覆盖配置中的漫画页数 |
+
+#### comic_continue.py - 续写漫画
+
+自动检测最新章节，续写小说并生成新的漫画页面，合并到完整漫画中。
+
+```bash
+# 基本用法（使用配置中的默认值：3章+4页）
+python comic_continue.py
+
+# 指定续写章节数和页数
+python comic_continue.py --chapters 5 --pages 6
+
+# 查看续写进度
+python comic_continue.py --status
+```
+
+| 参数 | 说明 |
+|------|------|
+| `--config` | 指定配置文件路径 |
+| `--chapters` | 续写章节数（默认：3） |
+| `--pages` | 生成页数（默认：4） |
+| `--status` | 显示当前续写状态 |
+
+#### 状态文件
+
+续写进度保存在 `output/comic_continued/state.json`：
+
+```json
+{
+  "last_chapter": 6,
+  "processed_novels": [
+    "zh_科幻星际冒险_20260903_010158.txt",
+    "zh_科幻星际冒险_20260903_020145.txt"
+  ],
+  "title": "星际冒险",
+  "total_pages": 8
+}
+```
+
+### 快速开始
+
+#### 1. 配置文件
+
+项目根目录下的 `comic_config.json` 控制所有生成参数：
+
+```json
+{
+  "project": {
+    "name": "星际冒险",
+    "version": "1.0.0",
+    "description": "科幻冒险漫画系列"
+  },
+  "novel": {
+    "genre": "科幻",
+    "title": "星际冒险",
+    "language": "zh",
+    "chapters": 3,
+    "outline": "少年意外获得星际航行能力，在宇宙中探索未知文明",
+    "characters": "主角阿星，16岁，好奇心强；AI助手小智，幽默风趣"
+  },
+  "manga": {
+    "title": "星际冒险",
+    "pages": 4,
+    "style": "manga",
+    "strength": 0.65,
+    "steps": 30,
+    "size": { "width": 512, "height": 768 }
+  },
+  "bubbles": {
+    "default_dialogues": [
+      "欢迎来到星际冒险！",
+      "我是艾琳，一起出发吧！",
+      "前方有未知的星球！",
+      "我们一定会成功的！"
+    ],
+    "positions": [[50, 50], [200, 200]],
+    "bubble_style": "rounded"
+  },
+  "export": {
+    "formats": ["pdf", "epub"],
+    "page_size": "A4",
+    "author": "AI 生成"
+  }
+}
+```
+
+#### 2. 从头生成漫画
+
+```bash
+# 使用默认配置
+python comic_auto.py
+
+# 覆盖配置参数
+python comic_auto.py --title "魔法学院" --genre "奇幻" --pages 6
+
+# 使用自定义配置文件
+python comic_auto.py --config my_config.json
+```
+
+#### 3. 续写漫画
+
+```bash
+# 自动检测最新章节并续写（默认续写3章+4页）
+python comic_continue.py
+
+# 指定续写章节数和页数
+python comic_continue.py --chapters 5 --pages 6
+
+# 查看续写进度
+python comic_continue.py --status
+```
+
+### 漫画技能列表
+
+| 技能 | 说明 | 独立运行命令 |
+|------|------|-------------|
+| `manga_script_writer` | 从小说生成漫画分镜剧本 | `python -m markflow.cli.commands execute manga_script_writer novel_file="小说.txt"` |
+| `manga_generator` | 从剧本生成漫画图片 | `python -m markflow.cli.commands execute manga_generator script_path="剧本.json"` |
+| `manga_bubble_adder` | 为漫画添加对话气泡 | `python -m markflow.cli.commands execute manga_bubble_adder image_path="图片.png" dialogues="['你好']" positions="[(50,50)]"` |
+| `manga_layout_editor` | 多种布局排版漫画 | `python -m markflow.cli.commands execute manga_layout_editor image_paths="[...]" layout_type=grid` |
+| `manga_to_pdf` | 导出为 PDF | `python -m markflow.cli.commands execute manga_to_pdf image_paths="[...]" title="漫画名"` |
+| `manga_to_epub` | 导出为 EPUB | `python -m markflow.cli.commands execute manga_to_epub image_paths="[...]" title="漫画名"` |
+| `manga_audio_book` | 生成有声漫画 | `python -m markflow.cli.commands execute manga_audio_book image_paths="[...]" voice="zh-CN-XiaoxiaoNeural"` |
+| `manga_style_unifier` | 统一多张漫画的画风 | `python -m markflow.cli.commands execute manga_style_unifier image_paths="[...]" style=anime` |
+
+### 命令行示例
+
+```bash
+# 1. 生成剧本
+python -m markflow.cli.commands execute manga_script_writer novel_file="skills/content/novel_writer/output/novels/zh_科幻冒险.txt"
+
+# 2. 生成漫画
+python -m markflow.cli.commands execute manga_generator script_path="skills/comics/manga_script_writer/output/script_*.json"
+
+# 3. 添加气泡（单张）
+python -m markflow.cli.commands execute manga_bubble_adder image_path="page1.png" dialogues="['你好','世界']" positions="[(50,50),(200,200)]"
+
+# 4. 排版
+python -m markflow.cli.commands execute manga_layout_editor image_paths="['page1.png','page2.png']" layout_type=grid title="星际冒险"
+
+# 5. 导出 PDF
+python -m markflow.cli.commands execute manga_to_pdf image_paths="['page1.png','page2.png']" title="星际冒险"
+
+# 6. 导出 EPUB
+python -m markflow.cli.commands execute manga_to_epub image_paths="['page1.png','page2.png']" title="星际冒险" author="AI 生成"
+
+# 7. 生成有声版
+python -m markflow.cli.commands execute manga_audio_book image_paths="['page1.png']" voice="zh-CN-XiaoxiaoNeural"
+```
+
+### 输出目录
+
+| 类型 | 路径 |
+|------|------|
+| 小说 | `skills/content/novel_writer/output/novels/` |
+| 剧本 | `skills/comics/manga_script_writer/output/` |
+| 漫画图片 | `skills/image/sd_image_generator/output/images/` |
+| 气泡图片 | `skills/comics/manga_bubble_adder/output/` |
+| PDF | `skills/comics/manga_to_pdf/output/` |
+| EPUB | `skills/comics/manga_to_epub/output/` |
+| 完整输出 | `output/comic/` |
+| 续写输出 | `output/comic_continued/` |
+
+### 支持画风
+
+| 风格 | 说明 | 配置值 |
+|------|------|--------|
+| 日漫 | 黑白、高对比、精细线条 | `manga` |
+| 动漫 | 鲜艳色彩、赛璐璐风格 | `anime` |
+| 美漫 | 粗线条、戏剧性阴影 | `comic` |
+| 条漫 | 清新、柔和、竖版 | `webtoon` |
+| 水彩 | 柔和水墨风格 | `watercolor` |
+| 素描 | 铅笔质感 | `sketch` |
+
+### 依赖安装
+
+```bash
+# 核心依赖
+pip install Pillow img2pdf reportlab
+```
+
+### 目录结构
+
+```text
+MarkFlow_Comic/
+├── comic_auto.py              # 从头生成漫画
+├── comic_continue.py          # 续写漫画
+├── comic_config.json          # 配置文件
+├── comic_utils/               # 工具模块
+│   ├── config.py              # 配置加载
+│   ├── logger.py              # 日志工具
+│   └── common.py              # 公共函数
+├── skills/comics/             # 漫画技能
+│   ├── manga_script_writer/
+│   ├── manga_generator/
+│   ├── manga_bubble_adder/
+│   ├── manga_layout_editor/
+│   ├── manga_to_pdf/
+│   ├── manga_to_epub/
+│   ├── manga_audio_book/
+│   └── manga_style_unifier/
+└── output/                    # 输出目录
+    ├── comic/                 # 完整漫画
+    └── comic_continued/       # 续写输出
+```
+
+### 注意事项
+
+| 事项 | 说明 |
+|------|------|
+| **Ollama 服务** | 小说生成需要 Ollama 服务运行（`qwen2.5:7b` 模型） |
+| **SD 模型** | 图片生成需要 Stable Diffusion 模型 |
+| **首次运行** | 小说生成较慢，约 2-4 分钟/章 |
+| **图片生成** | 使用 CPU 约 2-5 分钟/页，GPU 约 10-30 秒/页 |
+| **续写状态** | 状态保存在 `output/comic_continued/state.json` |
+
+
 ###  📄 许可证
 MIT
 
@@ -636,4 +887,3 @@ MIT
 MarkFlow - 原版 MarkFlow，包含更多通用技能
 
 此版本是 MarkFlow 的图片处理专用分支
-
