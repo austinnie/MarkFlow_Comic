@@ -363,7 +363,7 @@ class NovelWriterOllama:
             'default_chapter_count': 3,
             'default_words_per_chapter': 500,
             'default_language': 'zh',
-            'output_dir': './skills/novel_writer/output/novels',
+            'output_dir': './skills/content/novel_writer/output/novel',
         }
         for key, value in defaults.items():
             if key not in self.config:
