@@ -84,7 +84,7 @@ class Sdimagegenerator:
     
     def _setup_config(self):
         defaults = {
-            'output_dir': './skills/sd_image_generator/output/images',
+            'output_dir': './skills/image/sd_image_generator/output/images',
             'default_model': self.default_model,
             'default_width': 512,
             'default_height': 768,
@@ -213,7 +213,7 @@ class Sdimagegenerator:
             steps = kwargs.get('steps', self.config.get('default_steps', 25))
             cfg_scale = kwargs.get('cfg_scale', self.config.get('default_cfg_scale', 7.5))
             
-            output_dir = kwargs.get('output_dir', self.config.get('output_dir', './skills/sd_image_generator/output/images'))
+            output_dir = kwargs.get('output_dir', self.config.get('output_dir', './skills/image/sd_image_generator/output/images'))
             output_dir = Path(output_dir)
             output_dir.mkdir(parents=True, exist_ok=True)
             
