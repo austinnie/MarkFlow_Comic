@@ -1,0 +1,50 @@
+{
+  "project": {
+    "name": "星际冒险",
+    "version": "1.0.0",
+    "description": "科幻冒险漫画系列"
+  },
+  "novel": {
+    "genre": "科幻",
+    "title": "星际冒险",
+    "language": "zh",
+    "chapters": 3,
+    "outline": "少年意外获得星际航行能力，在宇宙中探索未知文明",
+    "characters": "主角阿星，16岁，好奇心强；AI助手小智，幽默风趣"
+  },
+  "manga": {
+    "title": "星际冒险",
+    "pages": 4,
+    "style": "manga",
+    "strength": 0.65,
+    "steps": 30,
+    "negative": "ugly, deformed, bad anatomy, extra limbs, blurry, low quality",
+    "size": {
+      "width": 512,
+      "height": 768
+    }
+  },
+  "bubbles": {
+    "default_dialogues": [
+      "欢迎来到星际冒险！",
+      "我是艾琳，一起出发吧！",
+      "前方有未知的星球！",
+      "我们一定会成功的！"
+    ],
+    "positions": [
+      [50, 50],
+      [200, 200]
+    ],
+    "bubble_style": "rounded"
+  },
+  "export": {
+    "formats": ["pdf", "epub"],
+    "page_size": "A4",
+    "author": "AI 生成"
+  },
+  "continue": {
+    "enabled": true,
+    "auto_detect": true,
+    "max_chapters": 50
+  }
+}
